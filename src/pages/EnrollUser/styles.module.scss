@@ -31,11 +31,19 @@
       width: 16rem;
     }
 
+    .password__input {
+      width: 17.5rem;
+
+      &:before {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+      }
+    }
+
     ::after {
       border-bottom: 2px solid var(--color-pink);
     }
 
-    button {
+    .button__states {
       background-color: var(--color-pink);
       border-radius: 20px;
       color: var(--color-white);
@@ -44,16 +52,16 @@
       text-transform: none;
       transition: none;
       padding: 0.6rem 3.5rem;
-    }
 
-    .button__states:hover {
-      background-color: var(--color-white);
-      color: var(--color-pink);
-    }
-    
-    .button__states:disabled {
-      background-color: var(--color-pink-low-opacity);
-      color: var(--color-white-50);
+      &:hover {
+        background-color: var(--color-white);
+        color: var(--color-pink);
+      }
+  
+      &:disabled {
+        background-color: var(--color-pink-low-opacity);
+        color: var(--color-white-50);
+      }
     }
   }
 
