@@ -9,8 +9,8 @@ import {
   Switch
 } from 'react-router-dom';
 import AuthContext from './contexts/AuthContext';
+import './index.scss';
 import EnrollUser from './pages/EnrollUser';
-import './style.scss';
 
 export function RestrictedRoutes(props) {
   const { token } = useContext(AuthContext);
