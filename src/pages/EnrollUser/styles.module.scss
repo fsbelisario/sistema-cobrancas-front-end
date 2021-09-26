@@ -15,12 +15,12 @@
     align-items: center;
     gap: 2.5rem;
     padding: 5rem;
-    
+
     h4 {
       align-self: flex-start;
       color: var(--color-dark-blue-600);
       font-weight: 600;
-      margin: 2rem 0 -1.5rem 0.8rem;
+      margin: 2rem 0 1rem 0.8rem;
     }
     
     input {
@@ -36,17 +36,24 @@
     }
 
     button {
-      background-color: var(--color-pink-low-opacity);
+      background-color: var(--color-pink);
       border-radius: 20px;
+      color: var(--color-white);
       font-family: 'Montserrat', sans-serif;
       font-weight: 600;
       text-transform: none;
+      transition: none;
       padding: 0.6rem 3.5rem;
+    }
 
-      .Mui-disabled {
-        background-color: var(--color-pink-low-opacity);
-        color: var(--color-white);
-      }
+    .button__states:hover {
+      background-color: var(--color-white);
+      color: var(--color-pink);
+    }
+    
+    .button__states:disabled {
+      background-color: var(--color-pink-low-opacity);
+      color: var(--color-white-50);
     }
   }
 
