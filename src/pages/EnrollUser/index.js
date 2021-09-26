@@ -1,15 +1,39 @@
 import { Button, TextField } from '@material-ui/core';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import academy from '../../assets/logo-academy.svg';
 import styles from './styles.module.scss';
 
 function EnrollUser() {
   const { register, handleSubmit } = useForm();
+  const history = useHistory();
 
-  const onSubmit = (data) => {
-    console.log("Conta criada com sucesso!");
-    console.log(data);
+  async function onSubmit(data) {
+
+    const body = {
+      name: data.name,
+      email: data.email,
+      password: data.password
+    }
+
+    const response = await fetch('http://localhost:3003/users', {
+      method: 'POST',
+      mode: 'cors',
+      credentials: 'same-origin',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify(body)
+    });
+
+    if(response.ok) {
+      console.log('Conta cadastrada com sucesso! ' + response.json());
+      //history.push('/');
+      return;
+    }
+
+    const requestData = await response.json();
+    console.log(requestData);
   }
 
   return (
