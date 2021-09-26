@@ -10,7 +10,7 @@ import {
 } from 'react-router-dom';
 import AuthContext from './contexts/AuthContext';
 import EnrollUser from './pages/EnrollUser';
-import './style.css';
+import './style.scss';
 
 export function RestrictedRoutes(props) {
   const { token } = useContext(AuthContext);
