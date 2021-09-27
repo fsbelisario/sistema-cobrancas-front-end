@@ -1,4 +1,5 @@
 import { Button, TextField } from '@material-ui/core';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useHistory } from 'react-router-dom';
 import academy from '../../assets/logo-academy.svg';
@@ -6,8 +7,9 @@ import { PasswordInput } from './../../components/PasswordInput/index';
 import styles from './styles.module.scss';
 
 function EnrollUser() {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, formState: { errors }, setError } = useForm();
   const history = useHistory();
+  const [requestError, setRequestError] = useState('');
 
   async function onSubmit(data) {
 
@@ -17,7 +19,7 @@ function EnrollUser() {
       password: data.password
     };
 
-    console.log(body);
+    setRequestError('');
 
     const response = await fetch('http://localhost:3003/users', {
       method: 'POST',
@@ -36,7 +38,7 @@ function EnrollUser() {
     }
 
     const requestData = await response.json();
-    console.log(requestData);
+    setRequestError(requestData);
   }
 
   return (
@@ -44,25 +46,32 @@ function EnrollUser() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <img src={academy} alt="Logo Academy" />
         <label>
-          <h4>Nome</h4>
-          <TextField {...register("name", { required: true })} 
-            variant="standard" 
+          {errors.name ? <h4 className={styles.input__error}>Nome</h4> : <h4>Nome</h4>}
+          <TextField {...register("name", { required: true })}
+            variant="standard"
+            error={!!errors.name}
           />
+          {errors.name ? <p>O campo Nome é obrigatório!</p> : ''}
         </label>
         <label>
-          <h4>E-mail</h4>
-          <TextField {...register("email", { required: true })} 
+        {errors.email ? <h4 className={styles.input__error}>E-mail</h4> : <h4>E-mail</h4>}
+          <TextField {...register("email", { required: true })}
+            id="email"
             placeholder="exemplo@gmail.com" 
-            variant="standard" 
+            variant="standard"
+            error={!!errors.email}
           />
+          {errors.email ? <p>O campo E-mail é obrigatório!</p> : ''}
         </label>
         <label>
-          <h4>Senha</h4>
+        {errors.password ? <h4 className={styles.input__error}>Senha</h4> : <h4>Senha</h4>}
           <PasswordInput register={() => register("password", { required: true })} 
             id="password" 
             className={styles.password__input} 
-            variant="standard" 
+            variant="standard"
+            error={!!errors.password}
           />
+          {errors.password ? <p>O campo Senha é obrigatório!</p> : ''}
         </label>
         <Button className={styles.button__states} 
           type="submit" 

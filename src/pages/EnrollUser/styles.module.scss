@@ -29,10 +29,27 @@
       font-size: 0.875rem;
       padding: 0.8rem;
       width: 16rem;
+
+    }
+
+    p {
+      font-weight: 400;
+      font-size: 0.75rem;
+      line-height: 1.66;
+      letter-spacing: 0.03333em;
+      text-align: left;
+      margin-top: 3px;
+      color: var(--color-red);
+      font-family: 'Montserrat', sans-serif;
+      margin-bottom: -1.441rem;
+    }
+
+    .input__error {
+      color: var(--color-red);
     }
 
     .password__input {
-      width: 17.5rem;
+      width: 17.55rem;
 
       &:before {
         border-bottom: 1px solid rgba(0, 0, 0, 0.42);
@@ -52,6 +69,7 @@
       text-transform: none;
       transition: none;
       padding: 0.6rem 3.5rem;
+      margin-top: 1rem;
 
       &:hover {
         background-color: var(--color-white);
