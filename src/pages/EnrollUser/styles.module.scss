@@ -15,6 +15,7 @@
     align-items: center;
     gap: 2.5rem;
     padding: 5rem;
+    position: relative;
 
     h4 {
       align-self: flex-start;
@@ -29,7 +30,6 @@
       font-size: 0.875rem;
       padding: 0.8rem;
       width: 16rem;
-
     }
 
     p {
@@ -81,6 +81,11 @@
         color: var(--color-white-50);
       }
     }
+
+    .snackbar {
+      position: absolute;
+      bottom: 0;
+    }
   }
 
   footer {
@@ -89,6 +94,19 @@
     a {
       text-decoration: underline;
       color: var(--color-pink);
+    }
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .content__wrapper {
+    form {
+      gap: 1rem;
+      padding: 2.5rem;
+    }
+
+    footer {
+      margin-top: -1rem;
     }
   }
 }

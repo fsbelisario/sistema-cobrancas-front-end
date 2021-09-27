@@ -1,4 +1,5 @@
-import { Button, TextField } from '@material-ui/core';
+import { Button, Snackbar, TextField } from '@material-ui/core';
+import Alert from '@material-ui/core/Alert';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useHistory } from 'react-router-dom';
@@ -41,6 +42,10 @@ function EnrollUser() {
     setRequestError(requestData);
   }
 
+  function handleAlertClose() {
+    setRequestError('');
+  }
+
   return (
     <div className={styles.content__wrapper}>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -73,6 +78,17 @@ function EnrollUser() {
           />
           {errors.password ? <p>O campo Senha é obrigatório!</p> : ''}
         </label>
+
+        <Snackbar className={styles.snackbar} 
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }} 
+          open={requestError} 
+          autoHideDuration={6000} 
+          onClose={handleAlertClose}>
+          <Alert severity='error'>
+            {requestError}
+          </Alert>
+        </Snackbar>
+
         <Button className={styles.button__states} 
           type="submit" 
           disabled={false} 
