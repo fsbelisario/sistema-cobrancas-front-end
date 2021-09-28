@@ -1,17 +1,19 @@
+import {
+  Alert,
+  Backdrop,
+  Button,
+  CircularProgress,
+  Snackbar,
+  TextField
+} from '@mui/material';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Link,
   useHistory
 } from 'react-router-dom';
-import PasswordInput from './../../components/PasswordInput';
-import {
-  Alert,
-  Button,
-  Snackbar,
-  TextField
-} from '@mui/material';
 import academy from '../../assets/logo-academy.svg';
+import PasswordInput from './../../components/PasswordInput';
 import styles from './styles.module.scss';
 
 function EnrollUser() {
@@ -20,6 +22,7 @@ function EnrollUser() {
   const history = useHistory();
 
   const [requestError, setRequestError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   async function onSubmit(data) {
     const body = {
@@ -29,6 +32,7 @@ function EnrollUser() {
     };
 
     setRequestError('');
+    setLoading(true);
 
     const response = await fetch('http://localhost:3003/users', {
       method: 'POST',
@@ -39,14 +43,18 @@ function EnrollUser() {
       body: JSON.stringify(body)
     });
 
-    if (response.ok) {
-      console.log('Conta cadastrada com sucesso! ' + response.json());
-      history.push('/');
-      return;
-    };
+    setLoading(false);
 
     const requestData = await response.json();
     setRequestError(requestData);
+
+    if (response.ok) {
+      setLoading(true);
+      setTimeout(() => {
+        history.push('/');
+      }, 2000);
+      return;
+    };
   };
 
   function handleAlertClose() {
@@ -88,10 +96,10 @@ function EnrollUser() {
 
         <Snackbar className={styles.snackbar}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          open={requestError}
+          open={!!requestError}
           autoHideDuration={6000}
           onClose={handleAlertClose}>
-          <Alert severity='error'>
+          <Alert severity={requestError === 'Usuário cadastrado com sucesso.' ? 'success' : 'error'}>
             {requestError}
           </Alert>
         </Snackbar>
@@ -101,6 +109,12 @@ function EnrollUser() {
           disabled={false}
           variant='contained'>Criar conta
         </Button>
+
+        <Backdrop sx={{ color: 'var(--color-white)', 
+          zIndex: (theme) => theme.zIndex.drawer + 1 }} 
+          open={loading}>
+          <CircularProgress color='inherit' />
+        </Backdrop>
       </form>
       <footer>Já possui uma conta? <Link to='/'>Acesse agora!</Link></footer>
     </div>
