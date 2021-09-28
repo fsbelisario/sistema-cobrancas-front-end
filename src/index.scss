@@ -1,0 +1,25 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+
+    body {
+        background-color: var(--color-grey-50);
+    }
+}
+  
+:root {
+    --color-black: #000;
+    --color-blue: #5197B5;
+    --color-dark-blue-600: #374952;
+    --color-dark-blue-700: #263238;
+    --color-gray-50: #E5E5E5;
+    --color-gray-500: #4C4C4C;
+    --color-green: #4EC06E;
+    --color-pink: #DA0175;
+    --color-pink-low-opacity: rgba(218, 1, 117, 0.35);
+    --color-red: #FF4D4D;
+    --color-white: #FFF;
+    --color-white-50: #f7f7f7;
+}

@@ -9,7 +9,8 @@ import {
   Switch
 } from 'react-router-dom';
 import AuthContext from './contexts/AuthContext';
-import './style.css';
+import './index.scss';
+import EnrollUser from './pages/EnrollUser';
 
 export function RestrictedRoutes(props) {
   const { token } = useContext(AuthContext);
@@ -31,6 +32,7 @@ function Routes() {
       <Router>
         <Switch>
           {/* <Route exact path='/' component={Login} /> */}
+          {<Route path="/cadastro" component={EnrollUser} />}
         </Switch>
       </Router>
     </AuthContext.Provider >
