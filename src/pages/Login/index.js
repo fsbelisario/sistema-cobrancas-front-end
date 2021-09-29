@@ -72,23 +72,25 @@ function Login() {
         <img src={academy} alt='Logo Academy' />
         <label>
           {errors.email ? <h4 className={styles.input__error}>E-mail</h4> : <h4>E-mail</h4>}
-          <TextField {...register('email', { required: true })}
+          <TextField
+            {...register('email', { required: true })}
             id='email'
             placeholder='exemplo@gmail.com'
             variant='standard'
             error={!!errors.email}
           />
-          {errors.email ? <p>O campo E-mail é obrigatório!</p> : ''}
+          {!!errors.email && <p>O campo E-mail é obrigatório!</p>}
         </label>
         <label>
           {errors.password ? <h4 className={styles.input__error}>Senha</h4> : <h4>Senha</h4>}
-          <PasswordInput register={() => register('password', { required: true })}
+          <PasswordInput
+            register={() => register('password', { required: true })}
             id='password'
             className={styles.password__input}
             variant='standard'
             error={!!errors.password}
           />
-          {errors.password ? <p>O campo Senha é obrigatório!</p> : ''}
+          {!!errors.password && <p>O campo Senha é obrigatório!</p>}
         </label>
 
         <Snackbar

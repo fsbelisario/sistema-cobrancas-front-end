@@ -72,7 +72,7 @@ function EnrollUser() {
             variant='standard'
             error={!!errors.name}
           />
-          {errors.name ? <p>O campo Nome é obrigatório!</p> : ''}
+          {!!errors.name && <p>O campo Nome é obrigatório!</p>}
         </label>
         <label>
           {errors.email ? <h4 className={styles.input__error}>E-mail</h4> : <h4>E-mail</h4>}
@@ -83,7 +83,7 @@ function EnrollUser() {
             variant='standard'
             error={!!errors.email}
           />
-          {errors.email ? <p>O campo E-mail é obrigatório!</p> : ''}
+          {!!errors.email && <p>O campo E-mail é obrigatório!</p>}
         </label>
         <label>
           {errors.password ? <h4 className={styles.input__error}>Senha</h4> : <h4>Senha</h4>}
@@ -94,7 +94,7 @@ function EnrollUser() {
             variant='standard'
             error={!!errors.password}
           />
-          {errors.password ? <p>O campo Senha é obrigatório!</p> : ''}
+          {!!errors.password && <p>O campo Senha é obrigatório!</p>}
         </label>
 
         <Snackbar
