@@ -11,6 +11,7 @@ import {
 import AuthContext from './contexts/AuthContext';
 import './index.scss';
 import EnrollUser from './pages/EnrollUser';
+import Home from './pages/Home/index';
 import Login from './pages/Login';
 
 export function RestrictedRoutes(props) {
@@ -22,7 +23,7 @@ export function RestrictedRoutes(props) {
 }
 
 function Routes() {
-  const [token, setToken] = useState('');
+  const [token, setToken] = useState(localStorage.getItem('token') || '');
 
   return (
     <AuthContext.Provider
@@ -34,6 +35,7 @@ function Routes() {
         <Switch>
           {<Route exact path='/' component={Login} />}
           {<Route path="/cadastro" component={EnrollUser} />}
+          {<Route path="/home" component={Home} />}
         </Switch>
       </Router>
     </AuthContext.Provider >

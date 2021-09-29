@@ -6,18 +6,21 @@ import {
   Snackbar,
   TextField
 } from '@mui/material';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Link,
   useHistory
 } from 'react-router-dom';
 import academy from '../../assets/logo-academy.svg';
+import AuthContext from '../../contexts/AuthContext';
 import PasswordInput from './../../components/PasswordInput';
 import styles from './styles.module.scss';
 
 function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm();
+
+  const { setToken } = useContext(AuthContext);
 
   const history = useHistory();
 
@@ -45,12 +48,15 @@ function Login() {
     setLoading(false);
 
     const requestData = await response.json();
-    setRequestError(requestData);
-
+    
     if (response.ok) {
+      setToken(requestData.token);
+      localStorage.setItem('token', requestData.token);
       history.push('/home');
       return;
     };
+    
+    setRequestError(requestData);
   };
 
   function handleAlertClose() {
