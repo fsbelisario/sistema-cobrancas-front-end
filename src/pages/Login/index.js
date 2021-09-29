@@ -6,7 +6,10 @@ import {
   Snackbar,
   TextField
 } from '@mui/material';
-import { useContext, useState } from 'react';
+import {
+  useContext,
+  useState
+} from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Link,
@@ -48,14 +51,14 @@ function Login() {
     setLoading(false);
 
     const requestData = await response.json();
-    
+
     if (response.ok) {
       setToken(requestData.token);
       localStorage.setItem('token', requestData.token);
       history.push('/home');
       return;
     };
-    
+
     setRequestError(requestData);
   };
 
@@ -69,48 +72,60 @@ function Login() {
         <img src={academy} alt='Logo Academy' />
         <label>
           {errors.email ? <h4 className={styles.input__error}>E-mail</h4> : <h4>E-mail</h4>}
-          <TextField {...register('email', { required: true })}
+          <TextField
+            {...register('email', { required: true })}
             id='email'
             placeholder='exemplo@gmail.com'
             variant='standard'
             error={!!errors.email}
           />
-          {errors.email ? <p>O campo E-mail é obrigatório!</p> : ''}
+          {!!errors.email && <p>O campo E-mail é obrigatório!</p>}
         </label>
         <label>
           {errors.password ? <h4 className={styles.input__error}>Senha</h4> : <h4>Senha</h4>}
-          <PasswordInput register={() => register('password', { required: true })}
+          <PasswordInput
+            register={() => register('password', { required: true })}
             id='password'
             className={styles.password__input}
             variant='standard'
             error={!!errors.password}
           />
-          {errors.password ? <p>O campo Senha é obrigatório!</p> : ''}
+          {!!errors.password && <p>O campo Senha é obrigatório!</p>}
         </label>
 
-        <Snackbar className={styles.snackbar}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        <Snackbar
+          className={styles.snackbar}
           open={!!requestError}
-          autoHideDuration={6000}
-          onClose={handleAlertClose}>
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          autoHideDuration={3000}
+          onClose={handleAlertClose}
+        >
           <Alert severity='error'>
             {requestError}
           </Alert>
         </Snackbar>
 
-        <Button className={styles.button__states}
+        <Button
+          className={styles.button__states}
           type='submit'
           disabled={false}
-          variant='contained'>Entrar
+          variant='contained'
+        >
+          Entrar
         </Button>
 
-        <Backdrop sx={{ color: 'var(--color-white)', 
-          zIndex: (theme) => theme.zIndex.drawer + 1 }} 
+        <Backdrop sx={{
+          color: 'var(--color-white)',
+          zIndex: (theme) => theme.zIndex.drawer + 1
+        }}
           open={loading}>
           <CircularProgress color='inherit' />
         </Backdrop>
       </form>
-      <footer>Ainda não possui uma conta? <Link to='/cadastro'>Crie agora!</Link></footer>
+
+      <footer>
+        Ainda não possui uma conta? <Link to='/cadastro'>Crie agora!</Link>
+      </footer>
     </div>
   );
 };

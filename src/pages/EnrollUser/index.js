@@ -67,37 +67,41 @@ function EnrollUser() {
         <img src={academy} alt='Logo Academy' />
         <label>
           {errors.name ? <h4 className={styles.input__error}>Nome</h4> : <h4>Nome</h4>}
-          <TextField {...register('name', { required: true })}
+          <TextField
+            {...register('name', { required: true })}
             variant='standard'
             error={!!errors.name}
           />
-          {errors.name ? <p>O campo Nome é obrigatório!</p> : ''}
+          {!!errors.name && <p>O campo Nome é obrigatório!</p>}
         </label>
         <label>
           {errors.email ? <h4 className={styles.input__error}>E-mail</h4> : <h4>E-mail</h4>}
-          <TextField {...register('email', { required: true })}
+          <TextField
+            {...register('email', { required: true })}
             id='email'
             placeholder='exemplo@gmail.com'
             variant='standard'
             error={!!errors.email}
           />
-          {errors.email ? <p>O campo E-mail é obrigatório!</p> : ''}
+          {!!errors.email && <p>O campo E-mail é obrigatório!</p>}
         </label>
         <label>
           {errors.password ? <h4 className={styles.input__error}>Senha</h4> : <h4>Senha</h4>}
-          <PasswordInput register={() => register('password', { required: true })}
+          <PasswordInput
+            register={() => register('password', { required: true })}
             id='password'
             className={styles.password__input}
             variant='standard'
             error={!!errors.password}
           />
-          {errors.password ? <p>O campo Senha é obrigatório!</p> : ''}
+          {!!errors.password && <p>O campo Senha é obrigatório!</p>}
         </label>
 
-        <Snackbar className={styles.snackbar}
+        <Snackbar
+          className={styles.snackbar}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           open={!!requestError}
-          autoHideDuration={6000}
+          autoHideDuration={3000}
           onClose={handleAlertClose}>
           <Alert severity={requestError === 'Usuário cadastrado com sucesso.' ? 'success' : 'error'}>
             {requestError}
@@ -110,13 +114,18 @@ function EnrollUser() {
           variant='contained'>Criar conta
         </Button>
 
-        <Backdrop sx={{ color: 'var(--color-white)', 
-          zIndex: (theme) => theme.zIndex.drawer + 1 }} 
+        <Backdrop sx={{
+          color: 'var(--color-white)',
+          zIndex: (theme) => theme.zIndex.drawer + 1
+        }}
           open={loading}>
           <CircularProgress color='inherit' />
         </Backdrop>
       </form>
-      <footer>Já possui uma conta? <Link to='/'>Acesse agora!</Link></footer>
+
+      <footer>
+        Já possui uma conta? <Link to='/'>Acesse agora!</Link>
+      </footer>
     </div>
   );
 };
