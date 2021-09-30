@@ -1,0 +1,48 @@
+.Navbar__wrapper {
+  background-color: var(--color-dark-blue-700);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  margin-right: auto;
+  max-width: 16.8rem;
+
+  > img {
+    padding: 3rem;
+    margin-bottom: 3.5rem;
+  }
+
+  button {
+    all: unset;
+    color: var(--color-white);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: 0.875rem;
+    font-weight: 700;
+    gap: 1.25rem;
+    padding: 0.75rem 3rem;
+    cursor: pointer;
+    text-decoration: none;
+    text-transform: uppercase;
+
+    &:hover {
+      background-color: var(--color-dark-blue-600);
+    }
+  }
+
+  .button__addBilling {
+    align-self: center;
+    background-color: var(--color-pink);
+    border-radius: 20px;
+    font-weight: 600;
+    margin-bottom: 3rem;
+    margin-top: auto;
+    text-transform: none;
+    width: fit-content;
+
+    &:hover {
+      background-color: var(--color-white);
+      color: var(--color-pink);
+    }
+  }
+}
