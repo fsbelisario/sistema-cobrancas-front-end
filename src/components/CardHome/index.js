@@ -1,15 +1,15 @@
 import styles from './styles.module.scss';
 
-function CardHome(image, title, body) {
+function CardHome({ icon, title , CardHomeItem }) {
   return(
     <div className={styles.card__wrapper}>
       <header>
-        <img src={image} alt='' />
+        <img src={icon} alt='' />
         <p>{title}</p>
       </header>
-      <div>
-        {body}
-      </div>
+      <main>
+        {CardHomeItem}
+      </main>
     </div>
   );
 }

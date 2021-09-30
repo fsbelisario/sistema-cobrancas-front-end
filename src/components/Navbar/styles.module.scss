@@ -4,7 +4,7 @@
   flex-direction: column;
   height: 100vh;
   margin-right: auto;
-  max-width: 16.8rem;
+  width: fit-content;
 
   > img {
     padding: 3rem;
@@ -17,7 +17,6 @@
     cursor: pointer;
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
     font-size: 0.875rem;
     font-weight: 700;
     gap: 1.25rem;
