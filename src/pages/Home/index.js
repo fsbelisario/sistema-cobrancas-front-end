@@ -12,21 +12,23 @@ function Home() {
       <Navbar />
       <div className={styles.main__content}>
         <div className={styles.cards}>
-          <CardHome 
+          <CardHome
+            key='client'
             icon={clientIcon}
             title='Clientes'
             CardHomeItem={[
-              <CardHomeItem className={styles.item__red} title='Inadimplentes' number='0' />,
-              <CardHomeItem className={styles.item__green} title='Em dia' number='0' />
+              <CardHomeItem key='client_item_1' className={styles.item__red} title='Inadimplentes' number='0' />,
+              <CardHomeItem key='client_item_2' className={styles.item__green} title='Em dia' number='0' />
             ]}
           />
-          <CardHome 
+          <CardHome
+            key='bill'
             icon={billIcon}
             title='Cobranças'
             CardHomeItem={[
-              <CardHomeItem className={styles.item__blue} title='Previstas' number='0' />,
-              <CardHomeItem className={styles.item__red} title='Vencidas' number='0' />,
-              <CardHomeItem className={styles.item__green} title='Pagas' number='0' />
+              <CardHomeItem key='bill_item_1' className={styles.item__blue} title='Previstas' number='0' />,
+              <CardHomeItem key='bill_item_2' className={styles.item__red} title='Vencidas' number='0' />,
+              <CardHomeItem key='bill_item_3' className={styles.item__green} title='Pagas' number='0' />
             ]}
           />
         </div>
