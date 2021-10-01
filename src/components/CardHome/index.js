@@ -1,7 +1,7 @@
 import styles from './styles.module.scss';
 
-function CardHome({ icon, title , CardHomeItem }) {
-  return(
+function CardHome({ icon, title, CardHomeItem }) {
+  return (
     <div className={styles.card__wrapper}>
       <header>
         <img src={icon} alt='' />
@@ -12,6 +12,6 @@ function CardHome({ icon, title , CardHomeItem }) {
       </main>
     </div>
   );
-}
+};
 
 export default CardHome;

@@ -65,8 +65,8 @@ function EditUserProfile() {
 
   function handleTabClose() {
     setOpen(!open);
-  }
-  
+  };
+
   return (
     <Modal
       open={open}
@@ -74,7 +74,7 @@ function EditUserProfile() {
       className={styles.content__wrapper}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <img src={closeIcon} alt='' onClick={handleTabClose}/>
+        <img src={closeIcon} alt='' onClick={handleTabClose} />
         <label>
           {errors.name ? <h4 className={styles.input__error}>Nome</h4> : <h4>Nome</h4>}
           <TextField

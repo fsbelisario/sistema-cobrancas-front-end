@@ -108,14 +108,14 @@ function EnrollUser() {
           </Alert>
         </Snackbar>
 
-        <Button 
+        <Button
           className={styles.button__states}
           type='submit'
           disabled={false}
           variant='contained'>Criar conta
         </Button>
 
-        <Backdrop 
+        <Backdrop
           sx={{
             color: 'var(--color-white)',
             zIndex: (theme) => theme.zIndex.drawer + 1

@@ -10,7 +10,7 @@ function Navbar() {
   return (
     <div className={styles.Navbar__wrapper}>
       <img src={academy} alt='Logo Academy' />
-      <NavLink 
+      <NavLink
         exact to='/home'
         activeClassName={styles.button__active}
         className={styles.navlink}
@@ -24,7 +24,7 @@ function Navbar() {
       >
         <NavbarItem key='Navbar_2' image={billIcon} title='Cobranças' />
       </NavLink>
-      <NavLink 
+      <NavLink
         exact to='/clientes'
         activeClassName={styles.button__active}
         className={styles.navlink}
@@ -36,6 +36,6 @@ function Navbar() {
       </button>
     </div>
   );
-}
+};
 
 export default Navbar;

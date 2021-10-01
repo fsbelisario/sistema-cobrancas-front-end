@@ -21,8 +21,8 @@ export function RestrictedRoutes(props) {
 
   return (
     <Route render={() => (token ? props.children : <Redirect to='/' />)} />
-  )
-}
+  );
+};
 
 function Routes() {
   const [token, setToken] = useState(localStorage.getItem('token') || '');
@@ -44,6 +44,6 @@ function Routes() {
       </Router>
     </AuthContext.Provider >
   );
-}
+};
 
 export default Routes;
