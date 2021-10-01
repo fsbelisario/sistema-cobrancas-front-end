@@ -18,7 +18,7 @@ function Navbar() {
         <NavbarItem key='Navbar_1' image={homeIcon} title='Home' />
       </NavLink>
       <NavLink
-        exact to='/'
+        exact to='/cobranças'
         activeClassName={styles.button__active}
         className={styles.navlink}
       >
