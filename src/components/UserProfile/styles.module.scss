@@ -44,6 +44,12 @@
 
     &:hover {
       color: var(--color-pink);
+
+      //Mudando a cor do svg utilizando um fitro CSS
+      //Link de referência: https://codepen.io/sosuke/pen/Pjoqqp
+      img { 
+        filter: invert(17%) sepia(63%) saturate(7218%) hue-rotate(318deg) brightness(84%) contrast(106%);
+      }
     }
   }
 }
