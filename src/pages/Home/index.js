@@ -3,6 +3,7 @@ import clientIcon from '../../assets/card-client-icon.svg';
 import CardHome from '../../components/CardHome';
 import CardHomeItem from '../../components/CardHomeItem';
 import Navbar from '../../components/Navbar';
+import UserProfile from '../../components/UserProfile';
 import styles from './styles.module.scss';
 
 function Home() {
@@ -11,6 +12,7 @@ function Home() {
     <div className={styles.content__wrapper}>
       <Navbar />
       <div className={styles.main__content}>
+        <UserProfile />
         <div className={styles.cards}>
           <CardHome
             key='client'
