@@ -23,7 +23,7 @@ function EnrollClient() {
     setLoading(true);
     console.log('Ainda estou fazendo o formulário');
     setLoading(false);
-  }
+  };
 
   function handleAlertClose() {
     setRequestError('');

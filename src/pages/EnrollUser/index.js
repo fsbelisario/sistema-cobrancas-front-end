@@ -108,17 +108,20 @@ function EnrollUser() {
           </Alert>
         </Snackbar>
 
-        <Button className={styles.button__states}
+        <Button 
+          className={styles.button__states}
           type='submit'
           disabled={false}
           variant='contained'>Criar conta
         </Button>
 
-        <Backdrop sx={{
-          color: 'var(--color-white)',
-          zIndex: (theme) => theme.zIndex.drawer + 1
-        }}
-          open={loading}>
+        <Backdrop 
+          sx={{
+            color: 'var(--color-white)',
+            zIndex: (theme) => theme.zIndex.drawer + 1
+          }}
+          open={loading}
+        >
           <CircularProgress color='inherit' />
         </Backdrop>
       </form>

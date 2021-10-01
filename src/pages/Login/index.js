@@ -114,11 +114,13 @@ function Login() {
           Entrar
         </Button>
 
-        <Backdrop sx={{
-          color: 'var(--color-white)',
-          zIndex: (theme) => theme.zIndex.drawer + 1
-        }}
-          open={loading}>
+        <Backdrop 
+          sx={{
+            color: 'var(--color-white)',
+            zIndex: (theme) => theme.zIndex.drawer + 1
+          }}
+          open={loading}
+        >
           <CircularProgress color='inherit' />
         </Backdrop>
       </form>

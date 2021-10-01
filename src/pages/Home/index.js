@@ -7,7 +7,6 @@ import UserProfile from '../../components/UserProfile';
 import styles from './styles.module.scss';
 
 function Home() {
-
   return (
     <div className={styles.content__wrapper}>
       <Navbar />
@@ -19,8 +18,18 @@ function Home() {
             icon={clientIcon}
             title='Clientes'
             CardHomeItem={[
-              <CardHomeItem key='client_item_1' className={styles.item__red} title='Inadimplentes' number='0' />,
-              <CardHomeItem key='client_item_2' className={styles.item__green} title='Em dia' number='0' />
+              <CardHomeItem 
+                key='client_item_1' 
+                className={styles.item__red} 
+                title='Inadimplentes' 
+                number='0' 
+              />,
+              <CardHomeItem 
+                key='client_item_2' 
+                className={styles.item__green} 
+                title='Em dia' 
+                number='0' 
+              />
             ]}
           />
           <CardHome
@@ -28,9 +37,24 @@ function Home() {
             icon={billIcon}
             title='Cobranças'
             CardHomeItem={[
-              <CardHomeItem key='bill_item_1' className={styles.item__blue} title='Previstas' number='0' />,
-              <CardHomeItem key='bill_item_2' className={styles.item__red} title='Vencidas' number='0' />,
-              <CardHomeItem key='bill_item_3' className={styles.item__green} title='Pagas' number='0' />
+              <CardHomeItem
+                key='bill_item_1'
+                className={styles.item__blue}
+                title='Previstas'
+                number='0'
+              />,
+              <CardHomeItem
+                key='bill_item_2'
+                className={styles.item__red}
+                title='Vencidas'
+                number='0'
+              />,
+              <CardHomeItem
+                key='bill_item_3'
+                className={styles.item__green}
+                title='Pagas'
+                number='0'
+              />
             ]}
           />
         </div>
