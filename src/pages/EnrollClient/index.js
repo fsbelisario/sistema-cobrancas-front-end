@@ -6,7 +6,10 @@ import {
   Snackbar,
   TextField
 } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import {
+  createTheme,
+  ThemeProvider
+} from '@mui/material/styles';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Navbar from '../../components/Navbar';
@@ -53,7 +56,7 @@ function EnrollClient() {
                     color='secondary'
                     {...register('name', { required: true })}
                     id='name'
-                    variant="outlined"
+                    variant='outlined'
                     error={!!errors.name}
                   />
                   {!!errors.name && <p>O campo Nome é obrigatório!</p>}
@@ -66,13 +69,13 @@ function EnrollClient() {
                     color='secondary'
                     {...register('email', { required: true })}
                     id='email'
-                    variant="outlined"
+                    variant='outlined'
                     error={!!errors.email}
                   />
                   {!!errors.email && <p>O campo E-mail é obrigatório!</p>}
                 </label>
               </div>
-              
+
               <div className={styles.input__wrapper}>
                 <label>
                   {errors.tax_id ? <h4 className={styles.input__error}>CPF</h4> : <h4>CPF</h4>}
@@ -81,7 +84,7 @@ function EnrollClient() {
                     color='secondary'
                     {...register('tax_id', { required: true })}
                     id='tax_id'
-                    variant="outlined"
+                    variant='outlined'
                     error={!!errors.tax_id}
                   />
                   {!!errors.tax_id && <p>O campo CPF é obrigatório!</p>}
@@ -94,7 +97,7 @@ function EnrollClient() {
                     color='secondary'
                     {...register('phone', { required: true })}
                     id='phone'
-                    variant="outlined"
+                    variant='outlined'
                     error={!!errors.phone}
                   />
                   {!!errors.phone && <p>O campo Telefone é obrigatório!</p>}
@@ -109,7 +112,7 @@ function EnrollClient() {
                     color='secondary'
                     {...register('zip_code')}
                     id='zip_code'
-                    variant="outlined"
+                    variant='outlined'
                     error={!!errors.zip_code}
                   />
                 </label>
@@ -121,7 +124,7 @@ function EnrollClient() {
                     color='secondary'
                     {...register('street')}
                     id='street'
-                    variant="outlined"
+                    variant='outlined'
                     error={!!errors.street}
                   />
                 </label>
@@ -135,14 +138,14 @@ function EnrollClient() {
                     color='secondary'
                     {...register('number')}
                     id='number'
-                    variant="outlined"
+                    variant='outlined'
                     error={!!errors.number}
                   />
                 </label>
 
                 <label>
-                  {errors.address_details 
-                    ? <h4 className={styles.input__error}>Complemento</h4> 
+                  {errors.address_details
+                    ? <h4 className={styles.input__error}>Complemento</h4>
                     : <h4>Complemento</h4>
                   }
                   <TextField
@@ -150,7 +153,7 @@ function EnrollClient() {
                     color='secondary'
                     {...register('address_details')}
                     id='address_details'
-                    variant="outlined"
+                    variant='outlined'
                     error={!!errors.address_details}
                   />
                 </label>
@@ -164,11 +167,11 @@ function EnrollClient() {
                     color='secondary'
                     {...register('district')}
                     id='district'
-                    variant="outlined"
+                    variant='outlined'
                     error={!!errors.district}
                   />
                 </label>
-                
+
                 <label>
                   {errors.reference ? <h4 className={styles.input__error}>Ponto de referência</h4> : <h4>Ponto de referência</h4>}
                   <TextField
@@ -176,7 +179,7 @@ function EnrollClient() {
                     color='secondary'
                     {...register('reference')}
                     id='reference'
-                    variant="outlined"
+                    variant='outlined'
                     error={!!errors.reference}
                   />
                 </label>
@@ -190,7 +193,7 @@ function EnrollClient() {
                     color='secondary'
                     {...register('city')}
                     id='city'
-                    variant="outlined"
+                    variant='outlined'
                     error={!!errors.city}
                   />
                 </label>
@@ -202,12 +205,12 @@ function EnrollClient() {
                     color='secondary'
                     {...register('state')}
                     id='state'
-                    variant="outlined"
+                    variant='outlined'
                     error={!!errors.state}
                   />
                 </label>
               </div>
-              
+
               <Snackbar
                 className={styles.snackbar}
                 open={!!requestError}
@@ -221,7 +224,7 @@ function EnrollClient() {
               </Snackbar>
 
               <div className={styles.button__wrapper}>
-                <Button 
+                <Button
                   className={`${styles.button__states} ${styles.button__cancel}`}
                 >
                   Cancelar
@@ -236,7 +239,7 @@ function EnrollClient() {
                 </Button>
               </div>
 
-              <Backdrop 
+              <Backdrop
                 sx={{
                   color: 'var(--color-white)',
                   zIndex: (theme) => theme.zIndex.drawer + 1
@@ -251,6 +254,6 @@ function EnrollClient() {
       </div>
     </div>
   );
-}
+};
 
 export default EnrollClient;

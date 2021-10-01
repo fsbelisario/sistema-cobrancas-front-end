@@ -16,24 +16,24 @@ function UserProfile() {
   const [editProfile, setEditProfile] = useState(false);
 
   const history = useHistory();
-  
+
   const { setToken } = useContext(AuthContext);
 
   function handleIsVisible() {
     setIsVisible(!isVisible);
     setEditProfile(false);
-  }
+  };
 
   function handleEditProfile() {
     setEditProfile(!editProfile);
     setIsVisible(!isVisible);
-  }
+  };
 
   function handleLogout() {
     setToken('');
     localStorage.clear();
     history.push('/');
-  }
+  };
 
   console.log(localStorage);
 
@@ -50,7 +50,7 @@ function UserProfile() {
             title='Editar'
             onClick={handleEditProfile}
           />
-          <NavbarItem 
+          <NavbarItem
             key='Menu_2'
             image={logoutIcon}
             title='Deslogar'
@@ -61,6 +61,6 @@ function UserProfile() {
       {editProfile && <EditUserProfile />}
     </div>
   );
-}
+};
 
 export default UserProfile;

@@ -3,7 +3,6 @@ import UserProfile from '../../components/UserProfile';
 import styles from './styles.module.scss';
 
 function Billing() {
-
   return (
     <div className={styles.content__wrapper}>
       <Navbar />
@@ -15,6 +14,6 @@ function Billing() {
       </div>
     </div>
   );
-}
+};
 
 export default Billing;

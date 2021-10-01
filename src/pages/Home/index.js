@@ -18,17 +18,17 @@ function Home() {
             icon={clientIcon}
             title='Clientes'
             CardHomeItem={[
-              <CardHomeItem 
-                key='client_item_1' 
-                className={styles.item__red} 
-                title='Inadimplentes' 
-                number='0' 
+              <CardHomeItem
+                key='client_item_1'
+                className={styles.item__red}
+                title='Inadimplentes'
+                number='0'
               />,
-              <CardHomeItem 
-                key='client_item_2' 
-                className={styles.item__green} 
-                title='Em dia' 
-                number='0' 
+              <CardHomeItem
+                key='client_item_2'
+                className={styles.item__green}
+                title='Em dia'
+                number='0'
               />
             ]}
           />
@@ -61,6 +61,6 @@ function Home() {
       </div>
     </div>
   );
-}
+};
 
 export default Home;
