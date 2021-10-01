@@ -1,6 +1,6 @@
-function NavbarItem({ image, title }) {
+function NavbarItem({ image, title, onClick }) {
   return(
-    <button>
+    <button onClick={onClick && onClick}>
       <img src={image} alt='' />
       <p>{title}</p>
     </button>
