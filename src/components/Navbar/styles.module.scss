@@ -1,0 +1,57 @@
+.Navbar__wrapper {
+  background-color: var(--color-dark-blue-700);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-height: 100%;
+  margin-right: auto;
+  width: fit-content;
+
+  > img {
+    padding: 3rem;
+    margin-bottom: 3.5rem;
+  }
+
+  a {
+    padding: 0.75rem 3rem;
+    text-decoration: none;
+    width: 100%;
+
+    &:hover {
+      background-color: var(--color-dark-blue-600);
+    }
+  }
+
+  button {
+    all: unset;
+    color: var(--color-white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    font-weight: 700;
+    grid-gap: 1.25rem;
+    text-transform: uppercase;
+    width: 100%;
+  }
+
+  .button__active {
+    background-color: var(--color-dark-blue-600);
+  }
+
+  .button__addBilling {
+    align-self: center;
+    background-color: var(--color-pink);
+    border-radius: 20px;
+    font-weight: 600;
+    margin-top: 5rem;
+    padding: 0.75rem 3rem;
+    text-transform: none;
+    width: fit-content;
+
+    &:hover {
+      background-color: var(--color-white);
+      color: var(--color-pink);
+    }
+  }
+}

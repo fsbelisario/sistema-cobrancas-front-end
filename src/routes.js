@@ -10,6 +10,8 @@ import {
 } from 'react-router-dom';
 import AuthContext from './contexts/AuthContext';
 import './index.scss';
+import Billing from './pages/Billing/index';
+import EnrollClient from './pages/EnrollClient/index';
 import EnrollUser from './pages/EnrollUser';
 import Home from './pages/Home/index';
 import Login from './pages/Login';
@@ -36,6 +38,8 @@ function Routes() {
           {<Route exact path='/' component={Login} />}
           {<Route path="/cadastro" component={EnrollUser} />}
           {<Route path="/home" component={Home} />}
+          {<Route path="/cobranças" component={Billing} />}
+          {<Route path="/clientes" component={EnrollClient} />}
         </Switch>
       </Router>
     </AuthContext.Provider >

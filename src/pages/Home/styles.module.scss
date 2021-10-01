@@ -1,0 +1,38 @@
+.content__wrapper {
+  background-color: var(--color-gray-50);
+  display: flex;
+
+  .main__content {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+    justify-content: center;
+    padding: 2.5rem;
+    width: 100%;
+  }
+
+  .cards {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+    justify-content: center;
+    margin-bottom: auto;
+  }
+
+  .item__green {
+    border: 2px solid var(--color-green);
+    color: var(--color-green);
+  }
+  
+  .item__red {
+    border: 2px solid var(--color-red);
+    color: var(--color-red);
+  }
+  
+  .item__blue {
+    border: 2px solid var(--color-blue);
+    color: var(--color-blue);
+  }
+}
