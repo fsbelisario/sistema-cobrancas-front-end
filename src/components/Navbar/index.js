@@ -2,36 +2,16 @@ import billIcon from '../../assets/billing-icon.svg';
 import clientIcon from '../../assets/client-icon.svg';
 import homeIcon from '../../assets/home-icon.svg';
 import academy from '../../assets/logo-academy-white.svg';
+import NavbarItem from '../NavbarItem';
 import styles from './styles.module.scss';
-
-const items = [
-  {
-    image: homeIcon,
-    text: 'Home'
-  },
-  {
-    image: billIcon,
-    text: 'Cobranças'
-  },
-  {
-    image: clientIcon,
-    text: 'Clientes'
-  },
-];
 
 function Navbar() {
   return (
     <div className={styles.Navbar__wrapper}>
       <img src={academy} alt='Logo Academy' />
-      {items.map((item, index) => (
-        <button
-          key={`NavbarItem ${index}`}
-          value={index}
-        >
-          <img src={item.image} alt='' />
-          <p>{item.text}</p>
-        </button>
-      ))}
+      <NavbarItem key='Navbar_1' image={homeIcon} title='Home' />
+      <NavbarItem key='Navbar_2' image={billIcon} title='Cobranças' />
+      <NavbarItem key='Navbar_3' image={clientIcon} title='Clientes' />
       <button className={styles.button__addBilling}>
         Criar cobrança
       </button>
