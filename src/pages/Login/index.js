@@ -39,27 +39,31 @@ function Login() {
     setRequestError('');
     setLoading(true);
 
-    const response = await fetch('http://localhost:3003/login', {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-type': 'application/json',
-      },
-      body: JSON.stringify(body)
-    });
+    try {
+      const response = await fetch('http://localhost:3003/login', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        body: JSON.stringify(body)
+      });
+  
+      const requestData = await response.json();
+  
+      if (response.ok) {
+        setToken(requestData.token);
+        localStorage.setItem('token', requestData.token);
+        history.push('/home');
+        return;
+      };
+  
+      setRequestError(requestData);
+    } catch(error) {
+      setRequestError(error.message);
+    }
 
     setLoading(false);
-
-    const requestData = await response.json();
-
-    if (response.ok) {
-      setToken(requestData.token);
-      localStorage.setItem('token', requestData.token);
-      history.push('/home');
-      return;
-    };
-
-    setRequestError(requestData);
   };
 
   function handleAlertClose() {

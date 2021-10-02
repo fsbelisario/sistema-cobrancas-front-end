@@ -34,27 +34,31 @@ function EnrollUser() {
     setRequestError('');
     setLoading(true);
 
-    const response = await fetch('http://localhost:3003/users', {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-type': 'application/json',
-      },
-      body: JSON.stringify(body)
-    });
+    try {
+      const response = await fetch('http://localhost:3003/users', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        body: JSON.stringify(body)
+      });
+  
+      const requestData = await response.json();
+      setRequestError(requestData);
+  
+      if (response.ok) {
+        setLoading(true);
+        setTimeout(() => {
+          history.push('/');
+        }, 2000);
+        return;
+      };
+    } catch(error) {
+      setRequestError(error.message);
+    }
 
     setLoading(false);
-
-    const requestData = await response.json();
-    setRequestError(requestData);
-
-    if (response.ok) {
-      setLoading(true);
-      setTimeout(() => {
-        history.push('/');
-      }, 2000);
-      return;
-    };
   };
 
   function handleAlertClose() {

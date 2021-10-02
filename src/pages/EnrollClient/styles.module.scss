@@ -101,12 +101,12 @@
 
           .button__cancel {
             background-color: var(--color-white);
-            border: 2px solid var(--color-white);
+            border: 2px solid var(--color-pink);
             color: var(--color-pink);
             padding: 0.475rem 2rem;
 
             &:hover {
-              border: 2px solid var(--color-pink);
+              background-color: var(--color-pink-lower-opacity);
             }
           }
         }

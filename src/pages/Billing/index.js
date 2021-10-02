@@ -9,7 +9,7 @@ function Billing() {
       <div className={styles.main__content}>
         <UserProfile />
         <div className={styles.content}>
-          O conteúdo vai aqui!
+          Você não possui nenhuma cobrança cadastrada.
         </div>
       </div>
     </div>
