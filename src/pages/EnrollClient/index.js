@@ -43,42 +43,55 @@ function EnrollClient() {
     const body = {
       name: data.name,
       email: data.email,
-      password: data.password
+      tax_id: data.tax_id,
+      phone: data.phone,
+      zip_code: data.zip_code && data.zip_code,
+      street: data.street && data.street,
+      number: data.number && data.number,
+      address_details: data.address_details && data.address_details,
+      district: data.district && data.district,
+      reference: data.reference && data.reference,
+      city: data.city && data.city,
+      state: data.state && data.state
     };
 
     setRequestError('');
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3003/users', {
+      const response = await fetch('http://localhost:3003/clients', {
         method: 'POST',
         mode: 'cors',
         headers: {
           'Content-type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(body)
       });
-  
+      
+      setLoading(false);
+
       const requestData = await response.json();
+
       setRequestError(requestData);
-  
+
       if (response.ok) {
-        setLoading(true);
-        setTimeout(() => {
-          history.push('/home');
-        }, 2000);
+        setRequestError(requestData);
+        history.push('/home');
         return;
       };
     } catch(error) {
       setRequestError(error.message);
     }
-
-    setLoading(false);
   };
 
   function handleAlertClose() {
     setRequestError('');
   };
+
+  function cancelButton() {
+    history.push('/home');
+  }
 
   const theme = createTheme({
     palette: {
@@ -274,6 +287,7 @@ function EnrollClient() {
               <div className={styles.button__wrapper}>
                 <Button
                   className={`${styles.button__states} ${styles.button__cancel}`}
+                  onClick={cancelButton}
                 >
                   Cancelar
                 </Button>

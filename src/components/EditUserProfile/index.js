@@ -8,82 +8,36 @@ import {
   TextField
 } from '@mui/material';
 import { 
-  useState, 
-  useEffect,
-  useContext,
-  useRef 
+  useState,
+  useContext
 } from 'react';
 import { useForm } from 'react-hook-form';
-import {
-  useHistory
-} from 'react-router-dom';
 import AuthContext from '../../contexts/AuthContext';
 import closeIcon from '../../assets/close-icon.svg';
 import PasswordInput from './../../components/PasswordInput';
 import styles from './styles.module.scss';
 
-function EditUserProfile() {
+function EditUserProfile({ user }) {
   const { register, handleSubmit, formState: { errors } } = useForm();
-
-  const { token, setToken } = useContext(AuthContext);
-
-  const history = useHistory();
+  const { token } = useContext(AuthContext);
 
   const [requestError, setRequestError] = useState('');
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(true);
 
-  let user = useRef;
-
-  useEffect(() => {
-    setToken(localStorage.getItem('token'));
-
-    if(!token) {
-      history.push('/');
-      return;
-    }
-
-    async function getProfile() {
-      try {
-        const response = await fetch('http://localhost:3003/users', {
-          method: 'GET',
-          mode: 'cors',
-          headers: {
-            'Content-type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-    
-        const requestData = await response.json();
-    
-        if (response.ok) {
-          console.log(requestData);
-          user.current = requestData;
-        };
-      } catch(error) {
-        setRequestError(error.message);
-      }
-    }
-
-    getProfile();
-  }, [ token, setToken, history, user ]);
-
-  console.log(user)
-  console.log(token)
-
   async function onSubmit(data) {
     const body = {
       name: data.name,
       email: data.email,
-      password: data.password && data.password,
-      phone: data.phone && data.phone,
-      tax_id: data.tax_id && data.tax_id
+      password: data.password === '' ?  user.password : data.password,
+      phone: data.phone === '' ? user.phone : data.phone,
+      tax_id: data.tax_id === '' ? user.tax_id : data.tax_id
     };
 
     setRequestError('');
     setLoading(true);
 
-    const response = await fetch('http://localhost:3003/users', {
+    const response = await fetch('http://localhost:3003/profile', {
       method: 'PUT',
       mode: 'cors',
       headers: {
@@ -93,15 +47,18 @@ function EditUserProfile() {
       body: JSON.stringify(body)
     });
 
-    setLoading(false);
-
     const requestData = await response.json();
 
     if (response.ok) {
-      console.log(requestData);
+      setRequestError(requestData);
+      setLoading(true);
+      setTimeout(() => {
+        setOpen(!open);
+      }, 2000);
       return;
     };
-
+    
+    setLoading(false);
     setRequestError(requestData);
   };
 
@@ -126,7 +83,7 @@ function EditUserProfile() {
           <TextField
             {...register('name', { required: true })}
             id='name'
-            defaultValue='Nome vindo da API'
+            defaultValue={user.name}
             variant='standard'
             error={!!errors.name}
           />
@@ -137,7 +94,7 @@ function EditUserProfile() {
           <TextField
             {...register('email', { required: true })}
             id='email'
-            defaultValue='E-mail vindo da API'
+            defaultValue={user.email}
             variant='standard'
             error={!!errors.email}
           />
@@ -159,6 +116,7 @@ function EditUserProfile() {
           <TextField
             {...register('phone')}
             id='phone'
+            defaultValue={user.phone}
             placeholder='(71) 9999-9999'
             variant='standard'
             error={!!errors.phone}
@@ -169,6 +127,7 @@ function EditUserProfile() {
           <TextField
             {...register('tax_id')}
             id='tax_id'
+            defaultValue={user.tax_id}
             placeholder='000.000.000-00'
             variant='standard'
             error={!!errors.tax_id}
@@ -182,7 +141,10 @@ function EditUserProfile() {
           autoHideDuration={3000}
           onClose={handleAlertClose}
         >
-          <Alert severity='error'>
+          <Alert severity={requestError === 'Perfil do usuário atualizado com sucesso.' 
+            ? 'success' 
+            : 'error'}
+          >
             {requestError}
           </Alert>
         </Snackbar>

@@ -1,6 +1,7 @@
 import {
   useContext,
-  useState
+  useState,
+  useEffect
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import editIcon from '../../assets/edit-icon.svg';
@@ -14,10 +15,36 @@ import styles from './styles.module.scss';
 function UserProfile() {
   const [isVisible, setIsVisible] = useState(false);
   const [editProfile, setEditProfile] = useState(false);
+  const [user, setUser] = useState();
 
   const history = useHistory();
 
-  const { setToken } = useContext(AuthContext);
+  const { token, setToken } = useContext(AuthContext);
+
+  useEffect(() => {
+    setToken(localStorage.getItem('token'));
+
+    if(!token) {
+      history.push('/');
+      return;
+    }
+    
+    async function getProfile() {
+      const response = await fetch('http://localhost:3003/profile', {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+  
+      const requestData = await response.json();
+      setUser(requestData);
+    }
+
+    getProfile();
+  }, [token, setToken, history]);
 
   function handleIsVisible() {
     setIsVisible(!isVisible);
@@ -30,6 +57,7 @@ function UserProfile() {
   };
 
   function handleLogout() {
+    setUser('');
     setToken('');
     localStorage.clear();
     history.push('/');
@@ -56,7 +84,7 @@ function UserProfile() {
           />
         </div>
       }
-      {editProfile && <EditUserProfile />}
+      {editProfile && <EditUserProfile user={user} />}
     </div>
   );
 };
