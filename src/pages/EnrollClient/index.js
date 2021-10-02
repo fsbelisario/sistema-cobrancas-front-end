@@ -10,10 +10,10 @@ import {
   createTheme,
   ThemeProvider
 } from '@mui/material/styles';
-import { 
-  useState, 
-  useContext, 
-  useEffect 
+import {
+  useState,
+  useContext,
+  useEffect
 } from 'react';
 import { useForm } from 'react-hook-form';
 import Navbar from '../../components/Navbar';
@@ -33,7 +33,7 @@ function EnrollClient() {
   useEffect(() => {
     setToken(localStorage.getItem('token'));
 
-    if(!token) {
+    if (!token) {
       history.push('/');
       return;
     }
@@ -43,12 +43,12 @@ function EnrollClient() {
     const body = {
       name: data.name,
       email: data.email,
-      tax_id: data.tax_id,
+      taxId: data.tax_id,
       phone: data.phone,
-      zip_code: data.zip_code && data.zip_code,
+      zipCode: data.zip_code && data.zip_code,
       street: data.street && data.street,
       number: data.number && data.number,
-      address_details: data.address_details && data.address_details,
+      addressDetails: data.address_details && data.address_details,
       district: data.district && data.district,
       reference: data.reference && data.reference,
       city: data.city && data.city,
@@ -68,7 +68,7 @@ function EnrollClient() {
         },
         body: JSON.stringify(body)
       });
-      
+
       setLoading(false);
 
       const requestData = await response.json();
@@ -80,7 +80,7 @@ function EnrollClient() {
         history.push('/home');
         return;
       };
-    } catch(error) {
+    } catch (error) {
       setRequestError(error.message);
     }
   };
