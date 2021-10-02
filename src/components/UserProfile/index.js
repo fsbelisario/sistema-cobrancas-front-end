@@ -35,8 +35,6 @@ function UserProfile() {
     history.push('/');
   };
 
-  console.log(localStorage);
-
   return (
     <div className={styles.content__wrapper}>
       <button onClick={handleIsVisible}>

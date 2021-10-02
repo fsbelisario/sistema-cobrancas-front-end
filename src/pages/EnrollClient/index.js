@@ -283,7 +283,7 @@ function EnrollClient() {
                   disabled={false}
                   variant='contained'
                 >
-                  Cadastrar Cliente
+                  Adicionar Cliente
                 </Button>
               </div>
 

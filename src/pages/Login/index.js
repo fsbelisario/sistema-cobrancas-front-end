@@ -22,9 +22,7 @@ import styles from './styles.module.scss';
 
 function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm();
-
   const { setToken } = useContext(AuthContext);
-
   const history = useHistory();
 
   const [requestError, setRequestError] = useState('');
