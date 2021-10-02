@@ -7,7 +7,7 @@ import {
   Snackbar,
   TextField
 } from '@mui/material';
-import { 
+import {
   useState,
   useContext
 } from 'react';
@@ -29,9 +29,9 @@ function EditUserProfile({ user }) {
     const body = {
       name: data.name,
       email: data.email,
-      password: data.password === '' ?  user.password : data.password,
+      password: data.password === '' ? user.password : data.password,
       phone: data.phone === '' ? user.phone : data.phone,
-      tax_id: data.tax_id === '' ? user.tax_id : data.tax_id
+      taxId: data.tax_Id === '' ? user.tax_id : data.tax_id
     };
 
     setRequestError('');
@@ -57,7 +57,7 @@ function EditUserProfile({ user }) {
       }, 2000);
       return;
     };
-    
+
     setLoading(false);
     setRequestError(requestData);
   };
@@ -141,8 +141,8 @@ function EditUserProfile({ user }) {
           autoHideDuration={3000}
           onClose={handleAlertClose}
         >
-          <Alert severity={requestError === 'Perfil do usuário atualizado com sucesso.' 
-            ? 'success' 
+          <Alert severity={requestError === 'Perfil do usuário atualizado com sucesso.'
+            ? 'success'
             : 'error'}
           >
             {requestError}
