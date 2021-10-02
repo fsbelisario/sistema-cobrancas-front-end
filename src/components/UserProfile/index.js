@@ -1,7 +1,8 @@
 import {
   useContext,
   useState,
-  useEffect
+  useEffect,
+  useRef
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import editIcon from '../../assets/edit-icon.svg';
@@ -15,22 +16,16 @@ import styles from './styles.module.scss';
 function UserProfile() {
   const [isVisible, setIsVisible] = useState(false);
   const [editProfile, setEditProfile] = useState(false);
-  const [user, setUser] = useState();
 
   const history = useHistory();
 
   const { token, setToken } = useContext(AuthContext);
 
-  useEffect(() => {
-    setToken(localStorage.getItem('token'));
+  let user = useRef();
 
-    if(!token) {
-      history.push('/');
-      return;
-    }
-    
+  useEffect(() => {
     async function getProfile() {
-      const response = await fetch('http://localhost:3003/profile', {
+      const response = await fetch('https://academy-bills.herokuapp.com/profile', {
         method: 'GET',
         mode: 'cors',
         headers: {
@@ -40,11 +35,11 @@ function UserProfile() {
       });
   
       const requestData = await response.json();
-      setUser(requestData);
+      user.current = requestData;
     }
 
     getProfile();
-  }, [token, setToken, history]);
+  }, [token, setToken, isVisible]);
 
   function handleIsVisible() {
     setIsVisible(!isVisible);
@@ -57,7 +52,7 @@ function UserProfile() {
   };
 
   function handleLogout() {
-    setUser('');
+    user.current = '';
     setToken('');
     localStorage.clear();
     history.push('/');

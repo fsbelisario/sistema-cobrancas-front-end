@@ -26,18 +26,29 @@ function EditUserProfile({ user }) {
   const [open, setOpen] = useState(true);
 
   async function onSubmit(data) {
+    let newPhone = data.phone;
+    let newTaxId = data.tax_id;
+
+    if(user.current.phone && data.phone === '') {
+      newPhone = '';
+    }
+
+    if(user.current.tax_id && data.tax_id === '') {
+      newTaxId = '';
+    }
+
     const body = {
       name: data.name,
       email: data.email,
-      password: data.password === '' ? user.password : data.password,
-      phone: data.phone === '' ? user.phone : data.phone,
-      taxId: data.tax_Id === '' ? user.tax_id : data.tax_id
+      password: data.password === '' ? user.current.password : data.password,
+      phone: newPhone,
+      taxId: newTaxId
     };
 
     setRequestError('');
     setLoading(true);
 
-    const response = await fetch('http://localhost:3003/profile', {
+    const response = await fetch('https://academy-bills.herokuapp.com/profile', {
       method: 'PUT',
       mode: 'cors',
       headers: {
@@ -83,7 +94,7 @@ function EditUserProfile({ user }) {
           <TextField
             {...register('name', { required: true })}
             id='name'
-            defaultValue={user.name}
+            defaultValue={user.current.name}
             variant='standard'
             error={!!errors.name}
           />
@@ -94,7 +105,7 @@ function EditUserProfile({ user }) {
           <TextField
             {...register('email', { required: true })}
             id='email'
-            defaultValue={user.email}
+            defaultValue={user.current.email}
             variant='standard'
             error={!!errors.email}
           />
@@ -116,7 +127,7 @@ function EditUserProfile({ user }) {
           <TextField
             {...register('phone')}
             id='phone'
-            defaultValue={user.phone}
+            defaultValue={user.current.phone}
             placeholder='(71) 9999-9999'
             variant='standard'
             error={!!errors.phone}
@@ -127,7 +138,7 @@ function EditUserProfile({ user }) {
           <TextField
             {...register('tax_id')}
             id='tax_id'
-            defaultValue={user.tax_id}
+            defaultValue={user.current.tax_id}
             placeholder='000.000.000-00'
             variant='standard'
             error={!!errors.tax_id}

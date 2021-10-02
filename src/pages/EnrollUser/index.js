@@ -25,6 +25,11 @@ function EnrollUser() {
   const [loading, setLoading] = useState(false);
 
   async function onSubmit(data) {
+    if(data.password.length < 5) {
+      setRequestError('A senha deve conter no mínimo 5 caracteres');
+      return;
+    };
+
     const body = {
       name: data.name,
       email: data.email,
@@ -35,7 +40,7 @@ function EnrollUser() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3003/users', {
+      const response = await fetch('https://academy-bills.herokuapp.com/users', {
         method: 'POST',
         mode: 'cors',
         headers: {

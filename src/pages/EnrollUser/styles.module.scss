@@ -69,7 +69,7 @@
       text-transform: none;
       transition: none;
       padding: 0.6rem 3.5rem;
-      margin-top: 1rem;
+      margin: 1rem 0;
 
       &:hover {
         background-color: var(--color-white);
@@ -85,7 +85,7 @@
     .snackbar {
       position: absolute;
       bottom: 0;
-      width: max-content;
+      width: 22.6rem;
     }
   }
 

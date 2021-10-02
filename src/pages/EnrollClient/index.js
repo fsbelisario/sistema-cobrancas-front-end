@@ -59,7 +59,7 @@ function EnrollClient() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3003/clients', {
+      const response = await fetch('https://academy-bills.herokuapp.com/clients', {
         method: 'POST',
         mode: 'cors',
         headers: {
