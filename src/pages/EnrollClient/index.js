@@ -10,27 +10,88 @@ import {
   createTheme,
   ThemeProvider
 } from '@mui/material/styles';
-import { useState } from 'react';
+import { 
+  useState, 
+  useContext, 
+  useEffect 
+} from 'react';
 import { useForm } from 'react-hook-form';
 import Navbar from '../../components/Navbar';
 import UserProfile from '../../components/UserProfile';
+import AuthContext from '../../contexts/AuthContext';
+import { useHistory } from 'react-router-dom';
 import styles from './styles.module.scss';
 
 function EnrollClient() {
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const { token, setToken } = useContext(AuthContext);
+  const history = useHistory();
 
   const [requestError, setRequestError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  function onSubmit() {
+  useEffect(() => {
+    setToken(localStorage.getItem('token'));
+
+    if(!token) {
+      history.push('/');
+      return;
+    }
+  }, [token, setToken, history]);
+
+  async function onSubmit(data) {
+    const body = {
+      name: data.name,
+      email: data.email,
+      tax_id: data.tax_id,
+      phone: data.phone,
+      zip_code: data.zip_code && data.zip_code,
+      street: data.street && data.street,
+      number: data.number && data.number,
+      address_details: data.address_details && data.address_details,
+      district: data.district && data.district,
+      reference: data.reference && data.reference,
+      city: data.city && data.city,
+      state: data.state && data.state
+    };
+
+    setRequestError('');
     setLoading(true);
-    console.log('Ainda estou fazendo o formulário');
-    setLoading(false);
+
+    try {
+      const response = await fetch('http://localhost:3003/clients', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(body)
+      });
+      
+      setLoading(false);
+
+      const requestData = await response.json();
+
+      setRequestError(requestData);
+
+      if (response.ok) {
+        setRequestError(requestData);
+        history.push('/home');
+        return;
+      };
+    } catch(error) {
+      setRequestError(error.message);
+    }
   };
 
   function handleAlertClose() {
     setRequestError('');
   };
+
+  function cancelButton() {
+    history.push('/home');
+  }
 
   const theme = createTheme({
     palette: {
@@ -226,6 +287,7 @@ function EnrollClient() {
               <div className={styles.button__wrapper}>
                 <Button
                   className={`${styles.button__states} ${styles.button__cancel}`}
+                  onClick={cancelButton}
                 >
                   Cancelar
                 </Button>
@@ -235,7 +297,7 @@ function EnrollClient() {
                   disabled={false}
                   variant='contained'
                 >
-                  Cadastrar Cliente
+                  Adicionar Cliente
                 </Button>
               </div>
 

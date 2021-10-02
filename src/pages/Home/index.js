@@ -1,3 +1,9 @@
+import { 
+  useContext, 
+  useEffect 
+} from 'react';
+import { useHistory } from 'react-router';
+import AuthContext from '../../contexts/AuthContext';
 import billIcon from '../../assets/card-billing-icon.svg';
 import clientIcon from '../../assets/card-client-icon.svg';
 import CardHome from '../../components/CardHome';
@@ -7,6 +13,18 @@ import UserProfile from '../../components/UserProfile';
 import styles from './styles.module.scss';
 
 function Home() {
+  const { token, setToken } = useContext(AuthContext);
+  const history = useHistory();
+
+  useEffect(() => {
+    setToken(localStorage.getItem('token'));
+
+    if(!token) {
+      history.push('/');
+      return;
+    }
+  }, [token, setToken, history]);
+
   return (
     <div className={styles.content__wrapper}>
       <Navbar />

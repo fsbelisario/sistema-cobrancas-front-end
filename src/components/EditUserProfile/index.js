@@ -7,19 +7,19 @@ import {
   Snackbar,
   TextField
 } from '@mui/material';
-import { useState } from 'react';
+import { 
+  useState,
+  useContext
+} from 'react';
 import { useForm } from 'react-hook-form';
-import {
-  useHistory
-} from 'react-router-dom';
+import AuthContext from '../../contexts/AuthContext';
 import closeIcon from '../../assets/close-icon.svg';
 import PasswordInput from './../../components/PasswordInput';
 import styles from './styles.module.scss';
 
-function EditUserProfile() {
+function EditUserProfile({ user }) {
   const { register, handleSubmit, formState: { errors } } = useForm();
-
-  const history = useHistory();
+  const { token } = useContext(AuthContext);
 
   const [requestError, setRequestError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -29,9 +29,9 @@ function EditUserProfile() {
     const body = {
       name: data.name,
       email: data.email,
-      password: data.password && data.password,
-      phone: data.phone && data.phone,
-      tax_id: data.tax_id && data.tax_id
+      password: data.password === '' ?  user.password : data.password,
+      phone: data.phone === '' ? user.phone : data.phone,
+      tax_id: data.tax_id === '' ? user.tax_id : data.tax_id
     };
 
     setRequestError('');
@@ -42,20 +42,23 @@ function EditUserProfile() {
       mode: 'cors',
       headers: {
         'Content-type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(body)
     });
 
-    setLoading(false);
-
     const requestData = await response.json();
 
     if (response.ok) {
-      console.log('Perfil editado com sucesso!');
-      history.push('/home');
+      setRequestError(requestData);
+      setLoading(true);
+      setTimeout(() => {
+        setOpen(!open);
+      }, 2000);
       return;
     };
-
+    
+    setLoading(false);
     setRequestError(requestData);
   };
 
@@ -80,7 +83,7 @@ function EditUserProfile() {
           <TextField
             {...register('name', { required: true })}
             id='name'
-            defaultValue='Nome vindo da API'
+            defaultValue={user.name}
             variant='standard'
             error={!!errors.name}
           />
@@ -91,7 +94,7 @@ function EditUserProfile() {
           <TextField
             {...register('email', { required: true })}
             id='email'
-            defaultValue='E-mail vindo da API'
+            defaultValue={user.email}
             variant='standard'
             error={!!errors.email}
           />
@@ -113,6 +116,7 @@ function EditUserProfile() {
           <TextField
             {...register('phone')}
             id='phone'
+            defaultValue={user.phone}
             placeholder='(71) 9999-9999'
             variant='standard'
             error={!!errors.phone}
@@ -123,6 +127,7 @@ function EditUserProfile() {
           <TextField
             {...register('tax_id')}
             id='tax_id'
+            defaultValue={user.tax_id}
             placeholder='000.000.000-00'
             variant='standard'
             error={!!errors.tax_id}
@@ -136,7 +141,10 @@ function EditUserProfile() {
           autoHideDuration={3000}
           onClose={handleAlertClose}
         >
-          <Alert severity='error'>
+          <Alert severity={requestError === 'Perfil do usuário atualizado com sucesso.' 
+            ? 'success' 
+            : 'error'}
+          >
             {requestError}
           </Alert>
         </Snackbar>
