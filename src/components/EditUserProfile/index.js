@@ -7,11 +7,17 @@ import {
   Snackbar,
   TextField
 } from '@mui/material';
-import { useState } from 'react';
+import { 
+  useState, 
+  useEffect,
+  useContext,
+  useRef 
+} from 'react';
 import { useForm } from 'react-hook-form';
 import {
   useHistory
 } from 'react-router-dom';
+import AuthContext from '../../contexts/AuthContext';
 import closeIcon from '../../assets/close-icon.svg';
 import PasswordInput from './../../components/PasswordInput';
 import styles from './styles.module.scss';
@@ -19,11 +25,51 @@ import styles from './styles.module.scss';
 function EditUserProfile() {
   const { register, handleSubmit, formState: { errors } } = useForm();
 
+  const { token, setToken } = useContext(AuthContext);
+
   const history = useHistory();
 
   const [requestError, setRequestError] = useState('');
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(true);
+
+  let user = useRef;
+
+  useEffect(() => {
+    setToken(localStorage.getItem('token'));
+
+    if(!token) {
+      history.push('/');
+      return;
+    }
+
+    async function getProfile() {
+      try {
+        const response = await fetch('http://localhost:3003/users', {
+          method: 'GET',
+          mode: 'cors',
+          headers: {
+            'Content-type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+    
+        const requestData = await response.json();
+    
+        if (response.ok) {
+          console.log(requestData);
+          user.current = requestData;
+        };
+      } catch(error) {
+        setRequestError(error.message);
+      }
+    }
+
+    getProfile();
+  }, [ token, setToken, history, user ]);
+
+  console.log(user)
+  console.log(token)
 
   async function onSubmit(data) {
     const body = {
@@ -37,11 +83,12 @@ function EditUserProfile() {
     setRequestError('');
     setLoading(true);
 
-    const response = await fetch('http://localhost:3003/profile', {
+    const response = await fetch('http://localhost:3003/users', {
       method: 'PUT',
       mode: 'cors',
       headers: {
         'Content-type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(body)
     });
@@ -51,8 +98,7 @@ function EditUserProfile() {
     const requestData = await response.json();
 
     if (response.ok) {
-      console.log('Perfil editado com sucesso!');
-      history.push('/home');
+      console.log(requestData);
       return;
     };
 

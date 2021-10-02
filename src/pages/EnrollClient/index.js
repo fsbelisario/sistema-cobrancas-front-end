@@ -10,21 +10,69 @@ import {
   createTheme,
   ThemeProvider
 } from '@mui/material/styles';
-import { useState } from 'react';
+import { 
+  useState, 
+  useContext, 
+  useEffect 
+} from 'react';
 import { useForm } from 'react-hook-form';
 import Navbar from '../../components/Navbar';
 import UserProfile from '../../components/UserProfile';
+import AuthContext from '../../contexts/AuthContext';
+import { useHistory } from 'react-router-dom';
 import styles from './styles.module.scss';
 
 function EnrollClient() {
   const { register, handleSubmit, formState: { errors } } = useForm();
+  const { token, setToken } = useContext(AuthContext);
+  const history = useHistory();
 
   const [requestError, setRequestError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  function onSubmit() {
+  useEffect(() => {
+    setToken(localStorage.getItem('token'));
+
+    if(!token) {
+      history.push('/');
+      return;
+    }
+  }, [token, setToken, history]);
+
+  async function onSubmit(data) {
+    const body = {
+      name: data.name,
+      email: data.email,
+      password: data.password
+    };
+
+    setRequestError('');
     setLoading(true);
-    console.log('Ainda estou fazendo o formulário');
+
+    try {
+      const response = await fetch('http://localhost:3003/users', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        body: JSON.stringify(body)
+      });
+  
+      const requestData = await response.json();
+      setRequestError(requestData);
+  
+      if (response.ok) {
+        setLoading(true);
+        setTimeout(() => {
+          history.push('/home');
+        }, 2000);
+        return;
+      };
+    } catch(error) {
+      setRequestError(error.message);
+    }
+
     setLoading(false);
   };
 
