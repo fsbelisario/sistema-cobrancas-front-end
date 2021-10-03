@@ -33,7 +33,7 @@ function UserProfile() {
           'Authorization': `Bearer ${token}`
         }
       });
-  
+
       const requestData = await response.json();
       user.current = requestData;
       localStorage.setItem('user', user.current);
@@ -55,7 +55,8 @@ function UserProfile() {
   function handleLogout() {
     user.current = '';
     setToken('');
-    localStorage.clear();
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     history.push('/');
   };
 
