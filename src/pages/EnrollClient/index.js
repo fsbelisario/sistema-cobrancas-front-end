@@ -36,15 +36,16 @@ function EnrollClient() {
     if (!token) {
       history.push('/');
       return;
-    }
+    };
+
   }, [token, setToken, history]);
 
   async function onSubmit(data) {
     const body = {
-      name: data.name,
-      email: data.email,
-      taxId: data.tax_id,
-      phone: data.phone,
+      name: data.clientName,
+      email: data.clientEmail,
+      taxId: data.clientTax_id,
+      phone: data.clientPhone,
       zipCode: data.zip_code && data.zip_code,
       street: data.street && data.street,
       number: data.number && data.number,
@@ -111,57 +112,69 @@ function EnrollClient() {
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className={styles.input__wrapper}>
                 <label>
-                  {errors.name ? <h4 className={styles.input__error}>Nome</h4> : <h4>Nome</h4>}
+                  {errors.clientName ? <h4 className={styles.input__error}>Nome</h4> : <h4>Nome</h4>}
                   <TextField
                     className={styles.fieldset}
                     color='secondary'
-                    {...register('name', { required: true })}
-                    id='name'
+                    error={!!errors.clientName}
+                    id='clientName'
+                    {...register('clientName', { required: true })}
                     variant='outlined'
-                    error={!!errors.name}
                   />
-                  {!!errors.name && <p>O campo Nome é obrigatório!</p>}
+                  {!!errors.clientName && <p>O campo Nome é obrigatório!</p>}
                 </label>
 
                 <label>
-                  {errors.email ? <h4 className={styles.input__error}>E-mail</h4> : <h4>E-mail</h4>}
+                  {errors.clientEmail ? <h4 className={styles.input__error}>E-mail</h4> : <h4>E-mail</h4>}
                   <TextField
                     className={styles.fieldset}
                     color='secondary'
-                    {...register('email', { required: true })}
-                    id='email'
+                    id='clientEmail'
+                    error={!!errors.clientEmail}
+                    {...register('clientEmail', { required: true })}
                     variant='outlined'
-                    error={!!errors.email}
                   />
-                  {!!errors.email && <p>O campo E-mail é obrigatório!</p>}
+                  {!!errors.clientEmail && <p>O campo E-mail é obrigatório!</p>}
                 </label>
               </div>
 
               <div className={styles.input__wrapper}>
                 <label>
-                  {errors.tax_id ? <h4 className={styles.input__error}>CPF</h4> : <h4>CPF</h4>}
+                  {errors.clientTax_id ? <h4 className={styles.input__error}>CPF</h4> : <h4>CPF</h4>}
                   <TextField
                     className={styles.fieldset}
                     color='secondary'
-                    {...register('tax_id', { required: true })}
-                    id='tax_id'
+                    id='clientTax_id'
+                    error={!!errors.clientTax_id}
+                    {...register('clientTax_id', 
+                      { required: true, minLength: 11, maxLength: 11, pattern: /^[0-9]+$/i })
+                    }
                     variant='outlined'
-                    error={!!errors.tax_id}
                   />
-                  {!!errors.tax_id && <p>O campo CPF é obrigatório!</p>}
+                  {errors.clientTax_id?.type === 'required' && <p>O campo CPF é obrigatório!</p>}
+                  {(errors.clientTax_id?.type === 'minLength' || errors.clientTax_id?.type === 'maxLength') 
+                    && <p>O CPF deve conter 11 caracteres</p>
+                  }
+                  {errors.clientTax_id?.type === 'pattern' && <p>O CPF deve conter apenas números</p>}
                 </label>
 
                 <label>
-                  {errors.phone ? <h4 className={styles.input__error}>Telefone</h4> : <h4>Telefone</h4>}
+                  {errors.clientPhone ? <h4 className={styles.input__error}>Telefone</h4> : <h4>Telefone</h4>}
                   <TextField
                     className={styles.fieldset}
                     color='secondary'
-                    {...register('phone', { required: true })}
-                    id='phone'
+                    id='clientPhone'
+                    error={!!errors.clientPhone}
+                    {...register('clientPhone', 
+                      { required: true, minLength: 10, maxLength: 11, pattern: /^[0-9]+$/i })
+                    }
                     variant='outlined'
-                    error={!!errors.phone}
                   />
-                  {!!errors.phone && <p>O campo Telefone é obrigatório!</p>}
+                  {errors.clientPhone?.type === 'required' && <p>O campo Telefone é obrigatório!</p>}
+                  {(errors.clientPhone?.type === 'minLength' || errors.clientPhone?.type === 'maxLength') 
+                    && <p>O telefone deve conter entre 10 a 11 caracteres</p>
+                  }
+                  {errors.clientPhone?.type === 'pattern' && <p>O telefone deve conter apenas números</p>}
                 </label>
               </div>
 
@@ -171,11 +184,15 @@ function EnrollClient() {
                   <TextField
                     className={styles.fieldset}
                     color='secondary'
-                    {...register('zip_code')}
                     id='zip_code'
+                    {...register('zip_code', { minLength: 8, maxLength: 8, pattern: /^[0-9]+$/i })}
                     variant='outlined'
                     error={!!errors.zip_code}
                   />
+                  {(errors.zip_code?.type === 'minLength' || errors.zip_code?.type === 'maxLength') 
+                    && <p>O CEP deve conter 8 caracteres</p>
+                  }
+                  {errors.zip_code?.type === 'pattern' && <p>O CEP deve conter apenas números</p>}
                 </label>
 
                 <label>
@@ -183,10 +200,10 @@ function EnrollClient() {
                   <TextField
                     className={styles.fieldset}
                     color='secondary'
-                    {...register('street')}
-                    id='street'
-                    variant='outlined'
                     error={!!errors.street}
+                    id='street'
+                    {...register('street')}
+                    variant='outlined'
                   />
                 </label>
               </div>
@@ -197,10 +214,10 @@ function EnrollClient() {
                   <TextField
                     className={styles.fieldset}
                     color='secondary'
-                    {...register('number')}
                     id='number'
-                    variant='outlined'
                     error={!!errors.number}
+                    {...register('number')}
+                    variant='outlined'
                   />
                 </label>
 
@@ -212,10 +229,10 @@ function EnrollClient() {
                   <TextField
                     className={styles.fieldset}
                     color='secondary'
-                    {...register('address_details')}
                     id='address_details'
-                    variant='outlined'
                     error={!!errors.address_details}
+                    {...register('address_details')}
+                    variant='outlined'
                   />
                 </label>
               </div>
@@ -226,10 +243,10 @@ function EnrollClient() {
                   <TextField
                     className={styles.fieldset}
                     color='secondary'
-                    {...register('district')}
                     id='district'
-                    variant='outlined'
                     error={!!errors.district}
+                    {...register('district')}
+                    variant='outlined'
                   />
                 </label>
 
@@ -238,10 +255,10 @@ function EnrollClient() {
                   <TextField
                     className={styles.fieldset}
                     color='secondary'
-                    {...register('reference')}
                     id='reference'
-                    variant='outlined'
                     error={!!errors.reference}
+                    {...register('reference')}
+                    variant='outlined'
                   />
                 </label>
               </div>
@@ -252,10 +269,10 @@ function EnrollClient() {
                   <TextField
                     className={styles.fieldset}
                     color='secondary'
-                    {...register('city')}
                     id='city'
-                    variant='outlined'
                     error={!!errors.city}
+                    {...register('city')}
+                    variant='outlined'
                   />
                 </label>
 
@@ -264,11 +281,14 @@ function EnrollClient() {
                   <TextField
                     className={styles.fieldset}
                     color='secondary'
-                    {...register('state')}
                     id='state'
-                    variant='outlined'
                     error={!!errors.state}
+                    {...register('state', { minLength: 2, maxLength: 2, pattern: /^[A-Za-z]+$/i })}
+                    variant='outlined'
                   />
+                  {(errors.state?.type === 'minLength' || errors.state?.type === 'maxLength') 
+                    && <p>Escreva a sigla do Estado com apenas 2 caracteres. Ex: Bahia = BA</p>
+                  }
                 </label>
               </div>
 

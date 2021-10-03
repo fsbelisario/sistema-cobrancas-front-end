@@ -114,35 +114,46 @@ function EditUserProfile({ user }) {
         <label>
           {errors.password ? <h4 className={styles.input__error}>Nova senha</h4> : <h4>Nova senha</h4>}
           <PasswordInput
-            register={() => register('password')}
+            register={() => register('password', { minLength: 5 })}
             id='password'
             className={styles.password__input}
             variant='standard'
             error={!!errors.password}
           />
-          <p className={styles.input__warning}>Deixe esse campo vazio para não editar sua senha atual</p>
+          {errors.password?.type === 'minLength' 
+            ? <p>A senha deve conter no mínimo 5 caracteres</p>
+            : <p className={styles.input__warning}>Deixe o campo vazio para não editar sua senha atual</p>
+          }
         </label>
         <label>
           {errors.phone ? <h4 className={styles.input__error}>Telefone</h4> : <h4>Telefone</h4>}
           <TextField
-            {...register('phone')}
+            {...register('phone', { minLength: 10, maxLength: 11, pattern: /^[0-9]+$/i })}
             id='phone'
             defaultValue={user.current.phone}
             placeholder='(71) 9999-9999'
             variant='standard'
             error={!!errors.phone}
           />
+          {(errors.phone?.type === 'minLength' || errors.phone?.type === 'maxLength') 
+            && <p>O telefone deve conter entre 10 a 11 caracteres</p>
+          }
+          {errors.phone?.type === 'pattern' && <p>O telefone deve conter apenas números</p>}
         </label>
         <label>
           {errors.tax_id ? <h4 className={styles.input__error}>CPF</h4> : <h4>CPF</h4>}
           <TextField
-            {...register('tax_id')}
+            {...register('tax_id', { minLength: 11, maxLength: 11, pattern: /^[0-9]+$/i })}
             id='tax_id'
             defaultValue={user.current.tax_id}
             placeholder='000.000.000-00'
             variant='standard'
             error={!!errors.tax_id}
           />
+          {(errors.tax_id?.type === 'minLength' || errors.tax_id?.type === 'maxLength') 
+            && <p>O CPF deve conter 11 caracteres</p>
+          }
+          {errors.tax_id?.type === 'pattern' && <p>O CPF deve conter apenas números</p>}
         </label>
 
         <Snackbar

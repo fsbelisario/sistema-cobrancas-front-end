@@ -25,11 +25,6 @@ function EnrollUser() {
   const [loading, setLoading] = useState(false);
 
   async function onSubmit(data) {
-    if(data.password.length < 5) {
-      setRequestError('A senha deve conter no mínimo 5 caracteres');
-      return;
-    };
-
     const body = {
       name: data.name,
       email: data.email,
@@ -97,13 +92,14 @@ function EnrollUser() {
         <label>
           {errors.password ? <h4 className={styles.input__error}>Senha</h4> : <h4>Senha</h4>}
           <PasswordInput
-            register={() => register('password', { required: true })}
+            register={() => register('password', { required: true, minLength: 5 })}
             id='password'
             className={styles.password__input}
             variant='standard'
             error={!!errors.password}
           />
-          {!!errors.password && <p>O campo Senha é obrigatório!</p>}
+          {errors.password?.type === 'required' && <p>O campo Senha é obrigatório!</p>}
+          {errors.password?.type === 'minLength' && <p>A senha deve conter no mínimo 5 caracteres</p>}
         </label>
 
         <Snackbar

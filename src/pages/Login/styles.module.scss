@@ -33,15 +33,16 @@
     }
 
     p {
-      font-weight: 400;
-      font-size: 0.75rem;
-      line-height: 1.66;
-      letter-spacing: 0.03333em;
-      text-align: left;
-      margin-top: 3px;
       color: var(--color-red);
       font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.03333em;
+      line-height: 1.66;
+      margin-top: 3px;
       margin-bottom: -1.441rem;
+      max-width: 17.5rem;
+      text-align: center;
     }
 
     .input__error {

@@ -36,6 +36,7 @@ function UserProfile() {
   
       const requestData = await response.json();
       user.current = requestData;
+      localStorage.setItem('user', user.current);
     }
 
     getProfile();
