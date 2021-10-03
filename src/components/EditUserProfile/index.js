@@ -19,6 +19,7 @@ import styles from './styles.module.scss';
 
 function EditUserProfile({ user }) {
   const { register, handleSubmit, formState: { errors } } = useForm();
+
   const { token } = useContext(AuthContext);
 
   const [requestError, setRequestError] = useState('');
@@ -29,13 +30,13 @@ function EditUserProfile({ user }) {
     let newPhone = data.phone;
     let newTaxId = data.tax_id;
 
-    if(user.current.phone && data.phone === '') {
+    if (user.current.phone && data.phone === '') {
       newPhone = '';
-    }
+    };
 
-    if(user.current.tax_id && data.tax_id === '') {
+    if (user.current.tax_id && data.tax_id === '') {
       newTaxId = '';
-    }
+    };
 
     const body = {
       name: data.name,
@@ -120,7 +121,7 @@ function EditUserProfile({ user }) {
             variant='standard'
             error={!!errors.password}
           />
-          {errors.password?.type === 'minLength' 
+          {errors.password?.type === 'minLength'
             ? <p>A senha deve conter no mínimo 5 caracteres</p>
             : <p className={styles.input__warning}>Deixe o campo vazio para não editar sua senha atual</p>
           }
@@ -135,7 +136,7 @@ function EditUserProfile({ user }) {
             variant='standard'
             error={!!errors.phone}
           />
-          {(errors.phone?.type === 'minLength' || errors.phone?.type === 'maxLength') 
+          {(errors.phone?.type === 'minLength' || errors.phone?.type === 'maxLength')
             && <p>O telefone deve conter entre 10 a 11 caracteres</p>
           }
           {errors.phone?.type === 'pattern' && <p>O telefone deve conter apenas números</p>}
@@ -150,7 +151,7 @@ function EditUserProfile({ user }) {
             variant='standard'
             error={!!errors.tax_id}
           />
-          {(errors.tax_id?.type === 'minLength' || errors.tax_id?.type === 'maxLength') 
+          {(errors.tax_id?.type === 'minLength' || errors.tax_id?.type === 'maxLength')
             && <p>O CPF deve conter 11 caracteres</p>
           }
           {errors.tax_id?.type === 'pattern' && <p>O CPF deve conter apenas números</p>}
