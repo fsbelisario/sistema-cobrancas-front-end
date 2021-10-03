@@ -1,12 +1,12 @@
 import Navbar from '../../components/Navbar';
 import UserProfile from '../../components/UserProfile';
 import styles from './styles.module.scss';
-import { 
+import {
   useEffect,
-  useContext 
+  useContext
 } from 'react';
 import { useHistory } from 'react-router-dom';
-import AuthContext from '../../contexts/AuthContext'; 
+import AuthContext from '../../contexts/AuthContext';
 
 function Billing() {
   const { token, setToken } = useContext(AuthContext);
@@ -16,10 +16,10 @@ function Billing() {
   useEffect(() => {
     setToken(localStorage.getItem('token'));
 
-    if(!token) {
+    if (!token) {
       history.push('/');
       return;
-    }
+    };
   }, [token, setToken, history]);
 
   return (
