@@ -22,7 +22,7 @@ import styles from './styles.module.scss';
 
 function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const { setToken } = useContext(AuthContext);
+  const { setToken, setTokenLS } = useContext(AuthContext);
   const history = useHistory();
 
   const [requestError, setRequestError] = useState('');
@@ -46,20 +46,20 @@ function Login() {
         },
         body: JSON.stringify(body)
       });
-  
+
       const requestData = await response.json();
-  
+
       if (response.ok) {
         setToken(requestData.token);
-        localStorage.setItem('token', requestData.token);
+        setTokenLS(requestData.token);
         history.push('/home');
         return;
       };
-  
+
       setRequestError(requestData);
-    } catch(error) {
+    } catch (error) {
       setRequestError(error.message);
-    }
+    };
 
     setLoading(false);
   };
@@ -116,7 +116,7 @@ function Login() {
           Entrar
         </Button>
 
-        <Backdrop 
+        <Backdrop
           sx={{
             color: 'var(--color-white)',
             zIndex: (theme) => theme.zIndex.drawer + 1

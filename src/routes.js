@@ -8,6 +8,7 @@ import {
   Route,
   Switch
 } from 'react-router-dom';
+import { useLocalStorage } from 'react-use';
 import AuthContext from './contexts/AuthContext';
 import './index.scss';
 import Billing from './pages/Billing/index';
@@ -25,21 +26,25 @@ export function RestrictedRoutes(props) {
 };
 
 function Routes() {
-  const [token, setToken] = useState(localStorage.getItem('token') || '');
+  const [tokenLS, setTokenLS, removeTokenLS] = useLocalStorage('token', '');
+  const [token, setToken] = useState(tokenLS || '');
+  const [userLS, setUserLS, removeUserLS] = useLocalStorage('user', '');
 
   return (
     <AuthContext.Provider
       value={{
-        token, setToken
+        token, setToken, 
+        tokenLS, setTokenLS, removeTokenLS,
+        userLS, setUserLS, removeUserLS
       }}
     >
       <Router>
         <Switch>
           {<Route exact path='/' component={Login} />}
-          {<Route path="/cadastro" component={EnrollUser} />}
-          {<Route path="/home" component={Home} />}
-          {<Route path="/cobranças" component={Billing} />}
-          {<Route path="/clientes" component={EnrollClient} />}
+          {<Route path='/cadastro' component={EnrollUser} />}
+          {<Route path='/home' component={Home} />}
+          {<Route path='/cobranças' component={Billing} />}
+          {<Route path='/clientes' component={EnrollClient} />}
         </Switch>
       </Router>
     </AuthContext.Provider >

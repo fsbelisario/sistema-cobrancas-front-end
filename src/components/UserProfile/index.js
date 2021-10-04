@@ -19,7 +19,7 @@ function UserProfile() {
 
   const history = useHistory();
 
-  const { token, setToken } = useContext(AuthContext);
+  const { token, setToken, removeTokenLS, userLS, removeUserLS  } = useContext(AuthContext);
 
   let user = useRef();
 
@@ -33,14 +33,17 @@ function UserProfile() {
           'Authorization': `Bearer ${token}`
         }
       });
-  
+
       const requestData = await response.json();
       user.current = requestData;
-      localStorage.setItem('user', user.current);
     }
 
     getProfile();
-  }, [token, setToken, isVisible]);
+  }, [token]);
+  
+  if(userLS) {
+    user.current = userLS;
+  };
 
   function handleIsVisible() {
     setIsVisible(!isVisible);
@@ -55,7 +58,8 @@ function UserProfile() {
   function handleLogout() {
     user.current = '';
     setToken('');
-    localStorage.clear();
+    removeUserLS();
+    removeTokenLS();
     history.push('/');
   };
 

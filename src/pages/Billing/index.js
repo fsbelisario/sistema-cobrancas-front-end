@@ -1,26 +1,27 @@
 import Navbar from '../../components/Navbar';
 import UserProfile from '../../components/UserProfile';
 import styles from './styles.module.scss';
-import { 
+import {
   useEffect,
-  useContext 
+  useContext
 } from 'react';
 import { useHistory } from 'react-router-dom';
-import AuthContext from '../../contexts/AuthContext'; 
+import AuthContext from '../../contexts/AuthContext';
 
 function Billing() {
-  const { token, setToken } = useContext(AuthContext);
+  const { token, setToken, tokenLS } = useContext(AuthContext);
 
   const history = useHistory();
 
   useEffect(() => {
-    setToken(localStorage.getItem('token'));
+    setToken(tokenLS);
 
-    if(!token) {
+    if (!token) {
       history.push('/');
       return;
-    }
-  }, [token, setToken, history]);
+    };
+    
+  }, [token, setToken, tokenLS, history]);
 
   return (
     <div className={styles.content__wrapper}>
