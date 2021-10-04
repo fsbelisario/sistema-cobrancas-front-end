@@ -41,10 +41,10 @@ function Routes() {
       <Router>
         <Switch>
           {<Route exact path='/' component={Login} />}
-          {<Route path="/cadastro" component={EnrollUser} />}
-          {<Route path="/home" component={Home} />}
-          {<Route path="/cobranças" component={Billing} />}
-          {<Route path="/clientes" component={EnrollClient} />}
+          {<Route path='/cadastro' component={EnrollUser} />}
+          {<Route path='/home' component={Home} />}
+          {<Route path='/cobranças' component={Billing} />}
+          {<Route path='/clientes' component={EnrollClient} />}
         </Switch>
       </Router>
     </AuthContext.Provider >

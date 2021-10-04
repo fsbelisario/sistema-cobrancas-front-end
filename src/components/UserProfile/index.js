@@ -33,7 +33,7 @@ function UserProfile() {
           'Authorization': `Bearer ${token}`
         }
       });
-  
+
       const requestData = await response.json();
       user.current = requestData;
     }

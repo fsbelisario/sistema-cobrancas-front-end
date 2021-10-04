@@ -43,10 +43,10 @@ function EnrollUser() {
         },
         body: JSON.stringify(body)
       });
-  
+
       const requestData = await response.json();
       setRequestError(requestData);
-  
+
       if (response.ok) {
         setLoading(true);
         setTimeout(() => {
@@ -54,9 +54,9 @@ function EnrollUser() {
         }, 2000);
         return;
       };
-    } catch(error) {
+    } catch (error) {
       setRequestError(error.message);
-    }
+    };
 
     setLoading(false);
   };

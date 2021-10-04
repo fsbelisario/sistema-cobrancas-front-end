@@ -83,7 +83,7 @@ function EnrollClient() {
       };
     } catch (error) {
       setRequestError(error.message);
-    }
+    };
   };
 
   function handleAlertClose() {
@@ -92,7 +92,7 @@ function EnrollClient() {
 
   function cancelButton() {
     history.push('/home');
-  }
+  };
 
   const theme = createTheme({
     palette: {
@@ -146,13 +146,13 @@ function EnrollClient() {
                     color='secondary'
                     id='clientTax_id'
                     error={!!errors.clientTax_id}
-                    {...register('clientTax_id', 
+                    {...register('clientTax_id',
                       { required: true, minLength: 11, maxLength: 11, pattern: /^[0-9]+$/i })
                     }
                     variant='outlined'
                   />
                   {errors.clientTax_id?.type === 'required' && <p>O campo CPF é obrigatório!</p>}
-                  {(errors.clientTax_id?.type === 'minLength' || errors.clientTax_id?.type === 'maxLength') 
+                  {(errors.clientTax_id?.type === 'minLength' || errors.clientTax_id?.type === 'maxLength')
                     && <p>O CPF deve conter 11 caracteres</p>
                   }
                   {errors.clientTax_id?.type === 'pattern' && <p>O CPF deve conter apenas números</p>}
@@ -165,13 +165,13 @@ function EnrollClient() {
                     color='secondary'
                     id='clientPhone'
                     error={!!errors.clientPhone}
-                    {...register('clientPhone', 
+                    {...register('clientPhone',
                       { required: true, minLength: 10, maxLength: 11, pattern: /^[0-9]+$/i })
                     }
                     variant='outlined'
                   />
                   {errors.clientPhone?.type === 'required' && <p>O campo Telefone é obrigatório!</p>}
-                  {(errors.clientPhone?.type === 'minLength' || errors.clientPhone?.type === 'maxLength') 
+                  {(errors.clientPhone?.type === 'minLength' || errors.clientPhone?.type === 'maxLength')
                     && <p>O telefone deve conter entre 10 a 11 caracteres</p>
                   }
                   {errors.clientPhone?.type === 'pattern' && <p>O telefone deve conter apenas números</p>}
@@ -189,7 +189,7 @@ function EnrollClient() {
                     variant='outlined'
                     error={!!errors.zip_code}
                   />
-                  {(errors.zip_code?.type === 'minLength' || errors.zip_code?.type === 'maxLength') 
+                  {(errors.zip_code?.type === 'minLength' || errors.zip_code?.type === 'maxLength')
                     && <p>O CEP deve conter 8 caracteres</p>
                   }
                   {errors.zip_code?.type === 'pattern' && <p>O CEP deve conter apenas números</p>}
@@ -286,7 +286,7 @@ function EnrollClient() {
                     {...register('state', { minLength: 2, maxLength: 2, pattern: /^[A-Za-z]+$/i })}
                     variant='outlined'
                   />
-                  {(errors.state?.type === 'minLength' || errors.state?.type === 'maxLength') 
+                  {(errors.state?.type === 'minLength' || errors.state?.type === 'maxLength')
                     && <p>Escreva a sigla do Estado com apenas 2 caracteres. Ex: Bahia = BA</p>
                   }
                 </label>
