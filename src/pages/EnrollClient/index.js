@@ -24,21 +24,21 @@ import styles from './styles.module.scss';
 
 function EnrollClient() {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const { token, setToken } = useContext(AuthContext);
+  const { token, setToken, tokenLS } = useContext(AuthContext);
   const history = useHistory();
 
   const [requestError, setRequestError] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setToken(localStorage.getItem('token'));
+    setToken(tokenLS);
 
     if (!token) {
       history.push('/');
       return;
     };
 
-  }, [token, setToken, history]);
+  }, [token, setToken, tokenLS, history]);
 
   async function onSubmit(data) {
     const body = {

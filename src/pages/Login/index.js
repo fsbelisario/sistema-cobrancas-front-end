@@ -22,7 +22,7 @@ import styles from './styles.module.scss';
 
 function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const { setToken } = useContext(AuthContext);
+  const { setToken, setTokenLS } = useContext(AuthContext);
   const history = useHistory();
 
   const [requestError, setRequestError] = useState('');
@@ -51,7 +51,7 @@ function Login() {
   
       if (response.ok) {
         setToken(requestData.token);
-        localStorage.setItem('token', requestData.token);
+        setTokenLS(requestData.token);
         history.push('/home');
         return;
       };

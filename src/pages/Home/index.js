@@ -13,17 +13,18 @@ import UserProfile from '../../components/UserProfile';
 import styles from './styles.module.scss';
 
 function Home() {
-  const { token, setToken } = useContext(AuthContext);
+  const { token, setToken, tokenLS } = useContext(AuthContext);
   const history = useHistory();
 
   useEffect(() => {
-    setToken(localStorage.getItem('token'));
+    setToken(tokenLS);
 
     if(!token) {
       history.push('/');
       return;
-    }
-  }, [token, setToken, history]);
+    };
+    
+  }, [token, setToken, tokenLS, history]);
 
   return (
     <div className={styles.content__wrapper}>
