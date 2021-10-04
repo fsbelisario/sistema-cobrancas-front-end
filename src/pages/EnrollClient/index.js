@@ -29,6 +29,13 @@ function EnrollClient() {
 
   const [requestError, setRequestError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [zipCodeSearch, setZipCodeSearch] = useState('');
+  const [zipCodeError, setZipCodeError] = useState('');
+  const [street, setStreet] = useState('');
+  const [district, setDistrict] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [stateError, setStateError] = useState('');
 
   useEffect(() => {
     setToken(tokenLS);
@@ -40,20 +47,75 @@ function EnrollClient() {
 
   }, [token, setToken, tokenLS, history]);
 
+  useEffect(() => {
+    setZipCodeError('');
+    setStreet('');
+    setDistrict('');
+    setCity('');
+    setState('');
+
+    if (zipCodeSearch.length === 8 && !!Number(zipCodeSearch)) {
+      retrieveAddress();
+    };
+
+  }, [zipCodeSearch]);
+
+  async function retrieveAddress() {
+    const response = await fetch(`https://viacep.com.br/ws/${zipCodeSearch}/json/`);
+
+    if (response.ok) {
+      const requestData = await response.json();
+
+      if (!requestData.erro) {
+        setZipCodeError('');
+
+        setStreet(requestData.logradouro);
+        setDistrict(requestData.bairro);
+        setCity(requestData.localidade);
+        setState(requestData.uf);
+
+        return;
+      };
+
+      setZipCodeError('CEP inválido.');
+    } else {
+      setZipCodeError('CEP inválido.');
+    };
+  };
+
   async function onSubmit(data) {
+    if (!!zipCodeError) {
+      return;
+    };
+
+    if (!!zipCodeSearch && zipCodeSearch.length !== 8) {
+      setZipCodeError('O CEP deve conter 8 caracteres numéricos.');
+      return;
+    };
+
+    if (!!zipCodeSearch && !Number(zipCodeSearch)) {
+      setZipCodeError('O CEP deve conter apenas números.');
+      return;
+    };
+
+    if (!!state && state.length !== 2) {
+      setStateError('O estado deve conter 2 caracteres.');
+      return;
+    };
+
     const body = {
       name: data.clientName,
       email: data.clientEmail,
       taxId: data.clientTax_id,
       phone: data.clientPhone,
-      zipCode: data.zip_code && data.zip_code,
-      street: data.street && data.street,
+      zipCode: zipCodeSearch && zipCodeSearch,
+      street: street && street,
       number: data.number && data.number,
       addressDetails: data.address_details && data.address_details,
-      district: data.district && data.district,
+      district: district && district,
       reference: data.reference && data.reference,
-      city: data.city && data.city,
-      state: data.state && data.state
+      city: city && city,
+      state: state && state
     };
 
     setRequestError('');
@@ -180,29 +242,27 @@ function EnrollClient() {
 
               <div className={styles.input__wrapper}>
                 <label>
-                  {errors.zip_code ? <h4 className={styles.input__error}>CEP</h4> : <h4>CEP</h4>}
+                  {!!zipCodeError ? <h4 className={styles.input__error}>CEP</h4> : <h4>CEP</h4>}
                   <TextField
                     className={styles.fieldset}
+                    value={zipCodeSearch}
+                    onChange={(e) => setZipCodeSearch(e.target.value)}
                     color='secondary'
                     id='zip_code'
-                    {...register('zip_code', { minLength: 8, maxLength: 8, pattern: /^[0-9]+$/i })}
                     variant='outlined'
-                    error={!!errors.zip_code}
+                    error={!!zipCodeError}
                   />
-                  {(errors.zip_code?.type === 'minLength' || errors.zip_code?.type === 'maxLength')
-                    && <p>O CEP deve conter 8 caracteres</p>
-                  }
-                  {errors.zip_code?.type === 'pattern' && <p>O CEP deve conter apenas números</p>}
+                  {!!zipCodeError && <p>{zipCodeError}</p>}
                 </label>
 
                 <label>
                   {errors.street ? <h4 className={styles.input__error}>Logradouro</h4> : <h4>Logradouro</h4>}
                   <TextField
                     className={styles.fieldset}
+                    value={street}
+                    onChange={(e) => setStreet(e.target.value)}
                     color='secondary'
-                    error={!!errors.street}
                     id='street'
-                    {...register('street')}
                     variant='outlined'
                   />
                 </label>
@@ -242,10 +302,10 @@ function EnrollClient() {
                   {errors.district ? <h4 className={styles.input__error}>Bairro</h4> : <h4>Bairro</h4>}
                   <TextField
                     className={styles.fieldset}
+                    value={district}
+                    onChange={(e) => setDistrict(e.target.value)}
                     color='secondary'
                     id='district'
-                    error={!!errors.district}
-                    {...register('district')}
                     variant='outlined'
                   />
                 </label>
@@ -268,27 +328,26 @@ function EnrollClient() {
                   {errors.city ? <h4 className={styles.input__error}>Cidade</h4> : <h4>Cidade</h4>}
                   <TextField
                     className={styles.fieldset}
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
                     color='secondary'
                     id='city'
-                    error={!!errors.city}
-                    {...register('city')}
                     variant='outlined'
                   />
                 </label>
 
                 <label>
-                  {errors.state ? <h4 className={styles.input__error}>Estado</h4> : <h4>Estado</h4>}
+                  {!!stateError ? <h4 className={styles.input__error}>Estado</h4> : <h4>Estado</h4>}
                   <TextField
                     className={styles.fieldset}
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
                     color='secondary'
                     id='state'
-                    error={!!errors.state}
-                    {...register('state', { minLength: 2, maxLength: 2, pattern: /^[A-Za-z]+$/i })}
+                    error={!!stateError}
                     variant='outlined'
                   />
-                  {(errors.state?.type === 'minLength' || errors.state?.type === 'maxLength')
-                    && <p>Escreva a sigla do Estado com apenas 2 caracteres. Ex: Bahia = BA</p>
-                  }
+                  {!!stateError && <p>{stateError}</p>}
                 </label>
               </div>
 
