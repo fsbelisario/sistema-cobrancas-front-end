@@ -54,34 +54,38 @@ function EnrollClient() {
     setCity('');
     setState('');
 
+    async function retrieveAddress() {
+
+      setLoading(true);
+
+      const response = await fetch(`https://viacep.com.br/ws/${zipCodeSearch}/json/`);
+  
+      if (response.ok) {
+        const requestData = await response.json();
+  
+        if (!requestData.erro) {
+          setZipCodeError('');
+  
+          setStreet(requestData.logradouro);
+          setDistrict(requestData.bairro);
+          setCity(requestData.localidade);
+          setState(requestData.uf);
+  
+          return;
+        };
+  
+        setZipCodeError('CEP inválido.');
+      } else {
+        setZipCodeError('CEP inválido.');
+      };
+    };
+
     if (zipCodeSearch.length === 8 && !!Number(zipCodeSearch)) {
       retrieveAddress();
     };
 
+    setLoading(false);
   }, [zipCodeSearch]);
-
-  async function retrieveAddress() {
-    const response = await fetch(`https://viacep.com.br/ws/${zipCodeSearch}/json/`);
-
-    if (response.ok) {
-      const requestData = await response.json();
-
-      if (!requestData.erro) {
-        setZipCodeError('');
-
-        setStreet(requestData.logradouro);
-        setDistrict(requestData.bairro);
-        setCity(requestData.localidade);
-        setState(requestData.uf);
-
-        return;
-      };
-
-      setZipCodeError('CEP inválido.');
-    } else {
-      setZipCodeError('CEP inválido.');
-    };
-  };
 
   async function onSubmit(data) {
     if (!!zipCodeError) {
@@ -135,12 +139,13 @@ function EnrollClient() {
       setLoading(false);
 
       const requestData = await response.json();
-
       setRequestError(requestData);
 
       if (response.ok) {
-        setRequestError(requestData);
-        history.push('/home');
+        setLoading(true);
+        setTimeout(() => {
+          history.push('/home');
+        }, 2000);
         return;
       };
     } catch (error) {
@@ -358,7 +363,7 @@ function EnrollClient() {
                 autoHideDuration={3000}
                 onClose={handleAlertClose}
               >
-                <Alert severity='error'>
+                <Alert severity={requestError === 'Cliente cadastrado com sucesso.' ? 'success' : 'error'}>
                   {requestError}
                 </Alert>
               </Snackbar>
