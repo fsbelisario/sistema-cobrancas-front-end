@@ -54,34 +54,33 @@ function EnrollClient() {
     setCity('');
     setState('');
 
+    async function retrieveAddress() {
+      const response = await fetch(`https://viacep.com.br/ws/${zipCodeSearch}/json/`);
+  
+      if (response.ok) {
+        const requestData = await response.json();
+  
+        if (!requestData.erro) {
+          setZipCodeError('');
+  
+          setStreet(requestData.logradouro);
+          setDistrict(requestData.bairro);
+          setCity(requestData.localidade);
+          setState(requestData.uf);
+  
+          return;
+        };
+  
+        setZipCodeError('CEP inválido.');
+      } else {
+        setZipCodeError('CEP inválido.');
+      };
+    };
+
     if (zipCodeSearch.length === 8 && !!Number(zipCodeSearch)) {
       retrieveAddress();
     };
-
   }, [zipCodeSearch]);
-
-  async function retrieveAddress() {
-    const response = await fetch(`https://viacep.com.br/ws/${zipCodeSearch}/json/`);
-
-    if (response.ok) {
-      const requestData = await response.json();
-
-      if (!requestData.erro) {
-        setZipCodeError('');
-
-        setStreet(requestData.logradouro);
-        setDistrict(requestData.bairro);
-        setCity(requestData.localidade);
-        setState(requestData.uf);
-
-        return;
-      };
-
-      setZipCodeError('CEP inválido.');
-    } else {
-      setZipCodeError('CEP inválido.');
-    };
-  };
 
   async function onSubmit(data) {
     if (!!zipCodeError) {
