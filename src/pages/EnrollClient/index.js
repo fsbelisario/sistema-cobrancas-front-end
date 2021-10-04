@@ -55,6 +55,9 @@ function EnrollClient() {
     setState('');
 
     async function retrieveAddress() {
+
+      setLoading(true);
+
       const response = await fetch(`https://viacep.com.br/ws/${zipCodeSearch}/json/`);
   
       if (response.ok) {
@@ -80,6 +83,8 @@ function EnrollClient() {
     if (zipCodeSearch.length === 8 && !!Number(zipCodeSearch)) {
       retrieveAddress();
     };
+
+    setLoading(false);
   }, [zipCodeSearch]);
 
   async function onSubmit(data) {
@@ -134,12 +139,13 @@ function EnrollClient() {
       setLoading(false);
 
       const requestData = await response.json();
-
       setRequestError(requestData);
 
       if (response.ok) {
-        setRequestError(requestData);
-        history.push('/home');
+        setLoading(true);
+        setTimeout(() => {
+          history.push('/home');
+        }, 2000);
         return;
       };
     } catch (error) {
@@ -357,7 +363,7 @@ function EnrollClient() {
                 autoHideDuration={3000}
                 onClose={handleAlertClose}
               >
-                <Alert severity='error'>
+                <Alert severity={requestError === 'Cliente cadastrado com sucesso.' ? 'success' : 'error'}>
                   {requestError}
                 </Alert>
               </Snackbar>
