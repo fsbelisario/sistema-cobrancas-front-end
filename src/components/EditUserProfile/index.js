@@ -9,8 +9,7 @@ import {
 } from '@mui/material';
 import {
   useState,
-  useContext,
-  useEffect
+  useContext
 } from 'react';
 import { useForm } from 'react-hook-form';
 import AuthContext from '../../contexts/AuthContext';
@@ -20,26 +19,21 @@ import styles from './styles.module.scss';
 
 function EditUserProfile({ user }) {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const { token, setUserLS } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
 
-  const [phoneMask, setPhoneMask] = useState('');
   const [requestError, setRequestError] = useState('');
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(true);
 
-  useEffect(() => {
-    setPhoneMask(user.current.phone)
-  }, [user])
-
   async function onSubmit(data) {
     let newPhone = data.phone;
-    let newTaxId = data.taxId;
+    let newTaxId = data.tax_id;
 
     if(user.current.phone && data.phone === '') {
       newPhone = '';
     }
 
-    if(user.current.taxId && data.taxId === '') {
+    if(user.current.tax_id && data.tax_id === '') {
       newTaxId = '';
     }
 
@@ -68,7 +62,6 @@ function EditUserProfile({ user }) {
 
     if (response.ok) {
       setRequestError(requestData);
-      setUserLS(body);
       setLoading(true);
       setTimeout(() => {
         setOpen(!open);
@@ -137,8 +130,6 @@ function EditUserProfile({ user }) {
           <TextField
             defaultValue={user.current.phone}
             {...register('phone', { minLength: 10, maxLength: 11, pattern: /^[0-9]+$/i })}
-            value={phoneMask}
-            onChange={e => setPhoneMask(e.target.value)}
             id='phone'
             placeholder='(71) 9999-9999'
             variant='standard'
@@ -154,7 +145,7 @@ function EditUserProfile({ user }) {
           <TextField
             {...register('tax_id', { minLength: 11, maxLength: 11, pattern: /^[0-9]+$/i })}
             id='tax_id'
-            defaultValue={user.current.taxId}
+            defaultValue={user.current.tax_id}
             placeholder='000.000.000-00'
             variant='standard'
             error={!!errors.tax_id}

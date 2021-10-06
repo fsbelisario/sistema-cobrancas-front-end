@@ -19,7 +19,7 @@ function UserProfile() {
 
   const history = useHistory();
 
-  const { token, setToken, removeTokenLS, userLS, removeUserLS  } = useContext(AuthContext);
+  const { token, setToken, removeTokenLS } = useContext(AuthContext);
 
   let user = useRef();
 
@@ -39,11 +39,9 @@ function UserProfile() {
     }
 
     getProfile();
-  }, [token]);
-  
-  if(userLS) {
-    user.current = userLS;
-  };
+  }, [token, isVisible]);
+
+  console.log(user.current)
 
   function handleIsVisible() {
     setIsVisible(!isVisible);
@@ -58,7 +56,6 @@ function UserProfile() {
   function handleLogout() {
     user.current = '';
     setToken('');
-    removeUserLS();
     removeTokenLS();
     history.push('/');
   };

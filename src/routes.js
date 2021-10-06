@@ -28,14 +28,12 @@ export function RestrictedRoutes(props) {
 function Routes() {
   const [tokenLS, setTokenLS, removeTokenLS] = useLocalStorage('token', '');
   const [token, setToken] = useState(tokenLS || '');
-  const [userLS, setUserLS, removeUserLS] = useLocalStorage('user', '');
 
   return (
     <AuthContext.Provider
       value={{
         token, setToken, 
-        tokenLS, setTokenLS, removeTokenLS,
-        userLS, setUserLS, removeUserLS
+        tokenLS, setTokenLS, removeTokenLS
       }}
     >
       <Router>
