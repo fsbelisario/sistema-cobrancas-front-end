@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 import {
   useContext,
+  useEffect,
   useState
 } from 'react';
 import { useForm } from 'react-hook-form';
@@ -22,11 +23,27 @@ import styles from './styles.module.scss';
 
 function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const { setToken, setTokenLS } = useContext(AuthContext);
+
+  const {
+    token, setToken,
+    tokenLS, setTokenLS
+  } = useContext(AuthContext);
+
   const history = useHistory();
 
   const [requestError, setRequestError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (tokenLS) {
+      if (!token) {
+        setToken(tokenLS);
+      };
+      history.push('./home');
+
+      return;
+    };
+  }, []);
 
   async function onSubmit(data) {
     const body = {
