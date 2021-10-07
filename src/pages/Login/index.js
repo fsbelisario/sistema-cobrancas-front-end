@@ -106,7 +106,7 @@ function Login() {
             variant='standard'
             error={errors.email}
           />
-          {errors.email && <p>{errors.email}</p>}
+          {errors.email && <p>O campo E-mail é obrigatório!</p>}
         </label>
         <label>
           {errors.password ? <h4 className={styles.input__error}>Senha</h4> : <h4>Senha</h4>}
@@ -118,7 +118,7 @@ function Login() {
             variant='standard'
             error={errors.password}
           />
-          {errors.password && <p>{errors.password}</p>}
+          {errors.email && <p>O campo Senha é obrigatório!</p>}
         </label>
 
         <Snackbar
