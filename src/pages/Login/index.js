@@ -96,29 +96,24 @@ function Login() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <img src={academy} alt='Logo Academy' />
         <label>
-          {errors.email ? <h4 className={styles.input__error}>E-mail</h4> : <h4>E-mail</h4>}
+          <h4>E-mail</h4>
           <TextField
             placeholder='exemplo@gmail.com'
-            {...register('email', { required: true })}
             type='email'
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             variant='standard'
-            error={errors.email}
           />
-          {errors.email && <p>O campo E-mail é obrigatório!</p>}
         </label>
         <label>
-          {errors.password ? <h4 className={styles.input__error}>Senha</h4> : <h4>Senha</h4>}
+          <h4>Senha</h4>
           <PasswordInput
-            register={() => register('password', { required: true })}
+            register={() => register('password')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className={styles.password__input}
             variant='standard'
-            error={errors.password}
           />
-          {errors.email && <p>O campo Senha é obrigatório!</p>}
         </label>
 
         <Snackbar
