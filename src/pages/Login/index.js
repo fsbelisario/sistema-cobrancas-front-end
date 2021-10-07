@@ -47,14 +47,6 @@ function Login() {
     };
   }, []);
 
-  function handleChangeEmail(e) {
-    setEmail(e.target.value);
-  };
-
-  function handleChangePassword(e) {
-    setPassword(e.target.value);
-  };
-
   async function onSubmit(data) {
     const body = {
       email: email,
@@ -108,24 +100,25 @@ function Login() {
           <TextField
             placeholder='exemplo@gmail.com'
             {...register('email', { required: true })}
+            type='email'
             value={email}
-            onChange={handleChangeEmail}
+            onChange={(e) => setEmail(e.target.value)}
             variant='standard'
             error={errors.email}
           />
-          {errors.email && <p>O campo E-mail é obrigatório!</p>}
+          {errors.email && <p>{errors.email}</p>}
         </label>
         <label>
           {errors.password ? <h4 className={styles.input__error}>Senha</h4> : <h4>Senha</h4>}
           <PasswordInput
             register={() => register('password', { required: true })}
             value={password}
-            onChange={handleChangePassword}
+            onChange={(e) => setPassword(e.target.value)}
             className={styles.password__input}
             variant='standard'
             error={errors.password}
           />
-          {errors.password && <p>O campo Senha é obrigatório!</p>}
+          {errors.password && <p>{errors.password}</p>}
         </label>
 
         <Snackbar
