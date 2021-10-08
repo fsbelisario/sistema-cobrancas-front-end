@@ -8,12 +8,11 @@ import {
   TextField
 } from '@mui/material';
 import {
-  useState,
-  useContext
+  useContext, useState
 } from 'react';
 import { useForm } from 'react-hook-form';
-import AuthContext from '../../contexts/AuthContext';
 import closeIcon from '../../assets/close-icon.svg';
+import AuthContext from '../../contexts/AuthContext';
 import PasswordInput from './../../components/PasswordInput';
 import styles from './styles.module.scss';
 
@@ -77,18 +76,18 @@ function EditUserProfile({ user }) {
     setRequestError('');
   };
 
-  function handleTabClose() {
+  function handleModalClose() {
     setOpen(!open);
   };
 
   return (
     <Modal
       open={open}
-      onClose={handleTabClose}
+      onClose={handleModalClose}
       className={styles.content__wrapper}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <img src={closeIcon} alt='' onClick={handleTabClose} />
+        <img src={closeIcon} alt='' onClick={handleModalClose} />
         <label>
           {errors.name ? <h4 className={styles.input__error}>Nome</h4> : <h4>Nome</h4>}
           <TextField

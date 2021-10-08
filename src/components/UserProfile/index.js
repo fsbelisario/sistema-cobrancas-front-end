@@ -1,8 +1,6 @@
 import {
-  useContext,
-  useState,
-  useEffect,
-  useRef
+  useContext, useEffect,
+  useRef, useState
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import editIcon from '../../assets/edit-icon.svg';
@@ -40,8 +38,6 @@ function UserProfile() {
 
     getProfile();
   }, [token, isVisible]);
-
-  console.log(user.current)
 
   function handleIsVisible() {
     setIsVisible(!isVisible);

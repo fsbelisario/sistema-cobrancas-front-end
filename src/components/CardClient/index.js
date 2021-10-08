@@ -3,6 +3,7 @@ import {
   Backdrop,
   Button,
   CircularProgress,
+  Modal,
   Snackbar,
   TextField
 } from '@mui/material';
@@ -11,24 +12,20 @@ import {
   ThemeProvider
 } from '@mui/material/styles';
 import {
-  useContext,
-  useEffect,
-  useState
+  useContext, useEffect, useRef, useState
 } from 'react';
 import { useForm } from 'react-hook-form';
-import { useHistory } from 'react-router-dom';
-import Navbar from '../../components/Navbar';
-import UserProfile from '../../components/UserProfile';
+import closeIcon from '../../assets/close-icon.svg';
+import editIcon from '../../assets/edit-client-icon.svg';
+import emailIcon from '../../assets/email-icon.svg';
+import phoneIcon from '../../assets/phone-icon.svg';
 import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
-function EnrollClient() {
+function CardClient({ client }) {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const { token, setToken, tokenLS } = useContext(AuthContext);
-  const history = useHistory();
+  const { token } = useContext(AuthContext);
 
-  const [requestError, setRequestError] = useState('');
-  const [loading, setLoading] = useState(false);
   const [zipCodeSearch, setZipCodeSearch] = useState('');
   const [zipCodeError, setZipCodeError] = useState('');
   const [street, setStreet] = useState('');
@@ -36,17 +33,15 @@ function EnrollClient() {
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
   const [stateError, setStateError] = useState('');
+  
+  const [openModal, setOpenModal] = useState(false);
+  
+  const [requestError, setRequestError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    setToken(tokenLS);
-
-    if (!token) {
-      history.push('/');
-      return;
-    };
-
-  }, [token, setToken, tokenLS, history]);
-
+  let thisClient = useRef();
+  thisClient.current = client;
+  
   useEffect(() => {
     setZipCodeError('');
     setStreet('');
@@ -55,7 +50,6 @@ function EnrollClient() {
     setState('');
 
     async function retrieveAddress() {
-
       setLoading(true);
 
       const response = await fetch(`https://viacep.com.br/ws/${zipCodeSearch}/json/`);
@@ -85,7 +79,7 @@ function EnrollClient() {
     };
 
     setLoading(false);
-  }, [zipCodeSearch]);
+  }, [zipCodeSearch, openModal]);
 
   async function onSubmit(data) {
     if (!!zipCodeError) {
@@ -93,20 +87,20 @@ function EnrollClient() {
     };
 
     if (!!zipCodeSearch && zipCodeSearch.length !== 8) {
-      setZipCodeError('O CEP deve conter 8 caracteres numéricos.');
+      setZipCodeError('O CEP deve conter 8 caracteres numéricos');
       return;
     };
 
     if (!!zipCodeSearch && !Number(zipCodeSearch)) {
-      setZipCodeError('O CEP deve conter apenas números.');
+      setZipCodeError('O CEP deve conter apenas números');
       return;
     };
 
     if (!!state && state.length !== 2) {
-      setStateError('O estado deve conter 2 caracteres.');
+      setStateError('O Estado deve conter 2 caracteres');
       return;
     };
-
+    
     const body = {
       name: data.clientName,
       email: data.clientEmail,
@@ -126,8 +120,8 @@ function EnrollClient() {
     setLoading(true);
 
     try {
-      const response = await fetch('https://academy-bills.herokuapp.com/clients', {
-        method: 'POST',
+      const response = await fetch(`https://academy-bills.herokuapp.com/clients/${thisClient.current.id}`, {
+        method: 'PUT',
         mode: 'cors',
         headers: {
           'Content-type': 'application/json',
@@ -136,30 +130,33 @@ function EnrollClient() {
         body: JSON.stringify(body)
       });
 
-      setLoading(false);
-
       const requestData = await response.json();
       setRequestError(requestData);
 
       if (response.ok) {
         setLoading(true);
         setTimeout(() => {
-          history.push('/clientes');
+          setOpenModal(!openModal);
         }, 2000);
         return;
       };
     } catch (error) {
       setRequestError(error.message);
     };
+
+    setRequestError('');
+    setLoading(false);
   };
 
   function handleAlertClose() {
     setRequestError('');
   };
-
-  function cancelButton() {
-    history.push('/clientes');
-  };
+  
+  function handleEditClient() {
+    setRequestError('');
+    setZipCodeSearch('');
+    setOpenModal(!openModal);
+  }
 
   const theme = createTheme({
     palette: {
@@ -169,20 +166,53 @@ function EnrollClient() {
     }
   });
 
-  return (
-    <div className={styles.content__wrapper}>
-      <Navbar />
-      <div className={styles.main__content}>
-        <UserProfile />
-        <div className={styles.content}>
-          <ThemeProvider theme={theme}>
+  return(
+    <div className={styles.card__wrapper}> 
+      <div className={styles.info__client}>
+        <div className={styles.client__name}>{client.name}</div>
+        <div>
+          <img src={emailIcon} alt='' />
+          {client.email}
+        </div>
+        <div>
+          <img src={phoneIcon} alt='' />
+          {client.phone}
+        </div>
+      </div>
+      <div className={styles.info__billing}>
+        <div className={styles.charges__made}>
+          {Number((client.billings/100)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+        </div>
+        <div className={styles.charges__received}>
+          {Number((client.payments/100)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+        </div>
+        <div className={client.status === 'EM DIA' 
+          ? `${styles.status} ${styles.text__green}` 
+          : `${styles.status} ${styles.text__red}`}>
+          {client.status}
+        </div>
+      </div>
+      <button 
+        className={styles.edit__button}
+        onClick={handleEditClient}
+      >
+        <img src={editIcon} alt='' />
+      </button>
+      {openModal && <Modal
+        open={openModal}
+        onClose={handleEditClient}
+        className={styles.modal__wrapper}
+      >
+        <ThemeProvider theme={theme}>
             <form onSubmit={handleSubmit(onSubmit)}>
+              <img src={closeIcon} alt='' onClick={handleEditClient} />
               <div className={styles.input__wrapper}>
                 <label>
                   {errors.clientName ? <h4 className={styles.input__error}>Nome</h4> : <h4>Nome</h4>}
                   <TextField
                     className={styles.fieldset}
                     color='secondary'
+                    defaultValue={thisClient.current.name}
                     error={!!errors.clientName}
                     id='clientName'
                     {...register('clientName', { required: true })}
@@ -196,6 +226,7 @@ function EnrollClient() {
                   <TextField
                     className={styles.fieldset}
                     color='secondary'
+                    defaultValue={thisClient.current.email}
                     id='clientEmail'
                     error={!!errors.clientEmail}
                     {...register('clientEmail', { required: true })}
@@ -211,6 +242,7 @@ function EnrollClient() {
                   <TextField
                     className={styles.fieldset}
                     color='secondary'
+                    defaultValue={thisClient.current.tax_id}
                     id='clientTax_id'
                     error={!!errors.clientTax_id}
                     {...register('clientTax_id',
@@ -230,6 +262,7 @@ function EnrollClient() {
                   <TextField
                     className={styles.fieldset}
                     color='secondary'
+                    defaultValue={thisClient.current.phone}
                     id='clientPhone'
                     error={!!errors.clientPhone}
                     {...register('clientPhone',
@@ -250,7 +283,7 @@ function EnrollClient() {
                   {!!zipCodeError ? <h4 className={styles.input__error}>CEP</h4> : <h4>CEP</h4>}
                   <TextField
                     className={styles.fieldset}
-                    value={zipCodeSearch}
+                    value={thisClient.current.zip_code || zipCodeSearch}
                     onChange={(e) => setZipCodeSearch(e.target.value)}
                     color='secondary'
                     id='zip_code'
@@ -264,7 +297,7 @@ function EnrollClient() {
                   {errors.street ? <h4 className={styles.input__error}>Logradouro</h4> : <h4>Logradouro</h4>}
                   <TextField
                     className={styles.fieldset}
-                    value={street}
+                    value={thisClient.current.street || street}
                     onChange={(e) => setStreet(e.target.value)}
                     color='secondary'
                     id='street'
@@ -279,6 +312,7 @@ function EnrollClient() {
                   <TextField
                     className={styles.fieldset}
                     color='secondary'
+                    defaultValue={thisClient.current.number}
                     id='number'
                     error={!!errors.number}
                     {...register('number')}
@@ -294,6 +328,7 @@ function EnrollClient() {
                   <TextField
                     className={styles.fieldset}
                     color='secondary'
+                    defaultValue={thisClient.current.address_details}
                     id='address_details'
                     error={!!errors.address_details}
                     {...register('address_details')}
@@ -307,7 +342,7 @@ function EnrollClient() {
                   {errors.district ? <h4 className={styles.input__error}>Bairro</h4> : <h4>Bairro</h4>}
                   <TextField
                     className={styles.fieldset}
-                    value={district}
+                    value={thisClient.current.district || district}
                     onChange={(e) => setDistrict(e.target.value)}
                     color='secondary'
                     id='district'
@@ -320,6 +355,7 @@ function EnrollClient() {
                   <TextField
                     className={styles.fieldset}
                     color='secondary'
+                    defaultValue={thisClient.current.reference}
                     id='reference'
                     error={!!errors.reference}
                     {...register('reference')}
@@ -333,7 +369,7 @@ function EnrollClient() {
                   {errors.city ? <h4 className={styles.input__error}>Cidade</h4> : <h4>Cidade</h4>}
                   <TextField
                     className={styles.fieldset}
-                    value={city}
+                    value={thisClient.current.city || city}
                     onChange={(e) => setCity(e.target.value)}
                     color='secondary'
                     id='city'
@@ -345,7 +381,7 @@ function EnrollClient() {
                   {!!stateError ? <h4 className={styles.input__error}>Estado</h4> : <h4>Estado</h4>}
                   <TextField
                     className={styles.fieldset}
-                    value={state}
+                    value={state || thisClient.current.state}
                     onChange={(e) => setState(e.target.value)}
                     color='secondary'
                     id='state'
@@ -363,7 +399,7 @@ function EnrollClient() {
                 autoHideDuration={3000}
                 onClose={handleAlertClose}
               >
-                <Alert severity={requestError === 'Cliente cadastrado com sucesso.' ? 'success' : 'error'}>
+                <Alert severity={requestError === 'Cadastro do cliente atualizado com sucesso.' ? 'success' : 'error'}>
                   {requestError}
                 </Alert>
               </Snackbar>
@@ -371,17 +407,16 @@ function EnrollClient() {
               <div className={styles.button__wrapper}>
                 <Button
                   className={`${styles.button__states} ${styles.button__cancel}`}
-                  onClick={cancelButton}
+                  onClick={handleEditClient}
                 >
                   Cancelar
                 </Button>
                 <Button
                   className={styles.button__states}
                   type='submit'
-                  disabled={false}
                   variant='contained'
                 >
-                  Adicionar Cliente
+                  Editar Cliente
                 </Button>
               </div>
 
@@ -396,10 +431,9 @@ function EnrollClient() {
               </Backdrop>
             </form>
           </ThemeProvider>
-        </div>
-      </div>
+      </Modal>}
     </div>
   );
-};
+}
 
-export default EnrollClient;
+export default CardClient;

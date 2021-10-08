@@ -12,10 +12,11 @@ import { useLocalStorage } from 'react-use';
 import AuthContext from './contexts/AuthContext';
 import './index.scss';
 import Billing from './pages/Billing/index';
-import EnrollClient from './pages/EnrollClient/index';
+import ListClient from './pages/ListClient';
 import EnrollUser from './pages/EnrollUser';
 import Home from './pages/Home/index';
 import Login from './pages/Login';
+import EnrollClient from './pages/EnrollClient';
 
 export function RestrictedRoutes(props) {
   const { token } = useContext(AuthContext);
@@ -42,7 +43,8 @@ function Routes() {
           {<Route path='/cadastro' component={EnrollUser} />}
           {<Route path='/home' component={Home} />}
           {<Route path='/cobranças' component={Billing} />}
-          {<Route path='/clientes' component={EnrollClient} />}
+          {<Route path='/clientes' component={ListClient} />}
+          {<Route path='/adicionar-cliente' component={EnrollClient} />}
         </Switch>
       </Router>
     </AuthContext.Provider >
