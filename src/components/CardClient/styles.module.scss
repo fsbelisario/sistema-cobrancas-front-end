@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   font-size: 0.875rem;
-  gap: 3.75rem;
+  gap: 1rem;
   justify-content: space-between;
   padding: 1rem 3.5rem 1rem 1.5rem;
   text-align: center;
@@ -13,32 +13,47 @@
 
   .info__client {
     display: flex;
+    flex-wrap: wrap;
     flex-direction: column;
     justify-self: flex-start;
     row-gap: 0.5rem;
     text-align: left;
+    width: 30%;
 
     .client__name {
       display: flex;
       flex-wrap: wrap;
       font-weight: 600;
       margin-bottom: 0.5rem;
-      width: fit-content;
+      width: 100%;
     }
 
     > div {
       display: flex;
-      gap: 0.475rem;
+      gap: 0.4rem;
+      width: 100%;
+
+      > div {
+        overflow: hidden;
+        text-overflow: ellipsis;
+  
+        &:hover {
+          overflow: visible;
+        }
+      }
     }
   }
 
   .info__billing {
     display: flex;
     align-items: center;
-    gap: 6.5rem;
-    justify-content: space-evenly;
+    gap: 2rem;
     justify-self: center;
-    width: 32rem;
+    width: 63%;
+
+    > div {
+      width: 33%;
+    }
 
     .text__green {
       color: var(--color-green);
@@ -54,6 +69,7 @@
   .edit__button {
     all: unset;
     cursor: pointer;
+    width: 7%;
 
     &:hover {
       color: var(--color-pink);
@@ -83,14 +99,13 @@
     flex-direction: column;
     align-items: center;
     gap: 2rem;
-    padding: 2rem 4rem;
-    position: relative;
     overflow-y: auto;
     overflow-x: hidden;
+    padding: 2rem 4rem;
+    position: relative;
 
     > img {
       position: absolute;
-
       top: 1rem;
       right: 1rem;
 
@@ -182,8 +197,8 @@
     }
 
     .snackbar {
-      position: absolute;
-      bottom: 0;
+      margin-top: auto;
+      margin-bottom: -0.5rem;
       width: max-content;
     }
   }

@@ -12,11 +12,11 @@ import { useLocalStorage } from 'react-use';
 import AuthContext from './contexts/AuthContext';
 import './index.scss';
 import Billing from './pages/Billing/index';
-import ListClient from './pages/ListClient';
+import EnrollClient from './pages/EnrollClient';
 import EnrollUser from './pages/EnrollUser';
 import Home from './pages/Home/index';
+import ListClient from './pages/ListClient';
 import Login from './pages/Login';
-import EnrollClient from './pages/EnrollClient';
 
 export function RestrictedRoutes(props) {
   const { token } = useContext(AuthContext);

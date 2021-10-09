@@ -1,5 +1,13 @@
-import { Button } from '@mui/material';
-import { useContext, useEffect, useState } from 'react';
+import {
+  Backdrop,
+  Button,
+  CircularProgress
+} from '@mui/material';
+import {
+  useContext,
+  useEffect,
+  useState
+} from 'react';
 import { useHistory } from 'react-router';
 import CardClient from '../../components/CardClient';
 import Navbar from '../../components/Navbar';
@@ -11,6 +19,7 @@ function ListClient() {
   const { token, setToken, tokenLS } = useContext(AuthContext);
   const history = useHistory();
   const [clientList, setClientList] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setToken(tokenLS);
@@ -19,6 +28,8 @@ function ListClient() {
       history.push('/');
       return;
     };
+
+    setLoading(true);
 
     async function getProfile() {
       const response = await fetch('https://academy-bills.herokuapp.com/clients', {
@@ -30,13 +41,14 @@ function ListClient() {
         }
       });
 
+      setLoading(false);
+
       const requestData = await response.json();
 
       setClientList(requestData);
     }
 
     getProfile();
-    
   }, [token, setToken, tokenLS, history]);
 
   function enrollClient() {
@@ -69,6 +81,15 @@ function ListClient() {
             </div>
           </div>
           {clientList.map((client) => <CardClient key={client.id} client={client} />)}
+          <Backdrop
+            sx={{
+              color: 'var(--color-white)',
+              zIndex: (theme) => theme.zIndex.drawer + 1
+            }}
+            open={loading}
+          >
+            <CircularProgress color='inherit' />
+          </Backdrop>
         </div>
       </div>
     </div>

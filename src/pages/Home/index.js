@@ -26,8 +26,6 @@ function Home() {
     
   }, [token, setToken, tokenLS, history]);
 
-  console.log(token);
-
   return (
     <div className={styles.content__wrapper}>
       <Navbar />
