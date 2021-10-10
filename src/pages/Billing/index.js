@@ -20,18 +20,17 @@ function Billing() {
   const [billList, setBillList] = useState([]);
   const [loading, setLoading] = useState(false);
 
-
   useEffect(() => {
     setToken(tokenLS);
-
     if (!token) {
       history.push('/');
       return;
     };
 
-    setLoading(true);
-
     async function getBillings() {
+
+      setLoading(true);
+
       const response = await fetch('https://academy-bills.herokuapp.com/billings', {
         method: 'GET',
         mode: 'cors',
@@ -41,11 +40,10 @@ function Billing() {
         }
       });
 
-      setLoading(false);
-
       const requestData = await response.json();
-
       setBillList(requestData);
+
+      setLoading(false);
     }
 
     getBillings();

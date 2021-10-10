@@ -54,7 +54,7 @@ function ModalDetailsClient({ client }) {
                   <p>{thisClient.current.district}</p>
                 </div>
                 <div className={styles.block__info}>
-                  <h4>Cidade</h4>
+                  <h4>Cidade/Estado</h4>
                   <p>{`${thisClient.current.city}/${thisClient.current.state}`}</p>
                 </div>
               </div>

@@ -31,6 +31,15 @@
       }
     }
 
+    h4 {
+      color: var(--color-dark-blue-600);
+      font-weight: 600;
+    }
+
+    p {
+      font-size: 0.875rem;
+    }
+
     .modal__title {
       display: flex;
       align-self: flex-start;
@@ -49,6 +58,9 @@
       gap: 3.5rem;
 
       .modal__info__client {
+        display: flex;
+        flex-direction: column;
+        gap: 2.5rem;
 
         .main__info__client {
           display: flex;
@@ -77,7 +89,7 @@
           align-items: flex-start;
           flex-direction: column;
           gap: 0.5rem;
-          justify-content: center;
+          justify-content: flex-start;
           width: 100%;
         }
       }
@@ -87,15 +99,6 @@
         flex-direction: column;
         border-left: 1px solid #DDDDDD;
       }
-    }
-
-    h4 {
-      color: var(--color-dark-blue-600);
-      font-weight: 600;
-    }
-
-    p {
-      font-size: 0.875rem;
     }
   }
 }

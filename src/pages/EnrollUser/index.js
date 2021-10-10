@@ -37,32 +37,27 @@ function EnrollUser() {
     setRequestError('');
     setLoading(true);
 
-    try {
-      const response = await fetch('https://academy-bills.herokuapp.com/users', {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          'Content-type': 'application/json',
-        },
-        body: JSON.stringify(body)
-      });
+    const response = await fetch('https://academy-bills.herokuapp.com/users', {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify(body)
+    });
 
-      const requestData = await response.json();
+    const requestData = await response.json();
+    
+    if (response.ok) {
       setRequestError(requestData);
-
-      if (response.ok) {
-        setLoading(true);
-
-        setTimeout(() => {
-          history.push('/');
-        }, 2000);
-
-        return;
-      };
-    } catch (error) {
-      setRequestError(error.message);
+      setLoading(true);
+      setTimeout(() => {
+        history.push('/');
+      }, 2000);
+      return;
     };
 
+    setRequestError(requestData);
     setLoading(false);
   };
 

@@ -113,32 +113,28 @@ function ModalEditClient({ client }) {
     setRequestError('');
     setLoading(true);
 
-    try {
-      const response = await fetch(`https://academy-bills.herokuapp.com/clients/${thisClient.current.id}`, {
-        method: 'PUT',
-        mode: 'cors',
-        headers: {
-          'Content-type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(body)
-      });
+    const response = await fetch(`https://academy-bills.herokuapp.com/clients/${thisClient.current.id}`, {
+      method: 'PUT',
+      mode: 'cors',
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(body)
+    });
 
-      const requestData = await response.json();
+    const requestData = await response.json();
+      
+    if (response.ok) {
       setRequestError(requestData);
-
-      if (response.ok) {
-        setLoading(true);
-        setTimeout(() => {
-          setOpenModal(!openModal);
-        }, 2000);
-        return;
-      };
-    } catch (error) {
-      setRequestError(error.message);
+      setLoading(true);
+      setTimeout(() => {
+        setOpenModal(!openModal);
+      }, 2000);
+      return;
     };
-    
-    setRequestError('');
+
+    setRequestError(requestData);
     setLoading(false);
   };
 
@@ -207,6 +203,7 @@ function ModalEditClient({ client }) {
               color='secondary'
               defaultValue={thisClient.current.tax_id}
               id='clientTax_id'
+              inputProps={{ maxLength: 11 }}
               error={!!errors.clientTax_id}
               {...register('clientTax_id',
                 { required: true, minLength: 11, maxLength: 11, pattern: /^[0-9]+$/i })
@@ -227,6 +224,7 @@ function ModalEditClient({ client }) {
               color='secondary'
               defaultValue={thisClient.current.phone}
               id='clientPhone'
+              inputProps={{ maxLength: 11 }}
               error={!!errors.clientPhone}
               {...register('clientPhone',
                 { required: true, minLength: 10, maxLength: 11, pattern: /^[0-9]+$/i })
@@ -246,8 +244,9 @@ function ModalEditClient({ client }) {
             {!!zipCodeError ? <h4 className={styles.input__error}>CEP</h4> : <h4>CEP</h4>}
             <TextField
               className={styles.fieldset}
-              value={thisClient.current.zip_code || zipCodeSearch}
+              value={zipCodeSearch}
               onChange={(e) => setZipCodeSearch(e.target.value)}
+              inputProps={{ maxLength: 8 }}
               color='secondary'
               id='zip_code'
               variant='outlined'
@@ -348,6 +347,7 @@ function ModalEditClient({ client }) {
               onChange={(e) => setState(e.target.value)}
               color='secondary'
               id='state'
+              inputProps={{ maxLength: 2 }}
               error={!!stateError}
               variant='outlined'
             />

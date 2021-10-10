@@ -23,15 +23,14 @@ function ListClient() {
 
   useEffect(() => {
     setToken(tokenLS);
-
     if(!token) {
       history.push('/');
       return;
     };
 
-    setLoading(true);
-
     async function getProfile() {
+      setLoading(true);
+
       const response = await fetch('https://academy-bills.herokuapp.com/clients', {
         method: 'GET',
         mode: 'cors',
@@ -40,12 +39,11 @@ function ListClient() {
           'Authorization': `Bearer ${token}`
         }
       });
-
-      setLoading(false);
-
+      
       const requestData = await response.json();
-
       setClientList(requestData);
+      
+      setLoading(false);
     }
 
     getProfile();
