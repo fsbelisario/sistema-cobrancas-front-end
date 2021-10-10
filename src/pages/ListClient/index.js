@@ -16,44 +16,60 @@ import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
 function ListClient() {
-  const { token, setToken, tokenLS } = useContext(AuthContext);
+  const {
+    token, setToken,
+    tokenLS,
+    updateClientsList, setUpdateClientsList
+  } = useContext(AuthContext);
+
   const history = useHistory();
+
   const [clientList, setClientList] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setToken(tokenLS);
-    if(!token) {
+    if (!token) {
       history.push('/');
+
       return;
     };
 
-    async function getProfile() {
-      setLoading(true);
-
-      const response = await fetch('https://academy-bills.herokuapp.com/clients', {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-          'Content-type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      const requestData = await response.json();
-      setClientList(requestData);
-      
-      setLoading(false);
-    }
-
-    getProfile();
+    getClientsList();
   }, [token, setToken, tokenLS, history]);
+
+  useEffect(() => {
+    if (updateClientsList) {
+      getClientsList();
+
+      setUpdateClientsList(false);
+    };
+  }, [updateClientsList]);
+
+  async function getClientsList() {
+    setLoading(true);
+
+    const response = await fetch('https://academy-bills.herokuapp.com/clients', {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    const requestData = await response.json();
+
+    setClientList(requestData);
+
+    setLoading(false);
+  };
 
   function enrollClient() {
     history.push('/adicionar-cliente');
-  }
+  };
 
-  return(
+  return (
     <div className={styles.content__wrapper}>
       <Navbar />
       <div className={styles.main__content}>
