@@ -1,17 +1,25 @@
+import {
+  Backdrop,
+  CircularProgress
+} from '@mui/material';
+import {
+  useContext,
+  useEffect,
+  useState
+} from 'react';
+import { useHistory } from 'react-router';
+import CardBill from '../../components/CardBill';
 import Navbar from '../../components/Navbar';
 import UserProfile from '../../components/UserProfile';
-import styles from './styles.module.scss';
-import {
-  useEffect,
-  useContext
-} from 'react';
-import { useHistory } from 'react-router-dom';
 import AuthContext from '../../contexts/AuthContext';
+import styles from './styles.module.scss';
 
 function Billing() {
   const { token, setToken, tokenLS } = useContext(AuthContext);
-
   const history = useHistory();
+  const [billList, setBillList] = useState([]);
+  const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     setToken(tokenLS);
@@ -20,7 +28,27 @@ function Billing() {
       history.push('/');
       return;
     };
-    
+
+    setLoading(true);
+
+    async function getBillings() {
+      const response = await fetch('https://academy-bills.herokuapp.com/billings', {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      setLoading(false);
+
+      const requestData = await response.json();
+
+      setBillList(requestData);
+    }
+
+    getBillings();
   }, [token, setToken, tokenLS, history]);
 
   return (
@@ -29,7 +57,24 @@ function Billing() {
       <div className={styles.main__content}>
         <UserProfile />
         <div className={styles.content}>
-          Você não possui nenhuma cobrança cadastrada.
+          <div className={styles.table__title}>
+            <div className={styles.info__id}>ID</div>
+            <div className={styles.info__name}>Cliente</div>
+            <div className={styles.info__description}>Descrição</div>
+            <div>Valor</div>
+            <div>Status</div>
+            <div>Vencimento</div>
+          </div>
+          {billList.map((bill) => <CardBill key={bill.id} bill={bill} />)}
+          <Backdrop
+            sx={{
+              color: 'var(--color-white)',
+              zIndex: (theme) => theme.zIndex.drawer + 1
+            }}
+            open={loading}
+          >
+            <CircularProgress color='inherit' />
+          </Backdrop>
         </div>
       </div>
     </div>
