@@ -1,6 +1,8 @@
 import {
-  useContext, useEffect,
-  useRef, useState
+  useContext,
+  useEffect,
+  useRef,
+  useState
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import editIcon from '../../assets/edit-icon.svg';
@@ -12,12 +14,16 @@ import NavbarItem from '../NavbarItem';
 import styles from './styles.module.scss';
 
 function UserProfile() {
-  const [isVisible, setIsVisible] = useState(false);
   const [editProfile, setEditProfile] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   const history = useHistory();
 
-  const { token, setToken, removeTokenLS } = useContext(AuthContext);
+  const {
+    token, setToken,
+    removeTokenLS,
+    userLS, removeUserLS
+  } = useContext(AuthContext);
 
   const user = useRef();
 
@@ -33,26 +39,37 @@ function UserProfile() {
       });
 
       const requestData = await response.json();
+
       user.current = requestData;
-    }
+    };
 
     getProfile();
-  }, [token, isVisible]);
+  }, [token]);
+
+  if (userLS) {
+    user.current = userLS;
+  };
 
   function handleIsVisible() {
     setIsVisible(!isVisible);
+
     setEditProfile(false);
   };
 
   function handleEditProfile() {
     setEditProfile(!editProfile);
+
     setIsVisible(!isVisible);
   };
 
   function handleLogout() {
     user.current = '';
+
     setToken('');
+
+    removeUserLS();
     removeTokenLS();
+
     history.push('/');
   };
 

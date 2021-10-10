@@ -21,14 +21,17 @@ function EnrollUser() {
 
   const history = useHistory();
 
-  const [requestError, setRequestError] = useState('');
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
+  const [requestError, setRequestError] = useState('');
 
   async function onSubmit(data) {
     const body = {
-      name: data.name,
-      email: data.email,
-      password: data.password
+      name: name,
+      email: email,
+      password: password
     };
 
     setRequestError('');
@@ -49,9 +52,11 @@ function EnrollUser() {
 
       if (response.ok) {
         setLoading(true);
+
         setTimeout(() => {
           history.push('/');
         }, 2000);
+
         return;
       };
     } catch (error) {
@@ -73,27 +78,32 @@ function EnrollUser() {
           {errors.name ? <h4 className={styles.input__error}>Nome</h4> : <h4>Nome</h4>}
           <TextField
             {...register('name', { required: true })}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             variant='standard'
             error={!!errors.name}
           />
-          {!!errors.name && <p>O campo Nome é obrigatório!</p>}
+          {errors.name && <p>O campo Nome é obrigatório!</p>}
         </label>
         <label>
           {errors.email ? <h4 className={styles.input__error}>E-mail</h4> : <h4>E-mail</h4>}
           <TextField
-            {...register('email', { required: true })}
-            id='email'
             placeholder='exemplo@gmail.com'
+            {...register('email', { required: true })}
+            type='email'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             variant='standard'
             error={!!errors.email}
           />
-          {!!errors.email && <p>O campo E-mail é obrigatório!</p>}
+          {errors.email && <p>O campo E-mail é obrigatório!</p>}
         </label>
         <label>
           {errors.password ? <h4 className={styles.input__error}>Senha</h4> : <h4>Senha</h4>}
           <PasswordInput
             register={() => register('password', { required: true, minLength: 5 })}
-            id='password'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className={styles.password__input}
             variant='standard'
             error={!!errors.password}
@@ -116,7 +126,7 @@ function EnrollUser() {
         <Button
           className={styles.button__states}
           type='submit'
-          disabled={false}
+          disabled={!name || !email || !password}
           variant='contained'>Criar conta
         </Button>
 

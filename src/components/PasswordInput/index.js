@@ -21,6 +21,8 @@ function PasswordInput(props) {
         type={passwordVisible ? 'text' : 'password'}
         error={props.error}
         {...props.register()}
+        value={props.value}
+        onChange={props.onChange}
         endAdornment={
           <InputAdornment position='end'>
             <IconButton
