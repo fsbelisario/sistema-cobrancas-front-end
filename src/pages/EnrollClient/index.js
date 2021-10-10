@@ -53,7 +53,6 @@ function EnrollClient() {
 
     if (!token) {
       history.push('/');
-
       return;
     };
 

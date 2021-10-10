@@ -20,7 +20,7 @@ import styles from './styles.module.scss';
 function EditUserProfile({ user }) {
   const { register, handleSubmit, formState: { errors } } = useForm();
 
-  const { token, setUserLS } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
 
   const [email, setEmail] = useState(user.current.email);
   const [loading, setLoading] = useState(false);
@@ -29,7 +29,7 @@ function EditUserProfile({ user }) {
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState(user.current.phone);
   const [requestError, setRequestError] = useState('');
-  const [taxId, setTaxId] = useState(user.current.taxId);
+  const [taxId, setTaxId] = useState(user.current.tax_id);
 
   async function onSubmit(data) {
     let newPhone = phone;
@@ -39,7 +39,7 @@ function EditUserProfile({ user }) {
       newPhone = '';
     };
 
-    if (user.current.taxId && taxId === '') {
+    if (user.current.tax_id && taxId === '') {
       newTaxId = '';
     };
 
@@ -69,7 +69,6 @@ function EditUserProfile({ user }) {
     if (response.ok) {
       setRequestError(requestData);
 
-      setUserLS(body);
       setLoading(true);
 
       setTimeout(() => {

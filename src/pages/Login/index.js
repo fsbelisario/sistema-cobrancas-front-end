@@ -22,7 +22,7 @@ import PasswordInput from './../../components/PasswordInput';
 import styles from './styles.module.scss';
 
 function Login() {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit } = useForm();
 
   const {
     token, setToken,
@@ -45,7 +45,7 @@ function Login() {
 
       return;
     };
-  }, []);
+  }, [token, setToken, tokenLS, history]);
 
   async function onSubmit(data) {
     const body = {
