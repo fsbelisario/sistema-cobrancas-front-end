@@ -10,6 +10,7 @@
     background-color: var(--color-white);
     border-radius: 16px;
     box-shadow: 0px 0px 32px rgba(0, 0, 0, 0.1);
+    color: var(--color-gray-800);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -28,6 +29,73 @@
         cursor: pointer;
         filter: invert(17%) sepia(63%) saturate(7218%) hue-rotate(318deg) brightness(84%) contrast(106%);
       }
+    }
+
+    .modal__title {
+      display: flex;
+      align-self: flex-start;
+      gap: 1.5rem;
+      flex-direction: column;
+
+      .info__name {
+        color: var(--color-dark-blue-600);
+        font-size: 2rem;
+        font-weight: 600;
+      }
+    }
+
+    .modal__content {
+      display: flex;
+      gap: 3.5rem;
+
+      .modal__info__client {
+
+        .main__info__client {
+          display: flex;
+          gap: 1rem;
+  
+          > div {
+            display: flex;
+            gap: 0.5rem;
+          }
+        }
+        
+        .address__info {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .inline__info {
+          display: flex;
+          gap: 2rem;
+          width: 100%;
+        }
+
+        .block__info {
+          display: flex;
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 0.5rem;
+          justify-content: center;
+          width: 100%;
+        }
+      }
+
+      .modal__info__billing{
+        display: flex;
+        flex-direction: column;
+        border-left: 1px solid #DDDDDD;
+      }
+    }
+
+    h4 {
+      color: var(--color-dark-blue-600);
+      font-weight: 600;
+    }
+
+    p {
+      font-size: 0.875rem;
     }
   }
 }
