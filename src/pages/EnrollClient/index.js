@@ -60,9 +60,13 @@ function EnrollClient() {
 
   useEffect(() => {
     setZipCodeError('');
+
     setStreet('');
+
     setDistrict('');
+
     setCity('');
+
     setState('');
 
     async function retrieveAddress() {
@@ -77,8 +81,11 @@ function EnrollClient() {
           setZipCodeError('');
 
           setStreet(requestData.logradouro);
+
           setDistrict(requestData.bairro);
+
           setCity(requestData.localidade);
+
           setState(requestData.uf);
 
           return;
@@ -118,6 +125,7 @@ function EnrollClient() {
     };
 
     setRequestError('');
+
     setLoading(true);
 
     const response = await fetch('https://academy-bills.herokuapp.com/clients', {
@@ -134,14 +142,18 @@ function EnrollClient() {
 
     if (response.ok) {
       setRequestError(requestData);
+
       setLoading(true);
+
       setTimeout(() => {
         history.push('/clientes');
       }, 2000);
+
       return;
     };
 
     setRequestError(requestData);
+
     setLoading(false);
   };
 
@@ -171,7 +183,7 @@ function EnrollClient() {
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className={styles.input__wrapper}>
                 <label>
-                  {errors.clientName ? <h4 className={styles.input__error}>Nome</h4> : <h4>Nome</h4>}
+                  <h4>Nome</h4>
                   <TextField
                     className={styles.fieldset}
                     {...register('clientName', { required: true })}
@@ -185,7 +197,7 @@ function EnrollClient() {
                 </label>
 
                 <label>
-                  {errors.clientEmail ? <h4 className={styles.input__error}>E-mail</h4> : <h4>E-mail</h4>}
+                  <h4>E-mail</h4>
                   <TextField
                     {...register('clientEmail', { required: true })}
                     type='email'
@@ -202,9 +214,9 @@ function EnrollClient() {
 
               <div className={styles.input__wrapper}>
                 <label>
-                  {errors.clientTax_id ? <h4 className={styles.input__error}>CPF</h4> : <h4>CPF</h4>}
+                  {errors.clientTaxId ? <h4 className={styles.input__error}>CPF</h4> : <h4>CPF</h4>}
                   <TextField
-                    {...register('clientTax_id',
+                    {...register('clientTaxId',
                       { required: true, minLength: 11, maxLength: 11, pattern: /^[0-9]+$/i })
                     }
                     value={taxId}
@@ -213,13 +225,13 @@ function EnrollClient() {
                     className={styles.fieldset}
                     color='secondary'
                     variant='outlined'
-                    error={errors.clientTax_id}
+                    error={errors.clientTaxId}
                   />
-                  {errors.clientTax_id?.type === 'required' && <p>O campo CPF é obrigatório!</p>}
-                  {(errors.clientTax_id?.type === 'minLength' || errors.clientTax_id?.type === 'maxLength')
+                  {errors.clientTaxId?.type === 'required' && <p>O campo CPF é obrigatório!</p>}
+                  {(errors.clientTaxId?.type === 'minLength' || errors.clientTaxId?.type === 'maxLength')
                     && <p>O CPF deve conter 11 caracteres</p>
                   }
-                  {errors.clientTax_id?.type === 'pattern' && <p>O CPF deve conter apenas números</p>}
+                  {errors.clientTaxId?.type === 'pattern' && <p>O CPF deve conter apenas números</p>}
                 </label>
 
                 <label>
