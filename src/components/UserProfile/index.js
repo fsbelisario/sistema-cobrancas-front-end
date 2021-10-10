@@ -19,7 +19,7 @@ function UserProfile() {
 
   const { token, setToken, removeTokenLS } = useContext(AuthContext);
 
-  let user = useRef();
+  const user = useRef();
 
   useEffect(() => {
     async function getProfile() {
