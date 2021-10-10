@@ -18,7 +18,6 @@ function Home() {
 
   useEffect(() => {
     setToken(tokenLS);
-
     if(!token) {
       history.push('/');
       return;

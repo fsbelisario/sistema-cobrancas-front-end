@@ -20,16 +20,16 @@ import styles from './styles.module.scss';
 function EditUserProfile({ user }) {
   const { register, handleSubmit, formState: { errors } } = useForm();
 
-  const { token, setUserLS } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
 
   const [email, setEmail] = useState(user.current.email);
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState(user.current.name);
   const [open, setOpen] = useState(true);
   const [password, setPassword] = useState('');
-  const [phone, setPhone] = useState(user.current.phone);
+  const [phone, setPhone] = useState(user.current.phone ? user.current.phone : '');
   const [requestError, setRequestError] = useState('');
-  const [taxId, setTaxId] = useState(user.current.taxId);
+  const [taxId, setTaxId] = useState(user.current.tax_id ? user.current.tax_id : '');
 
   async function onSubmit(data) {
     let newPhone = phone;
@@ -39,7 +39,7 @@ function EditUserProfile({ user }) {
       newPhone = '';
     };
 
-    if (user.current.taxId && taxId === '') {
+    if (user.current.tax_id && taxId === '') {
       newTaxId = '';
     };
 
@@ -68,20 +68,15 @@ function EditUserProfile({ user }) {
 
     if (response.ok) {
       setRequestError(requestData);
-
-      setUserLS(body);
       setLoading(true);
-
       setTimeout(() => {
         setOpen(!open);
       }, 2000);
-
       return;
     };
 
-    setLoading(false);
-
     setRequestError(requestData);
+    setLoading(false);
   };
 
   function handleAlertClose() {
@@ -138,6 +133,7 @@ function EditUserProfile({ user }) {
             {...register('phone', { minLength: 10, maxLength: 11, pattern: /^[0-9]+$/i })}
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
+            inputProps={{ maxLength: 11 }}
             placeholder='(71) 9999-9999'
             variant='standard'
             error={!!errors.phone}
@@ -153,6 +149,7 @@ function EditUserProfile({ user }) {
             {...register('tax_id', { minLength: 11, maxLength: 11, pattern: /^[0-9]+$/i })}
             value={taxId}
             onChange={(e) => setTaxId(e.target.value)}
+            inputProps={{ maxLength: 11 }}
             placeholder='000.000.000-00'
             variant='standard'
             error={!!errors.tax_id}

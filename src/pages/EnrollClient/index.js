@@ -53,7 +53,6 @@ function EnrollClient() {
 
     if (!token) {
       history.push('/');
-
       return;
     };
 
@@ -119,38 +118,31 @@ function EnrollClient() {
     };
 
     setRequestError('');
-
     setLoading(true);
 
-    try {
-      const response = await fetch('https://academy-bills.herokuapp.com/clients', {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          'Content-type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(body)
-      });
+    const response = await fetch('https://academy-bills.herokuapp.com/clients', {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(body)
+    });
 
-      setLoading(false);
+    const requestData = await response.json();
 
-      const requestData = await response.json();
-
+    if (response.ok) {
       setRequestError(requestData);
-
-      if (response.ok) {
-        setLoading(true);
-
-        setTimeout(() => {
-          history.push('/clientes');
-        }, 2000);
-
-        return;
-      };
-    } catch (error) {
-      setRequestError(error.message);
+      setLoading(true);
+      setTimeout(() => {
+        history.push('/clientes');
+      }, 2000);
+      return;
     };
+
+    setRequestError(requestData);
+    setLoading(false);
   };
 
   function handleAlertClose() {
@@ -217,6 +209,7 @@ function EnrollClient() {
                     }
                     value={taxId}
                     onChange={(e) => setTaxId(e.target.value)}
+                    inputProps={{ maxLength: 11 }}
                     className={styles.fieldset}
                     color='secondary'
                     variant='outlined'
@@ -237,6 +230,7 @@ function EnrollClient() {
                     }
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
+                    inputProps={{ maxLength: 11 }}
                     className={styles.fieldset}
                     color='secondary'
                     id='clientPhone'
@@ -260,6 +254,7 @@ function EnrollClient() {
                     }
                     value={zipCode}
                     onChange={(e) => setZipCode(e.target.value)}
+                    inputProps={{ maxLength: 8 }}
                     className={styles.fieldset}
                     color='secondary'
                     variant='outlined'
@@ -353,6 +348,7 @@ function EnrollClient() {
                     className={styles.fieldset}
                     value={state}
                     onChange={(e) => setState(e.target.value)}
+                    inputProps={{ maxLength: 2 }}
                     color='secondary'
                     variant='outlined'
                     error={errors.state}

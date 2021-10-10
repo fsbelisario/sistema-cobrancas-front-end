@@ -22,7 +22,7 @@ import PasswordInput from './../../components/PasswordInput';
 import styles from './styles.module.scss';
 
 function Login() {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit } = useForm();
 
   const {
     token, setToken,
@@ -45,7 +45,7 @@ function Login() {
 
       return;
     };
-  }, []);
+  }, [token, setToken, tokenLS, history]);
 
   async function onSubmit(data) {
     const body = {
@@ -54,36 +54,27 @@ function Login() {
     };
 
     setRequestError('');
-
     setLoading(true);
 
-    try {
-      const response = await fetch('https://academy-bills.herokuapp.com/login', {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          'Content-type': 'application/json',
-        },
-        body: JSON.stringify(body)
-      });
+    const response = await fetch('https://academy-bills.herokuapp.com/login', {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify(body)
+    });
 
-      const requestData = await response.json();
+    const requestData = await response.json();
 
-      if (response.ok) {
-        setToken(requestData.token);
-
-        setTokenLS(requestData.token);
-
-        history.push('/home');
-
-        return;
-      };
-
-      setRequestError(requestData);
-    } catch (error) {
-      setRequestError(error.message);
+    if (response.ok) {
+      setToken(requestData.token);
+      setTokenLS(requestData.token);
+      history.push('/home');
+      return;
     };
 
+    setRequestError(requestData);
     setLoading(false);
   };
 
