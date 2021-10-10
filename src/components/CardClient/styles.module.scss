@@ -1,0 +1,89 @@
+.card__wrapper {
+  background-color: var(--color-white);
+  border-radius: 0.5rem;
+  color: var(--color-gray-500);
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 1rem 3.5rem 1rem 1.5rem;
+  text-align: center;
+  width: 100%;
+
+  .info__client {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-self: flex-start;
+    row-gap: 0.5rem;
+    text-align: left;
+    width: 30%;
+
+    .client__name {
+      display: flex;
+      cursor: pointer;
+      flex-wrap: wrap;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      width: 100%;
+
+      &:hover {
+        color: var(--color-pink);
+      }
+    }
+
+    > div {
+      display: flex;
+      gap: 0.4rem;
+      width: 100%;
+
+      > div {
+        overflow: hidden;
+        text-overflow: ellipsis;
+  
+        &:hover {
+          overflow: visible;
+        }
+      }
+    }
+  }
+
+  .info__billing {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    justify-self: center;
+    width: 63%;
+
+    > div {
+      width: 33%;
+    }
+
+    .text__green {
+      color: var(--color-green);
+      font-weight: 600;
+    }
+    
+    .text__red {
+      color: var(--color-red);
+      font-weight: 600;
+    }
+  }
+
+  .edit__button {
+    all: unset;
+    cursor: pointer;
+    width: 7%;
+
+    &:hover {
+      color: var(--color-pink);
+
+      //Mudando a cor do svg utilizando um fitro CSS
+      //Link de referência: https://codepen.io/sosuke/pen/Pjoqqp
+      img { 
+        filter: invert(17%) sepia(63%) saturate(7218%) hue-rotate(318deg) brightness(84%) contrast(106%);
+      }
+    }
+  }
+}

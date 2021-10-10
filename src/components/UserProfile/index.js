@@ -25,7 +25,7 @@ function UserProfile() {
     userLS, removeUserLS
   } = useContext(AuthContext);
 
-  let user = useRef();
+  const user = useRef();
 
   useEffect(() => {
     async function getProfile() {
@@ -68,7 +68,6 @@ function UserProfile() {
     setToken('');
 
     removeUserLS();
-
     removeTokenLS();
 
     history.push('/');

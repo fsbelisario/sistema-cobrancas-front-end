@@ -16,10 +16,10 @@ import {
   useState
 } from 'react';
 import { useForm } from 'react-hook-form';
+import { useHistory } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import UserProfile from '../../components/UserProfile';
 import AuthContext from '../../contexts/AuthContext';
-import { useHistory } from 'react-router-dom';
 import styles from './styles.module.scss';
 
 function EnrollClient() {
@@ -143,7 +143,7 @@ function EnrollClient() {
         setLoading(true);
 
         setTimeout(() => {
-          history.push('/home');
+          history.push('/clientes');
         }, 2000);
 
         return;
@@ -158,7 +158,7 @@ function EnrollClient() {
   };
 
   function cancelButton() {
-    history.push('/home');
+    history.push('/clientes');
   };
 
   const theme = createTheme({

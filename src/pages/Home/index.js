@@ -1,15 +1,15 @@
-import { 
-  useContext, 
-  useEffect 
+import {
+  useContext,
+  useEffect
 } from 'react';
 import { useHistory } from 'react-router';
-import AuthContext from '../../contexts/AuthContext';
 import billIcon from '../../assets/card-billing-icon.svg';
 import clientIcon from '../../assets/card-client-icon.svg';
 import CardHome from '../../components/CardHome';
 import CardHomeItem from '../../components/CardHomeItem';
 import Navbar from '../../components/Navbar';
 import UserProfile from '../../components/UserProfile';
+import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
 function Home() {

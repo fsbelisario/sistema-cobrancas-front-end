@@ -12,9 +12,10 @@ import { useLocalStorage } from 'react-use';
 import AuthContext from './contexts/AuthContext';
 import './index.scss';
 import Billing from './pages/Billing/index';
-import EnrollClient from './pages/EnrollClient/index';
+import EnrollClient from './pages/EnrollClient';
 import EnrollUser from './pages/EnrollUser';
 import Home from './pages/Home/index';
+import ListClient from './pages/ListClient';
 import Login from './pages/Login';
 
 export function RestrictedRoutes(props) {
@@ -28,14 +29,12 @@ export function RestrictedRoutes(props) {
 function Routes() {
   const [tokenLS, setTokenLS, removeTokenLS] = useLocalStorage('token', '');
   const [token, setToken] = useState(tokenLS || '');
-  const [userLS, setUserLS, removeUserLS] = useLocalStorage('user', '');
 
   return (
     <AuthContext.Provider
       value={{
         token, setToken, 
-        tokenLS, setTokenLS, removeTokenLS,
-        userLS, setUserLS, removeUserLS
+        tokenLS, setTokenLS, removeTokenLS
       }}
     >
       <Router>
@@ -44,7 +43,8 @@ function Routes() {
           {<Route path='/cadastro' component={EnrollUser} />}
           {<Route path='/home' component={Home} />}
           {<Route path='/cobranças' component={Billing} />}
-          {<Route path='/clientes' component={EnrollClient} />}
+          {<Route path='/clientes' component={ListClient} />}
+          {<Route path='/adicionar-cliente' component={EnrollClient} />}
         </Switch>
       </Router>
     </AuthContext.Provider >
