@@ -14,18 +14,19 @@ function CardClient({ client }) {
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
 
   const thisClient = useRef();
+
   thisClient.current = client;
-  
+
   function handleEditClient() {
     setOpenEditModal(!openEditModal);
-  }
+  };
 
   function handleDetailsClient() {
     setOpenDetailsModal(!openDetailsModal);
-  }
+  };
 
-  return(
-    <div className={styles.card__wrapper}> 
+  return (
+    <div className={styles.card__wrapper}>
       <div className={styles.info__client}>
         <div className={styles.client__name} onClick={handleDetailsClient}>{client.name}</div>
         <div>
@@ -39,18 +40,18 @@ function CardClient({ client }) {
       </div>
       <div className={styles.info__billing}>
         <div className={styles.charges__made}>
-          {Number((client.billings/100)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+          {Number((client.billings / 100)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
         </div>
         <div className={styles.charges__received}>
-          {Number((client.payments/100)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+          {Number((client.payments / 100)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
         </div>
-        <div className={client.status === 'EM DIA' 
-          ? `${styles.status} ${styles.text__green}` 
+        <div className={client.status === 'EM DIA'
+          ? `${styles.status} ${styles.text__green}`
           : `${styles.status} ${styles.text__red}`}>
           {client.status}
         </div>
       </div>
-      <button 
+      <button
         className={styles.edit__button}
         onClick={handleEditClient}
       >
@@ -62,6 +63,6 @@ function CardClient({ client }) {
       {openDetailsModal && <ModalDetailsClient client={client} />}
     </div>
   );
-}
+};
 
 export default CardClient;
