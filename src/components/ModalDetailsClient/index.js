@@ -1,21 +1,48 @@
 import {
   Modal
 } from '@mui/material';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import closeIcon from '../../assets/close-icon.svg';
 import emailIcon from '../../assets/email-icon.svg';
 import phoneIcon from '../../assets/phone-icon.svg';
+import CardDetailBill from '../CardDetailBill';
 import styles from './styles.module.scss';
 
 function ModalDetailsClient({ client }) {
   const [openModal, setOpenModal] = useState(true);
 
-  const thisClient = useRef();
-  thisClient.current = client;
+  function formatPhone(phone) {
+    return `(${phone.substr(0,2)})${phone.substr(2,5)}-${phone.substr(7)}`;
+  }
+
+  function formatTaxId(taxId) {
+    return `${taxId.substr(0,3)}.${taxId.substr(3,3)}.${taxId.substr(6,3)}-${taxId.substr(9)}`;
+  }
+
+  function formatZipCode(zipCode) {
+    return `${zipCode.substr(0,2)}-${zipCode.substr(2,3)}.${zipCode.substr(5)}`;
+  }
 
   function handleDetailsClient() {
     setOpenModal(!openModal);
   }
+
+  const formatClient = {
+    name: client.name,
+    tax_id: formatTaxId(client.tax_id),
+    email: client.email,
+    phone: formatPhone(client.phone),
+    zip_code: client.zipCode ? formatZipCode(client.zipCode) : 'Não informado',
+    street: client.street ? client.street : 'Não informado',
+    number: client.number ? client.number : 'Não informado',
+    address_details: client.address_details ? client.address_details : 'Não informado',
+    reference: client.reference ? client.reference : 'Não informado',
+    district: client.district ? client.district : 'Não informado',
+    city: client.city ? client.city : 'Não informado',
+    state: client.state ? client.state : 'Não informado'
+  };
+
+  const billings = client.billingList;
 
   return(
     <Modal
@@ -27,60 +54,64 @@ function ModalDetailsClient({ client }) {
         <img src={closeIcon} alt='' onClick={handleDetailsClient} />
         <div className={styles.modal__title}>
           <div className={styles.info__name}>
-            {thisClient.current.name}
+            {formatClient.name}
           </div>
-          <div>{thisClient.current.tax_id}</div>
+          <div>{formatClient.tax_id}</div>
         </div>
         <div className={styles.modal__content}>
           <div className={styles.modal__info__client}>
             <div className={styles.main__info__client}>
               <div>
                   <img src={emailIcon} alt='' />
-                  <div>{thisClient.current.email}</div>
+                  <div>{formatClient.email}</div>
               </div>
               <div>
                   <img src={phoneIcon} alt='' />
-                  <div>{thisClient.current.phone}</div>
+                  <div>{formatClient.phone}</div>
               </div>
             </div>
             <div className={styles.address__info}>
               <div className={styles.inline__info}>
                 <div className={styles.block__info}>
                   <h4>CEP</h4>
-                  <p>{thisClient.current.zip_code}</p>
+                  <p>{formatClient.zip_code}</p>
                 </div>
                 <div className={styles.block__info}>
                   <h4>Bairro</h4>
-                  <p>{thisClient.current.district}</p>
+                  <p>{formatClient.district}</p>
                 </div>
                 <div className={styles.block__info}>
                   <h4>Cidade/Estado</h4>
-                  <p>{`${thisClient.current.city}/${thisClient.current.state}`}</p>
+                  <p>{(formatClient.city === 'Não informado') && (formatClient.city === 'Não informado') 
+                    ? 'Não informado'
+                    : `${formatClient.city}/${formatClient.state}`}
+                  </p>
                 </div>
               </div>
               <div className={styles.inline__info}>
                 <div className={styles.block__info}>
                   <h4>Logradouro</h4>
-                  <p>{thisClient.current.street}</p>
+                  <p>{formatClient.street}</p>
                 </div>
                 <div className={styles.block__info}>
                   <h4>Número</h4>
-                  <p>{thisClient.current.number}</p>
+                  <p>{formatClient.number}</p>
                 </div>
               </div>
               <div className={styles.inline__info}>
                 <div className={styles.block__info}>
                   <h4>Complemento</h4>
-                  <p>{thisClient.current.address_details}</p>
+                  <p>{formatClient.address_details}</p>
                 </div>
                 <div className={styles.block__info}>
                   <h4>Ponto de Referência</h4>
-                  <p>{thisClient.current.reference}</p>
+                  <p>{formatClient.reference}</p>
                 </div>
               </div>
             </div>
           </div>
           <div className={styles.modal__info__billing}>
+            {billings.map((bill) => <CardDetailBill key={bill.id} bill={bill} />)}
           </div>
         </div>
       </div>

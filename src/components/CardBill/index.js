@@ -1,7 +1,7 @@
 import styles from './styles.module.scss';
 
-function formatDate( date ){
-  return `${date.substr( 8, 2 )}/${date.substr( 5, 2 )}/${date.substr( 0, 4 )}`
+function formatDate(date) {
+  return `${date.substr(8, 2)}/${date.substr(5, 2)}/${date.substr(0, 4)}`;
 }
 
 function CardBill({ bill }) {

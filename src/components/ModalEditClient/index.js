@@ -21,7 +21,7 @@ import closeIcon from '../../assets/close-icon.svg';
 import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
-function ModalEditClient({ client }) {
+const ModalEditClient = ({ client }) => {
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const {
