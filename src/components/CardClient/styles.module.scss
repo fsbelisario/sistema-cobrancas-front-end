@@ -39,8 +39,10 @@
       width: 100%;
 
       > div {
+        background-color: var(--color-white);
         overflow: hidden;
         text-overflow: ellipsis;
+        z-index: 1;
   
         &:hover {
           overflow: visible;

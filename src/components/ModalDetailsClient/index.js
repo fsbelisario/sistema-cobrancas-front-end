@@ -8,7 +8,7 @@ import phoneIcon from '../../assets/phone-icon.svg';
 import CardDetailBill from '../CardDetailBill';
 import styles from './styles.module.scss';
 
-function ModalDetailsClient({ client }) {
+const ModalDetailsClient = ({ client }) => {
   const [openModal, setOpenModal] = useState(true);
 
   function formatPhone(phone) {
@@ -20,7 +20,7 @@ function ModalDetailsClient({ client }) {
   }
 
   function formatZipCode(zipCode) {
-    return `${zipCode.substr(0,2)}-${zipCode.substr(2,3)}.${zipCode.substr(5)}`;
+    return `${zipCode.substr(0,5)}-${zipCode.substr(5)}`;
   }
 
   function handleDetailsClient() {
@@ -32,7 +32,7 @@ function ModalDetailsClient({ client }) {
     tax_id: formatTaxId(client.tax_id),
     email: client.email,
     phone: formatPhone(client.phone),
-    zip_code: client.zipCode ? formatZipCode(client.zipCode) : 'Não informado',
+    zip_code: client.zip_code ? formatZipCode(client.zip_code) : 'Não informado',
     street: client.street ? client.street : 'Não informado',
     number: client.number ? client.number : 'Não informado',
     address_details: client.address_details ? client.address_details : 'Não informado',
@@ -61,7 +61,7 @@ function ModalDetailsClient({ client }) {
         <div className={styles.modal__content}>
           <div className={styles.modal__info__client}>
             <div className={styles.main__info__client}>
-              <div>
+              <div className={styles.info__email}>
                   <img src={emailIcon} alt='' />
                   <div>{formatClient.email}</div>
               </div>

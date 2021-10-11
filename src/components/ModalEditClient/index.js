@@ -39,7 +39,7 @@ const ModalEditClient = ({ client }) => {
   const [openModal, setOpenModal] = useState(true);
   const [phone, setPhone] = useState(client.phone ? client.phone : '');
   const [reference, setReference] = useState(client.reference ? client.reference : '');
-  const [requestError, setRequestError] = useState('');
+  const [requestError, setRequestError] = useState();
   const [state, setState] = useState(client.state ? client.state : '');
   const [street, setStreet] = useState(client.street ? client.street : '');
   const [taxId, setTaxId] = useState(client.tax_id ? client.tax_id : '');
@@ -47,7 +47,7 @@ const ModalEditClient = ({ client }) => {
   const [zipCodeError, setZipCodeError] = useState('');
 
   useEffect(() => {
-    if (zipCode !== client.zip_code || street === '') {
+    if (zipCode !== client.zip_code) {
       setZipCodeError('');
 
       setStreet('');
@@ -92,9 +92,9 @@ const ModalEditClient = ({ client }) => {
 
       setLoading(false);
     };
-  }, [zipCode, openModal]);
+  }, [client.zip_code, zipCode, openModal]);
 
-  async function onSubmit(data) {
+  async function onSubmit() {
     if (!!zipCodeError) {
       return;
     };

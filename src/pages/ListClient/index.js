@@ -31,39 +31,36 @@ function ListClient() {
     setToken(tokenLS);
     if (!token) {
       history.push('/');
-
       return;
     };
-
+    
+    async function getClientsList() {
+      setLoading(true);
+  
+      const response = await fetch('https://academy-bills.herokuapp.com/clients', {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+  
+      const requestData = await response.json();
+  
+      setClientList(requestData);
+  
+      setLoading(false);
+    };
+    
     getClientsList();
-  }, [token, setToken, tokenLS, history]);
 
-  useEffect(() => {
     if (updateClientsList) {
       getClientsList();
-
+  
       setUpdateClientsList(false);
     };
-  }, [updateClientsList]);
-
-  async function getClientsList() {
-    setLoading(true);
-
-    const response = await fetch('https://academy-bills.herokuapp.com/clients', {
-      method: 'GET',
-      mode: 'cors',
-      headers: {
-        'Content-type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
-    });
-
-    const requestData = await response.json();
-
-    setClientList(requestData);
-
-    setLoading(false);
-  };
+  }, [token, setToken, tokenLS, history, updateClientsList, setUpdateClientsList]);
 
   function enrollClient() {
     history.push('/adicionar-cliente');

@@ -33,9 +33,6 @@ function Home() {
       return;
     };
 
-  }, [token, setToken, tokenLS, history]);
-
-  useEffect(() => {
     async function retrieveData() {
       const response = await fetch('https://academy-bills.herokuapp.com/management', {
         method: 'GET',
@@ -53,12 +50,10 @@ function Home() {
       setOverdueBillings(requestData.overdueBillings)
       setDueBillings(requestData.dueBillings)
       setPaidBillings(requestData.paidBillings)
-
-      console.log(requestData);
     };
 
     retrieveData();
-  }, [])
+  }, [token, setToken, tokenLS, history]);
 
   return (
     <div className={styles.content__wrapper}>
@@ -92,15 +87,15 @@ function Home() {
             CardHomeItem={[
               <CardHomeItem
                 key='bill_item_1'
-                className={styles.item__blue}
-                title='Previstas'
-                number={Number((dueBillings / 100)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-              />,
-              <CardHomeItem
-                key='bill_item_2'
                 className={styles.item__red}
                 title='Vencidas'
                 number={Number((overdueBillings / 100)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+              />,
+              <CardHomeItem
+                key='bill_item_2'
+                className={styles.item__blue}
+                title='Previstas'
+                number={Number((dueBillings / 100)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               />,
               <CardHomeItem
                 key='bill_item_3'
