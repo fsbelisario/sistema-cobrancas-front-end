@@ -12,14 +12,14 @@ import {
   ThemeProvider
 } from '@mui/material/styles';
 import {
-  useContext, useEffect, useRef, useState
+  useContext, useEffect, useState
 } from 'react';
 import { useForm } from 'react-hook-form';
 import closeIcon from '../../assets/close-icon.svg';
 import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
-function ModalEditClient({ client }) {
+const ModalEditClient = ({ client }) => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const { token } = useContext(AuthContext);
 
@@ -34,9 +34,6 @@ function ModalEditClient({ client }) {
   const [openModal, setOpenModal] = useState(true);
   const [requestError, setRequestError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  const thisClient = useRef();
-  thisClient.current = client;
 
   useEffect(() => {
     setZipCodeError('');
@@ -113,7 +110,7 @@ function ModalEditClient({ client }) {
     setRequestError('');
     setLoading(true);
 
-    const response = await fetch(`https://academy-bills.herokuapp.com/clients/${thisClient.current.id}`, {
+    const response = await fetch(`https://academy-bills.herokuapp.com/clients/${client.id}`, {
       method: 'PUT',
       mode: 'cors',
       headers: {
@@ -171,7 +168,7 @@ function ModalEditClient({ client }) {
             <TextField
               className={styles.fieldset}
               color='secondary'
-              defaultValue={thisClient.current.name}
+              defaultValue={client.name}
               error={!!errors.clientName}
               id='clientName'
               {...register('clientName', { required: true })}
@@ -185,7 +182,7 @@ function ModalEditClient({ client }) {
             <TextField
               className={styles.fieldset}
               color='secondary'
-              defaultValue={thisClient.current.email}
+              defaultValue={client.email}
               id='clientEmail'
               error={!!errors.clientEmail}
               {...register('clientEmail', { required: true })}
@@ -201,7 +198,7 @@ function ModalEditClient({ client }) {
             <TextField
               className={styles.fieldset}
               color='secondary'
-              defaultValue={thisClient.current.tax_id}
+              defaultValue={client.tax_id}
               id='clientTax_id'
               inputProps={{ maxLength: 11 }}
               error={!!errors.clientTax_id}
@@ -222,7 +219,7 @@ function ModalEditClient({ client }) {
             <TextField
               className={styles.fieldset}
               color='secondary'
-              defaultValue={thisClient.current.phone}
+              defaultValue={client.phone}
               id='clientPhone'
               inputProps={{ maxLength: 11 }}
               error={!!errors.clientPhone}
@@ -259,7 +256,7 @@ function ModalEditClient({ client }) {
             {errors.street ? <h4 className={styles.input__error}>Logradouro</h4> : <h4>Logradouro</h4>}
             <TextField
               className={styles.fieldset}
-              value={thisClient.current.street || street}
+              value={client.street || street}
               onChange={(e) => setStreet(e.target.value)}
               color='secondary'
               id='street'
@@ -274,7 +271,7 @@ function ModalEditClient({ client }) {
             <TextField
               className={styles.fieldset}
               color='secondary'
-              defaultValue={thisClient.current.number}
+              defaultValue={client.number}
               id='number'
               error={!!errors.number}
               {...register('number')}
@@ -290,7 +287,7 @@ function ModalEditClient({ client }) {
             <TextField
               className={styles.fieldset}
               color='secondary'
-              defaultValue={thisClient.current.address_details}
+              defaultValue={client.address_details}
               id='address_details'
               error={!!errors.address_details}
               {...register('address_details')}
@@ -304,7 +301,7 @@ function ModalEditClient({ client }) {
             {errors.district ? <h4 className={styles.input__error}>Bairro</h4> : <h4>Bairro</h4>}
             <TextField
               className={styles.fieldset}
-              value={thisClient.current.district || district}
+              value={client.district || district}
               onChange={(e) => setDistrict(e.target.value)}
               color='secondary'
               id='district'
@@ -317,7 +314,7 @@ function ModalEditClient({ client }) {
             <TextField
               className={styles.fieldset}
               color='secondary'
-              defaultValue={thisClient.current.reference}
+              defaultValue={client.reference}
               id='reference'
               error={!!errors.reference}
               {...register('reference')}
@@ -331,7 +328,7 @@ function ModalEditClient({ client }) {
             {errors.city ? <h4 className={styles.input__error}>Cidade</h4> : <h4>Cidade</h4>}
             <TextField
               className={styles.fieldset}
-              value={thisClient.current.city || city}
+              value={client.city || city}
               onChange={(e) => setCity(e.target.value)}
               color='secondary'
               id='city'
@@ -343,7 +340,7 @@ function ModalEditClient({ client }) {
             {!!stateError ? <h4 className={styles.input__error}>Estado</h4> : <h4>Estado</h4>}
             <TextField
               className={styles.fieldset}
-              value={state || thisClient.current.state}
+              value={state || client.state}
               onChange={(e) => setState(e.target.value)}
               color='secondary'
               id='state'

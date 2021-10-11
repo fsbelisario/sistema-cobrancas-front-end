@@ -1,5 +1,4 @@
 import {
-  useRef,
   useState
 } from 'react';
 import editIcon from '../../assets/edit-client-icon.svg';
@@ -13,8 +12,9 @@ function CardClient({ client }) {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
 
-  const thisClient = useRef();
-  thisClient.current = client;
+  function formatPhone(phone) {
+    return `(${phone.substr(0,2)}) ${phone.substr(2,5)}-${phone.substr(7)}`;
+  }
   
   function handleEditClient() {
     setOpenEditModal(!openEditModal);
@@ -34,7 +34,7 @@ function CardClient({ client }) {
         </div>
         <div>
           <img src={phoneIcon} alt='' />
-          <div>{client.phone}</div>
+          <div>{formatPhone(client.phone)}</div>
         </div>
       </div>
       <div className={styles.info__billing}>

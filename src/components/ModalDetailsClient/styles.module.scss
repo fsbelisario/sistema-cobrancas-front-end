@@ -14,7 +14,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2rem;
+    gap: 3rem;
     overflow-y: auto;
     overflow-x: hidden;
     padding: 2rem 4rem;
@@ -45,6 +45,7 @@
       align-self: flex-start;
       gap: 1.5rem;
       flex-direction: column;
+      width: 100%;
 
       .info__name {
         color: var(--color-dark-blue-600);
@@ -55,20 +56,26 @@
 
     .modal__content {
       display: flex;
+      align-self: flex-start;
       gap: 3.5rem;
 
       .modal__info__client {
         display: flex;
         flex-direction: column;
-        gap: 2.5rem;
+        gap: 2.8rem;
 
         .main__info__client {
           display: flex;
-          gap: 1rem;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          column-gap: 2rem;
+          row-gap: 1rem;
+          width: 100%;
   
           > div {
             display: flex;
             gap: 0.5rem;
+            width: 50%;
           }
         }
         
@@ -94,10 +101,15 @@
         }
       }
 
-      .modal__info__billing{
+      .modal__info__billing {
+        border-left: 1px solid #DDDDDD;
         display: flex;
         flex-direction: column;
-        border-left: 1px solid #DDDDDD;
+        gap: 2rem;
+        max-height: 16rem;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 0 1.75rem;
       }
     }
   }
