@@ -44,6 +44,8 @@ const ModalDetailsClient = ({ client }) => {
 
   const billings = client.billingList;
 
+  console.log(billings);
+
   return(
     <Modal
       open={openModal}
@@ -111,7 +113,9 @@ const ModalDetailsClient = ({ client }) => {
             </div>
           </div>
           <div className={styles.modal__info__billing}>
-            {billings.map((bill) => <CardDetailBill key={bill.id} bill={bill} />)}
+            {billings.length === 0
+            ? <div className={styles.no__bills}>Não há cobranças cadastradas.</div>
+            : billings.map((bill) => <CardDetailBill key={bill.id} bill={bill} />)}
           </div>
         </div>
       </div>

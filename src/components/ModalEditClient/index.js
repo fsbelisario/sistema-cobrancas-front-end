@@ -183,7 +183,6 @@ const ModalEditClient = ({ client }) => {
               <h4>Nome</h4>
               <TextField
                 {...register('clientName', { required: true })}
-                className={styles.fieldset}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 variant='outlined'
@@ -197,7 +196,6 @@ const ModalEditClient = ({ client }) => {
               <h4>E-mail</h4>
               <TextField
                 {...register('clientEmail', { required: true })}
-                className={styles.fieldset}
                 type='email'
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -216,7 +214,6 @@ const ModalEditClient = ({ client }) => {
                 {...register('clientTaxId',
                   { required: true, minLength: 11, maxLength: 11, pattern: /^[0-9]+$/i })
                 }
-                className={styles.fieldset}
                 value={taxId}
                 onChange={(e) => setTaxId(e.target.value)}
                 color='secondary'
@@ -237,7 +234,6 @@ const ModalEditClient = ({ client }) => {
                 {...register('clientPhone',
                   { required: true, minLength: 10, maxLength: 11, pattern: /^[0-9]+$/i })
                 }
-                className={styles.fieldset}
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 color='secondary'
@@ -262,7 +258,6 @@ const ModalEditClient = ({ client }) => {
                 }
                 value={zipCode}
                 onChange={(e) => setZipCode(e.target.value)}
-                className={styles.fieldset}
                 inputProps={{ maxLength: 8 }}
                 color='secondary'
                 id='zip_code'
@@ -279,7 +274,6 @@ const ModalEditClient = ({ client }) => {
             <label>
               <h4>Logradouro</h4>
               <TextField
-                className={styles.fieldset}
                 value={street}
                 onChange={(e) => setStreet(e.target.value)}
                 color='secondary'
@@ -292,7 +286,6 @@ const ModalEditClient = ({ client }) => {
             <label>
               <h4>Número</h4>
               <TextField
-                className={styles.fieldset}
                 value={number}
                 onChange={(e) => setNumber(e.target.value)}
                 color='secondary'
@@ -303,7 +296,6 @@ const ModalEditClient = ({ client }) => {
             <label>
               <h4>Complemento</h4>
               <TextField
-                className={styles.fieldset}
                 value={addressDetails}
                 onChange={(e) => setAddressDetails(e.target.value)}
                 color='secondary'
@@ -316,7 +308,6 @@ const ModalEditClient = ({ client }) => {
             <label>
               <h4>Bairro</h4>
               <TextField
-                className={styles.fieldset}
                 value={district}
                 onChange={(e) => setDistrict(e.target.value)}
                 color='secondary'
@@ -327,7 +318,6 @@ const ModalEditClient = ({ client }) => {
             <label>
               <h4>Ponto de referência</h4>
               <TextField
-                className={styles.fieldset}
                 value={reference}
                 onChange={(e) => setReference(e.target.value)}
                 color='secondary'
@@ -340,7 +330,6 @@ const ModalEditClient = ({ client }) => {
             <label>
               <h4>Cidade</h4>
               <TextField
-                className={styles.fieldset}
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 color='secondary'
@@ -351,7 +340,6 @@ const ModalEditClient = ({ client }) => {
             <label>
               {errors.state ? <h4 className={styles.input__error}>Estado</h4> : <h4>Estado</h4>}
               <TextField
-                className={styles.fieldset}
                 value={state}
                 onChange={(e) => setState(e.target.value)}
                 color='secondary'

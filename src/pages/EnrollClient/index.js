@@ -185,7 +185,6 @@ function EnrollClient() {
                 <label>
                   <h4>Nome</h4>
                   <TextField
-                    className={styles.fieldset}
                     {...register('clientName', { required: true })}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -203,7 +202,6 @@ function EnrollClient() {
                     type='email'
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className={styles.fieldset}
                     color='secondary'
                     variant='outlined'
                     error={errors.clientEmail}
@@ -222,7 +220,6 @@ function EnrollClient() {
                     value={taxId}
                     onChange={(e) => setTaxId(e.target.value)}
                     inputProps={{ maxLength: 11 }}
-                    className={styles.fieldset}
                     color='secondary'
                     variant='outlined'
                     error={errors.clientTaxId}
@@ -243,7 +240,6 @@ function EnrollClient() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     inputProps={{ maxLength: 11 }}
-                    className={styles.fieldset}
                     color='secondary'
                     id='clientPhone'
                     variant='outlined'
@@ -267,7 +263,6 @@ function EnrollClient() {
                     value={zipCode}
                     onChange={(e) => setZipCode(e.target.value)}
                     inputProps={{ maxLength: 8 }}
-                    className={styles.fieldset}
                     color='secondary'
                     variant='outlined'
                     error={errors.zip_code || zipCodeError}
@@ -282,7 +277,6 @@ function EnrollClient() {
                 <label>
                   <h4>Logradouro</h4>
                   <TextField
-                    className={styles.fieldset}
                     value={street}
                     onChange={(e) => setStreet(e.target.value)}
                     color='secondary'
@@ -295,7 +289,6 @@ function EnrollClient() {
                 <label>
                   <h4>Número</h4>
                   <TextField
-                    className={styles.fieldset}
                     value={number}
                     onChange={(e) => setNumber(e.target.value)}
                     color='secondary'
@@ -306,7 +299,6 @@ function EnrollClient() {
                 <label>
                   <h4>Complemento</h4>
                   <TextField
-                    className={styles.fieldset}
                     value={addressDetails}
                     onChange={(e) => setAddressDetails(e.target.value)}
                     color='secondary'
@@ -319,7 +311,6 @@ function EnrollClient() {
                 <label>
                   <h4>Bairro</h4>
                   <TextField
-                    className={styles.fieldset}
                     value={district}
                     onChange={(e) => setDistrict(e.target.value)}
                     color='secondary'
@@ -330,7 +321,6 @@ function EnrollClient() {
                 <label>
                   <h4>Ponto de referência</h4>
                   <TextField
-                    className={styles.fieldset}
                     value={reference}
                     onChange={(e) => setReference(e.target.value)}
                     color='secondary'
@@ -343,7 +333,6 @@ function EnrollClient() {
                 <label>
                   <h4>Cidade</h4>
                   <TextField
-                    className={styles.fieldset}
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     color='secondary'
@@ -357,7 +346,6 @@ function EnrollClient() {
                     {...register('state',
                       { minLength: 2, maxLength: 2 })
                     }
-                    className={styles.fieldset}
                     value={state}
                     onChange={(e) => setState(e.target.value)}
                     inputProps={{ maxLength: 2 }}
