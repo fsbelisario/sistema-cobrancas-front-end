@@ -1,31 +1,41 @@
 import {
   Modal
 } from '@mui/material';
-import { useState } from 'react';
+import {
+  useContext,
+  useState
+} from 'react';
 import closeIcon from '../../assets/close-icon.svg';
 import emailIcon from '../../assets/email-icon.svg';
 import phoneIcon from '../../assets/phone-icon.svg';
 import CardDetailBill from '../CardDetailBill';
+import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
 const ModalDetailsClient = ({ client }) => {
   const [openModal, setOpenModal] = useState(true);
 
+  const {
+    setResetModal
+  } = useContext(AuthContext);
+
   function formatPhone(phone) {
-    return `(${phone.substr(0,2)})${phone.substr(2,5)}-${phone.substr(7)}`;
-  }
+    return `(${phone.substr(0, 2)})${phone.substr(2, 5)}-${phone.substr(7)}`;
+  };
 
   function formatTaxId(taxId) {
-    return `${taxId.substr(0,3)}.${taxId.substr(3,3)}.${taxId.substr(6,3)}-${taxId.substr(9)}`;
-  }
+    return `${taxId.substr(0, 3)}.${taxId.substr(3, 3)}.${taxId.substr(6, 3)}-${taxId.substr(9)}`;
+  };
 
   function formatZipCode(zipCode) {
-    return `${zipCode.substr(0,5)}-${zipCode.substr(5)}`;
-  }
+    return `${zipCode.substr(0, 5)}-${zipCode.substr(5)}`;
+  };
 
   function handleDetailsClient() {
-    setOpenModal(!openModal);
-  }
+    setOpenModal(false);
+
+    setResetModal(true);
+  };
 
   const formatClient = {
     name: client.name,
@@ -44,9 +54,7 @@ const ModalDetailsClient = ({ client }) => {
 
   const billings = client.billingList;
 
-  console.log(billings);
-
-  return(
+  return (
     <Modal
       open={openModal}
       onClose={handleDetailsClient}
@@ -64,12 +72,12 @@ const ModalDetailsClient = ({ client }) => {
           <div className={styles.modal__info__client}>
             <div className={styles.main__info__client}>
               <div className={styles.info__email}>
-                  <img src={emailIcon} alt='' />
-                  <div>{formatClient.email}</div>
+                <img src={emailIcon} alt='' />
+                <div>{formatClient.email}</div>
               </div>
               <div>
-                  <img src={phoneIcon} alt='' />
-                  <div>{formatClient.phone}</div>
+                <img src={phoneIcon} alt='' />
+                <div>{formatClient.phone}</div>
               </div>
             </div>
             <div className={styles.address__info}>
@@ -84,7 +92,7 @@ const ModalDetailsClient = ({ client }) => {
                 </div>
                 <div className={styles.block__info}>
                   <h4>Cidade/Estado</h4>
-                  <p>{(formatClient.city === 'Não informado') && (formatClient.city === 'Não informado') 
+                  <p>{(formatClient.city === 'Não informado') && (formatClient.city === 'Não informado')
                     ? 'Não informado'
                     : `${formatClient.city}/${formatClient.state}`}
                   </p>
@@ -114,13 +122,13 @@ const ModalDetailsClient = ({ client }) => {
           </div>
           <div className={styles.modal__info__billing}>
             {billings.length === 0
-            ? <div className={styles.no__bills}>Não há cobranças cadastradas.</div>
-            : billings.map((bill) => <CardDetailBill key={bill.id} bill={bill} />)}
+              ? <div className={styles.no__bills}>Não há cobranças cadastradas.</div>
+              : billings.map((bill) => <CardDetailBill key={bill.id} bill={bill} />)}
           </div>
         </div>
       </div>
     </Modal>
   );
-}
+};
 
 export default ModalDetailsClient;
