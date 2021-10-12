@@ -1,3 +1,4 @@
+import { useHistory } from 'react-router';
 import { NavLink } from 'react-router-dom';
 import billIcon from '../../assets/billing-icon.svg';
 import clientIcon from '../../assets/client-icon.svg';
@@ -7,6 +8,12 @@ import NavbarItem from '../NavbarItem';
 import styles from './styles.module.scss';
 
 function Navbar() {
+  const history = useHistory();
+  
+  function handleEnrollBill() {
+    history.push('/criar-cobranca');
+  }
+
   return (
     <div className={styles.Navbar__wrapper}>
       <img src={academy} alt='Logo Academy' />
@@ -18,7 +25,7 @@ function Navbar() {
         <NavbarItem key='Navbar_1' image={homeIcon} title='Home' />
       </NavLink>
       <NavLink
-        exact to='/cobranças'
+        exact to='/cobrancas'
         activeClassName={styles.button__active}
         className={styles.navlink}
       >
@@ -31,7 +38,7 @@ function Navbar() {
       >
         <NavbarItem key='Navbar_3' image={clientIcon} title='Clientes' />
       </NavLink>
-      <button className={styles.button__addBilling}>
+      <button className={styles.button__addBilling} onClick={handleEnrollBill}>
         Criar cobrança
       </button>
     </div>
