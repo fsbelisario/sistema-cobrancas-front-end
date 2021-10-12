@@ -26,7 +26,8 @@ const ModalEditClient = ({ client }) => {
 
   const {
     setUpdateClientsList,
-    token
+    token,
+    setResetModal
   } = useContext(AuthContext);
 
   const [addressDetails, setAddressDetails] = useState(client.address_details ? client.address_details : '');
@@ -136,7 +137,7 @@ const ModalEditClient = ({ client }) => {
       setLoading(true);
 
       setTimeout(() => {
-        setOpenModal(!openModal);
+        setOpenModal(false);
       }, 2000);
 
       setUpdateClientsList(true);
@@ -158,7 +159,9 @@ const ModalEditClient = ({ client }) => {
 
     setZipCode('');
 
-    setOpenModal(!openModal);
+    setOpenModal(false);
+
+    setResetModal(true);
   }
 
   const theme = createTheme({

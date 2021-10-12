@@ -1,4 +1,6 @@
 import {
+  useContext,
+  useEffect,
   useState
 } from 'react';
 import editIcon from '../../assets/edit-client-icon.svg';
@@ -6,23 +8,41 @@ import emailIcon from '../../assets/email-icon.svg';
 import phoneIcon from '../../assets/phone-icon.svg';
 import ModalDetailsClient from '../ModalDetailsClient';
 import ModalEditClient from '../ModalEditClient';
+import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
 function CardClient({ client }) {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openDetailsModal, setOpenDetailsModal] = useState(false);
 
+  const {
+    updateClientsList, setUpdateClientsList,
+    resetModal, setResetModal
+  } = useContext(AuthContext);
+
   function formatPhone(phone) {
-    return `(${phone.substr(0,2)}) ${phone.substr(2,5)}-${phone.substr(7)}`;
-  }
-  
+    return `(${phone.substr(0, 2)}) ${phone.substr(2, 5)}-${phone.substr(7)}`;
+  };
+
   function handleEditClient() {
-    setOpenEditModal(!openEditModal);
+    setOpenEditModal(true);
   };
 
   function handleDetailsClient() {
-    setOpenDetailsModal(!openDetailsModal);
+    setOpenDetailsModal(true);
   };
+
+  useEffect(() => {
+    if (updateClientsList || resetModal) {
+      setOpenEditModal(false);
+
+      setOpenDetailsModal(false);
+
+      setUpdateClientsList(false);
+
+      setResetModal(false);
+    };
+  }, [updateClientsList, setUpdateClientsList, resetModal, setResetModal]);
 
   return (
     <div className={styles.card__wrapper}>
