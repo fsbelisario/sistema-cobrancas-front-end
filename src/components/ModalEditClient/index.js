@@ -38,12 +38,12 @@ const ModalEditClient = ({ client }) => {
   const [name, setName] = useState(client.name ? client.name : '');
   const [number, setNumber] = useState(client.number ? client.number : '');
   const [openModal, setOpenModal] = useState(true);
-  const [phone, setPhone] = useState(client.phone ? client.phone : '');
+  const [phone, setPhone] = useState(`(${client.phone.substr(0, 2)})${client.phone.substr(2, 5)}-${client.phone.substr(7)}`);
   const [reference, setReference] = useState(client.reference ? client.reference : '');
   const [requestError, setRequestError] = useState();
   const [state, setState] = useState(client.state ? client.state : '');
   const [street, setStreet] = useState(client.street ? client.street : '');
-  const [taxId, setTaxId] = useState(client.tax_id ? client.tax_id : '');
+  const [taxId, setTaxId] = useState(`${client.tax_id.substr(0, 3)}.${client.tax_id.substr(3, 3)}.${client.tax_id.substr(6, 3)}-${client.tax_id.substr(9, 2)}`);
   const [zipCode, setZipCode] = useState(client.zip_code ? client.zip_code : '');
   const [zipCodeError, setZipCodeError] = useState('');
 
@@ -100,11 +100,15 @@ const ModalEditClient = ({ client }) => {
       return;
     };
 
+    const newPhone = phone.replace('(', '').replace(')', '').replace('-', '');
+
+    const newTaxId = taxId.replace(/\./g, '').replace('-', '');
+
     const body = {
       name: name,
       email: email,
-      taxId: taxId,
-      phone: phone,
+      taxId: newTaxId,
+      phone: newPhone,
       zipCode: zipCode && zipCode,
       street: street && street,
       number: number && number,
@@ -160,6 +164,64 @@ const ModalEditClient = ({ client }) => {
     setResetModal(true);
   }
 
+  function formatPhone(phone) {
+    const newPhone = phone.replace('(', '').replace(')', '').replace('-', '');
+
+    if(newPhone.length === 0) {
+      setPhone('');
+      return;
+    };
+
+    if(newPhone.length <= 2) {
+      const finalPhone = `(${newPhone.substr(0, 2)}`;
+      setPhone(finalPhone);
+      return;
+    };
+
+    if(newPhone.length === 10) {
+      const finalPhone = `(${newPhone.substr(0, 2)})${newPhone.substr(2, 4)}-${newPhone.substr(6)}`;
+      setPhone(finalPhone);
+      return;
+    };
+    
+    if(newPhone.length > 8) {
+      const finalPhone = `(${newPhone.substr(0, 2)})${newPhone.substr(2, 5)}-${newPhone.substr(7)}`;
+      setPhone(finalPhone);
+      return;
+    };
+
+    const finalPhone = `(${newPhone.substr(0, 2)})${newPhone.substr(2, (newPhone.length - 2))}`;
+    
+    setPhone(finalPhone);
+  }
+
+  function formatTaxId(taxId) {
+    const newTaxId = taxId.replace(/\./g, '').replace('-', '');
+
+    if(newTaxId.length <= 3) {
+      setTaxId(newTaxId);
+      return;
+    };
+
+    if(newTaxId.length >= 10) {
+      const finalTaxId = `${newTaxId.substr(0, 3)}.${newTaxId.substr(3, 3)}.${newTaxId.substr(6, 3)}-${newTaxId.substr(9, (newTaxId.length - 9))}`;
+      setTaxId(finalTaxId);
+      return;
+    };
+
+    if(newTaxId.length >= 7) {
+      const finalTaxId = `${newTaxId.substr(0, 3)}.${newTaxId.substr(3, 3)}.${newTaxId.substr(6, newTaxId.length - 6)}`;
+      setTaxId(finalTaxId);
+      return;
+    };
+
+    if(newTaxId.length >= 4) {
+      const finalTaxId = `${newTaxId.substr(0, 3)}.${newTaxId.substr(3, (newTaxId.length - 3))}`;
+      setTaxId(finalTaxId);
+      return;
+    };
+  }
+
   const theme = createTheme({
     palette: {
       secondary: {
@@ -199,6 +261,7 @@ const ModalEditClient = ({ client }) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 color='secondary'
+                placeholder='exemplo@email.com'
                 variant='outlined'
                 error={!!errors.clientEmail}
               />
@@ -211,12 +274,13 @@ const ModalEditClient = ({ client }) => {
               <h4>CPF</h4>
               <TextField
                 {...register('clientTaxId',
-                  { required: true, minLength: 11, maxLength: 11, pattern: /^[0-9]+$/i })
+                  { required: true, minLength: 14, maxLength: 14, pattern: /^[0-9.-]+$/i })
                 }
                 value={taxId}
-                onChange={(e) => setTaxId(e.target.value)}
+                onChange={(e) => formatTaxId(e.target.value)}
                 color='secondary'
-                inputProps={{ maxLength: 11 }}
+                inputProps={{ maxLength: 14 }}
+                placeholder='000.000.000-00'
                 variant='outlined'
                 error={!!errors.clientTaxId}
               />
@@ -231,12 +295,13 @@ const ModalEditClient = ({ client }) => {
               <h4>Telefone</h4>
               <TextField
                 {...register('clientPhone',
-                  { required: true, minLength: 10, maxLength: 11, pattern: /^[0-9]+$/i })
+                  { required: true, minLength: 13, maxLength: 14, pattern: /^[0-9()-]+$/i })
                 }
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => formatPhone(e.target.value)}
                 color='secondary'
-                inputProps={{ maxLength: 11 }}
+                inputProps={{ maxLength: 14 }}
+                placeholder='(71)9999-9999'
                 variant='outlined'
                 error={!!errors.clientPhone}
               />
