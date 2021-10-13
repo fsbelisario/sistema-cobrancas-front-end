@@ -33,6 +33,11 @@
 
         label {
           width: 100%;
+
+          > div {
+            display: flex;
+            width: 100%;
+          }
         }
 
         input, textarea, select {
@@ -69,9 +74,15 @@
           color: var(--color-dark-blue-600);
         }
 
+        em {
+          color: var(--color-gray-300);
+          font-style: normal;
+        }
+
         & .Mui-selected {
           font-size: 0.875rem;
         }
+
         .input__wrapper {
           display: flex;
           align-items: center;
@@ -130,7 +141,15 @@
             }
           }
         }
-    
+        
+        .calendar__icon {
+          cursor: pointer;
+
+          &:hover {
+            filter: invert(17%) sepia(63%) saturate(7218%) hue-rotate(318deg) brightness(84%) contrast(106%);
+          }
+        }
+
         .snackbar {
           position: absolute;
           bottom: 0;
