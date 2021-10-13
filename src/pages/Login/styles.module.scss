@@ -3,8 +3,9 @@
   align-items: center;
   flex-direction: column;
   gap: 2rem;
+  height: 100%;
   justify-content: center;
-  height: 100vh;
+  padding: 2rem;
 
   form {
     background-color: var(--color-white);

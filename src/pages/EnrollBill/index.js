@@ -4,8 +4,7 @@ import {
   Button,
   CircularProgress,
   InputAdornment,
-  MenuItem,
-  Snackbar,
+  MenuItem, Select, Snackbar,
   TextField
 } from '@mui/material';
 import {
@@ -19,6 +18,7 @@ import {
 } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
+import calendarIcon from '../../assets/calendar-icon.svg';
 import Navbar from '../../components/Navbar';
 import UserProfile from '../../components/UserProfile';
 import AuthContext from '../../contexts/AuthContext';
@@ -34,9 +34,9 @@ function EnrollBill() {
 
   const history = useHistory();
 
-  const [clientId, setClientId] = useState('');
+  const [clientId, setClientId] = useState('Selecione um(a) cliente');
   const [description, setDescription] = useState('');
-  const [status, setStatus] = useState('');
+  const [status, setStatus] = useState('Selecione um status');
   const [value, setValue] = useState('');
   const [dueDate, setDueDate] = useState('');
 
@@ -83,11 +83,18 @@ function EnrollBill() {
 
 
   async function onSubmit() {
+    const newValue = Number(value.replace('.', '').replace(',', ''));
+
+    if(newValue === 0) {
+      setRequestError('O valor da cobrança deve ser maior que zero.');
+      return;
+    }
+
     const body = {
       clientId: clientId,
       description: description,
       status: status,
-      value: Number(value.replace(',', '')),
+      value: newValue,
       dueDate: dueDate
     };
 
@@ -105,8 +112,6 @@ function EnrollBill() {
     });
 
     const requestData = await response.json();
-
-    console.log(requestData);
 
     if (response.ok) {
       setRequestError(requestData);
@@ -130,6 +135,29 @@ function EnrollBill() {
     history.push('/cobrancas');
   };
 
+  function formatValue(value) {
+    if(value.length < 3) {
+      setValue(value);
+      return;
+    };
+
+    let newValue = value.replace(',', '');
+    newValue = newValue.replace('.', '');
+    
+    const centIndex = (newValue.length - 2);
+    const thousandIndex = (newValue.length - 5);
+
+    if(newValue.length >= 6) {
+      const finalValue = `${newValue.substr(0, thousandIndex)}.${newValue.substr(thousandIndex, 3)},${newValue.substr(centIndex, 2)}`;
+      setValue(finalValue);
+      return;
+    }
+
+    const finalValue = `${newValue.substr(0, centIndex)},${newValue.substr(centIndex, 2)}`;
+
+    setValue(finalValue);
+  }
+
   const statusOption = [
     {
       id: 'status_1',
@@ -150,8 +178,10 @@ function EnrollBill() {
   });
 
   const menuItemStyle = {
+    color: 'var(--color-gray-800)',
     display: 'flex',
-    fontSize: '0.75rem',
+    fontFamily: 'Montserrat, sans-serif',
+    fontSize: '0.875rem',
     justifyContent: 'space-between'
   }
 
@@ -166,8 +196,7 @@ function EnrollBill() {
               <div className={styles.input__wrapper}>
                 <label>
                   <h4>Cliente</h4>
-                  <TextField
-                    select
+                  <Select
                     {...register('clientId', { required: true })}
                     value={clientId}
                     onChange={(e) => setClientId(e.target.value)}
@@ -175,14 +204,18 @@ function EnrollBill() {
                     fullWidth
                     variant='outlined'
                     error={errors.clientId}
+                    sx={menuItemStyle}
                   >
+                    <MenuItem disabled value='Selecione um(a) cliente' sx={menuItemStyle}>
+                      Selecione um(a) cliente
+                    </MenuItem>
                     {listClients.map((option) => (
                       <MenuItem key={option.id} value={option.id} className={styles.input__option} sx={menuItemStyle}>
                         <div>{option.name}</div>
                         <div className={styles.option__id}>{`#${option.id}`}</div>
                       </MenuItem>
                     ))}
-                  </TextField>
+                  </Select>
                 </label>
               </div>
 
@@ -207,9 +240,7 @@ function EnrollBill() {
               <div className={styles.input__wrapper}>
                 <label>
                   <h4>Status</h4>
-                  <TextField
-                    select
-                    placeHolder='Selecione um valor'
+                  <Select
                     {...register('status', { required: true })}
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
@@ -217,13 +248,17 @@ function EnrollBill() {
                     fullWidth
                     variant='outlined'
                     error={errors.status}
-                  >
+                    sx={menuItemStyle}
+                  > 
+                    <MenuItem disabled value='Selecione um status' sx={menuItemStyle}>
+                      Selecione um status
+                    </MenuItem>
                     {statusOption.map((option) => (
                       <MenuItem key={option.id} value={option.name} sx={menuItemStyle}>
                         {option.name}
                       </MenuItem>
                     ))}
-                  </TextField>
+                  </Select>
                 </label>
               </div>
 
@@ -231,9 +266,9 @@ function EnrollBill() {
                 <label className={styles.divided__label}>
                   <h4>Valor</h4>
                   <TextField
-                    {...register('value', { required: true })}
+                    {...register('value', { required: true, pattern: /^[0-9.,]+$/ })}
                     value={value}
-                    onChange={(e) => setValue(e.target.value)}
+                    onChange={(e) => formatValue(e.target.value)}
                     InputProps={{
                       startAdornment: <InputAdornment position="start">R$</InputAdornment>,
                     }}
@@ -252,6 +287,11 @@ function EnrollBill() {
                     {...register('dueDate', { required: true })}
                     value={dueDate}
                     onChange={(e) => setDueDate(e.target.value)}
+                    InputProps={{
+                      endAdornment: <InputAdornment position="start">
+                        <img src={calendarIcon} alt='' className={styles.calendar__icon} />
+                      </InputAdornment>,
+                    }}
                     color='secondary'
                     variant='outlined'
                     error={errors.dueDate}
@@ -281,7 +321,9 @@ function EnrollBill() {
                 <Button
                   className={styles.button__states}
                   type='submit'
-                  disabled={!clientId || !description || !status || !value || !dueDate}
+                  disabled={!clientId || !description || !status || !value || !dueDate
+                    || clientId === 'Selecione um(a) cliente' || status === 'Selecione um status'
+                  }
                   variant='contained'
                 >
                   Criar Cobrança

@@ -116,7 +116,6 @@ const ModalEditClient = ({ client }) => {
     };
 
     setRequestError('');
-
     setLoading(true);
 
     const response = await fetch(`https://academy-bills.herokuapp.com/clients/${client.id}`, {
@@ -133,20 +132,17 @@ const ModalEditClient = ({ client }) => {
 
     if (response.ok) {
       setRequestError(requestData);
-
       setLoading(true);
 
       setTimeout(() => {
         setOpenModal(false);
+        setUpdateClientsList(true);
       }, 2000);
-
-      setUpdateClientsList(true);
-
+      
       return;
     };
 
     setRequestError(requestData);
-
     setLoading(false);
   };
 

@@ -31,24 +31,21 @@ function EditUserProfile({ user }) {
   const [requestError, setRequestError] = useState('');
   const [taxId, setTaxId] = useState(user.current.tax_id ? user.current.tax_id : '');
 
-  async function onSubmit(data) {
-    let newPhone = phone;
-    let newTaxId = taxId;
-
+  async function onSubmit() {
     if (user.current.phone && phone === '') {
-      newPhone = '';
+      setPhone('');
     };
 
     if (user.current.tax_id && taxId === '') {
-      newTaxId = '';
+      setTaxId('');
     };
 
     const body = {
       name: name,
       email: email,
       password: password === '' ? user.current.password : password,
-      phone: newPhone,
-      taxId: newTaxId
+      phone: phone,
+      taxId: taxId
     };
 
     setRequestError('');
