@@ -76,6 +76,7 @@ function EnrollUser() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             variant='standard'
+            fullWidth
             error={!!errors.name}
           />
           {errors.name && <p>O campo Nome é obrigatório!</p>}
@@ -83,12 +84,13 @@ function EnrollUser() {
         <label>
           {errors.email ? <h4 className={styles.input__error}>E-mail</h4> : <h4>E-mail</h4>}
           <TextField
-            placeholder='exemplo@gmail.com'
             {...register('email', { required: true })}
             type='email'
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            placeholder='exemplo@email.com'
             variant='standard'
+            fullWidth
             error={!!errors.email}
           />
           {errors.email && <p>O campo E-mail é obrigatório!</p>}
@@ -101,6 +103,7 @@ function EnrollUser() {
             onChange={(e) => setPassword(e.target.value)}
             className={styles.password__input}
             variant='standard'
+            fullWidth
             error={!!errors.password}
           />
           {errors.password?.type === 'required' && <p>O campo Senha é obrigatório!</p>}

@@ -41,10 +41,16 @@
         }
       
         .info__id {
+          text-align: center;
           width: 5%;
         }
-      
+        
+        .info__name {
+          text-align: start;
+        }
+
         .info__description {
+          text-align: start;
           width: 40%;
         }
       }

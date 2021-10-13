@@ -41,9 +41,10 @@
       > div {
         background-color: var(--color-white);
         overflow: hidden;
+        text-align: left;
         text-overflow: ellipsis;
         z-index: 1;
-  
+
         &:hover {
           overflow: visible;
         }
@@ -56,7 +57,7 @@
     align-items: center;
     gap: 2rem;
     justify-self: center;
-    width: 63%;
+    width: 60%;
 
     > div {
       width: 33%;
