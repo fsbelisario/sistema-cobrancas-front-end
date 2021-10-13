@@ -87,6 +87,7 @@ function EnrollBill() {
 
     if(newValue === 0) {
       setRequestError('O valor da cobrança deve ser maior que zero.');
+      errors.value = !!errors.value;
       return;
     }
 
@@ -141,8 +142,7 @@ function EnrollBill() {
       return;
     };
 
-    let newValue = value.replace(',', '');
-    newValue = newValue.replace('.', '');
+    const newValue = value.replace(',', '').replace('.', '');
     
     const centIndex = (newValue.length - 2);
     const thousandIndex = (newValue.length - 5);
@@ -264,7 +264,7 @@ function EnrollBill() {
 
               <div className={styles.input__wrapper}>
                 <label className={styles.divided__label}>
-                  <h4>Valor</h4>
+                  {errors.value ? <h4 className={styles.input__error}>Valor</h4> : <h4>Valor</h4>}
                   <TextField
                     {...register('value', { required: true, pattern: /^[0-9.,]+$/ })}
                     value={value}
@@ -273,11 +273,11 @@ function EnrollBill() {
                       startAdornment: <InputAdornment position="start">R$</InputAdornment>,
                     }}
                     color='secondary'
-                    id='clientPhone'
                     placeholder='0,00'
                     variant='outlined'
-                    error={errors.value}
+                    error={!!errors.value}
                   />
+                  {errors.value?.type === 'pattern' && <p className={styles.alert__error}>O valor deve conter apenas números</p>}
                 </label>
                 
                 <label className={styles.divided__label}>

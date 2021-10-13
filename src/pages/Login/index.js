@@ -89,8 +89,9 @@ function Login() {
         <label>
           <h4>E-mail</h4>
           <TextField
-            placeholder='exemplo@gmail.com'
+            placeholder='exemplo@email.com'
             type='email'
+            fullWidth
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             variant='standard'
@@ -101,6 +102,7 @@ function Login() {
           <PasswordInput
             register={() => register('password')}
             value={password}
+            fullWidth
             onChange={(e) => setPassword(e.target.value)}
             className={styles.password__input}
             variant='standard'

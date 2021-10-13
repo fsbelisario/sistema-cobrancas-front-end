@@ -37,6 +37,13 @@
           > div {
             display: flex;
             width: 100%;
+
+            > div {
+              display: flex;
+              gap: 0.5rem;
+              justify-content: space-between;
+              width: 100%;
+            }
           }
         }
 
@@ -44,7 +51,7 @@
           display: flex;
           color: var(--color-gray-800);
           font-family: 'Montserrat', sans-serif;
-          font-size: 0.75rem;
+          font-size: 0.875rem;
           padding: 0.75rem;
           width: 100%;
         }
@@ -74,18 +81,26 @@
           color: var(--color-dark-blue-600);
         }
 
+        .alert__error{
+          color: var(--color-red);
+          font-family: 'Montserrat', sans-serif;
+          font-size: 0.75rem;
+          font-weight: 400;
+          letter-spacing: 0.03333em;
+          line-height: 1.66;
+          margin-top: 3px;
+          margin-bottom: -1.441rem;
+          max-width: 17.5rem;
+          text-align: center;
+        }
+
         em {
           color: var(--color-gray-300);
           font-style: normal;
         }
 
-        & .Mui-selected {
-          font-size: 0.875rem;
-        }
-
         .input__wrapper {
           display: flex;
-          align-items: center;
           column-gap: 1rem;
           row-gap: 2rem;
           justify-content: center;
@@ -98,7 +113,6 @@
         
         .option__id {
           color: var(--color-gray-300);
-          margin-right: auto;
         }
 
         .button__wrapper {

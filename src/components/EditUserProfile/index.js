@@ -27,9 +27,15 @@ function EditUserProfile({ user }) {
   const [name, setName] = useState(user.current.name);
   const [open, setOpen] = useState(true);
   const [password, setPassword] = useState('');
-  const [phone, setPhone] = useState(user.current.phone ? user.current.phone : '');
+  const [phone, setPhone] = useState(user.current.phone 
+    ? `(${user.current.phone.substr(0, 2)})${user.current.phone.substr(2, 5)}-${user.current.phone.substr(7)}` 
+    : ''
+  );
   const [requestError, setRequestError] = useState('');
-  const [taxId, setTaxId] = useState(user.current.tax_id ? user.current.tax_id : '');
+  const [taxId, setTaxId] = useState(user.current.tax_id 
+    ? `${user.current.tax_id.substr(0, 3)}.${user.current.tax_id.substr(3, 3)}.${user.current.tax_id.substr(6, 3)}-${user.current.tax_id.substr(9, 2)}` 
+    : ''
+  );
 
   async function onSubmit() {
     if (user.current.phone && phone === '') {
@@ -40,12 +46,16 @@ function EditUserProfile({ user }) {
       setTaxId('');
     };
 
+    const newPhone = phone.replace('(', '').replace(')', '').replace('-', '');
+
+    const newTaxId = taxId.replace(/\./g, '').replace('-', '');
+
     const body = {
       name: name,
       email: email,
       password: password === '' ? user.current.password : password,
-      phone: phone,
-      taxId: taxId
+      phone: phone === '' ? phone : newPhone,
+      taxId: taxId === '' ? taxId : newTaxId
     };
 
     setRequestError('');
@@ -83,6 +93,64 @@ function EditUserProfile({ user }) {
   function handleModalClose() {
     setOpen(!open);
   };
+
+  function formatPhone(phone) {
+    const newPhone = phone.replace('(', '').replace(')', '').replace('-', '');
+
+    if(newPhone.length === 0) {
+      setPhone('');
+      return;
+    };
+
+    if(newPhone.length <= 2) {
+      const finalPhone = `(${newPhone.substr(0, 2)}`;
+      setPhone(finalPhone);
+      return;
+    };
+
+    if(newPhone.length === 10) {
+      const finalPhone = `(${newPhone.substr(0, 2)})${newPhone.substr(2, 4)}-${newPhone.substr(6)}`;
+      setPhone(finalPhone);
+      return;
+    };
+    
+    if(newPhone.length > 8) {
+      const finalPhone = `(${newPhone.substr(0, 2)})${newPhone.substr(2, 5)}-${newPhone.substr(7)}`;
+      setPhone(finalPhone);
+      return;
+    };
+
+    const finalPhone = `(${newPhone.substr(0, 2)})${newPhone.substr(2, (newPhone.length - 2))}`;
+    
+    setPhone(finalPhone);
+  }
+
+  function formatTaxId(taxId) {
+    const newTaxId = taxId.replace(/\./g, '').replace('-', '');
+
+    if(newTaxId.length <= 3) {
+      setTaxId(newTaxId);
+      return;
+    };
+
+    if(newTaxId.length >= 10) {
+      const finalTaxId = `${newTaxId.substr(0, 3)}.${newTaxId.substr(3, 3)}.${newTaxId.substr(6, 3)}-${newTaxId.substr(9, (newTaxId.length - 9))}`;
+      setTaxId(finalTaxId);
+      return;
+    };
+
+    if(newTaxId.length >= 7) {
+      const finalTaxId = `${newTaxId.substr(0, 3)}.${newTaxId.substr(3, 3)}.${newTaxId.substr(6, newTaxId.length - 6)}`;
+      setTaxId(finalTaxId);
+      return;
+    };
+
+    if(newTaxId.length >= 4) {
+      const finalTaxId = `${newTaxId.substr(0, 3)}.${newTaxId.substr(3, (newTaxId.length - 3))}`;
+      setTaxId(finalTaxId);
+      return;
+    };
+  }
 
   return (
     <Modal
@@ -127,11 +195,11 @@ function EditUserProfile({ user }) {
         <label>
           {errors.phone ? <h4 className={styles.input__error}>Telefone</h4> : <h4>Telefone</h4>}
           <TextField
-            {...register('phone', { minLength: 10, maxLength: 11, pattern: /^[0-9]+$/i })}
+            {...register('phone', { minLength: 13, maxLength: 14, pattern: /^[0-9()-]+$/i })}
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            inputProps={{ maxLength: 11 }}
-            placeholder='(71) 9999-9999'
+            onChange={(e) => formatPhone(e.target.value)}
+            inputProps={{ maxLength: 14 }}
+            placeholder='(71)9999-9999'
             variant='standard'
             error={!!errors.phone}
           />
@@ -143,10 +211,10 @@ function EditUserProfile({ user }) {
         <label>
           {errors.tax_id ? <h4 className={styles.input__error}>CPF</h4> : <h4>CPF</h4>}
           <TextField
-            {...register('tax_id', { minLength: 11, maxLength: 11, pattern: /^[0-9]+$/i })}
+            {...register('tax_id', { minLength: 14, maxLength: 14, pattern: /^[0-9.-]+$/i })}
             value={taxId}
-            onChange={(e) => setTaxId(e.target.value)}
-            inputProps={{ maxLength: 11 }}
+            onChange={(e) => formatTaxId(e.target.value)}
+            inputProps={{ maxLength: 14 }}
             placeholder='000.000.000-00'
             variant='standard'
             error={!!errors.tax_id}
