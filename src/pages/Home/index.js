@@ -1,4 +1,8 @@
 import {
+  Backdrop,
+  CircularProgress
+} from '@mui/material';
+import {
   useContext,
   useEffect,
   useState
@@ -23,6 +27,7 @@ function Home() {
   const [overdueBillings, setOverdueBillings] = useState(0);
   const [dueBillings, setDueBillings] = useState(0);
   const [paidBillings, setPaidBillings] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setToken(tokenLS);
@@ -34,6 +39,8 @@ function Home() {
     };
 
     async function retrieveData() {
+      setLoading(true);
+
       const response = await fetch('https://academy-bills.herokuapp.com/management', {
         method: 'GET',
         mode: 'cors',
@@ -45,11 +52,13 @@ function Home() {
 
       const requestData = await response.json();
 
-      setOverdueClients(requestData.overdueClients)
-      setOnTimeClients(requestData.onTimeClients)
-      setOverdueBillings(requestData.overdueBillings)
-      setDueBillings(requestData.dueBillings)
-      setPaidBillings(requestData.paidBillings)
+      setOverdueClients(requestData.overdueClients);
+      setOnTimeClients(requestData.onTimeClients);
+      setOverdueBillings(requestData.overdueBillings);
+      setDueBillings(requestData.dueBillings);
+      setPaidBillings(requestData.paidBillings);
+
+      setLoading(false);
     };
 
     retrieveData();
@@ -80,6 +89,7 @@ function Home() {
               />
             ]}
           />
+
           <CardHome
             key='bill'
             icon={billIcon}
@@ -105,6 +115,16 @@ function Home() {
               />
             ]}
           />
+
+          <Backdrop
+            sx={{
+              color: 'var(--color-white)',
+              zIndex: (theme) => theme.zIndex.drawer + 1
+            }}
+            open={loading}
+          >
+            <CircularProgress color='inherit' />
+          </Backdrop>
         </div>
       </div>
     </div>
