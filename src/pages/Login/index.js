@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 import {
   useContext,
+  useEffect,
   useState
 } from 'react';
 import { useForm } from 'react-hook-form';
@@ -21,46 +22,59 @@ import PasswordInput from './../../components/PasswordInput';
 import styles from './styles.module.scss';
 
 function Login() {
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  const { setToken, setTokenLS } = useContext(AuthContext);
+  const { register, handleSubmit } = useForm();
+
+  const {
+    token, setToken,
+    tokenLS, setTokenLS
+  } = useContext(AuthContext);
+
   const history = useHistory();
 
-  const [requestError, setRequestError] = useState('');
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState('');
+  const [requestError, setRequestError] = useState('');
+
+  useEffect(() => {
+    if (tokenLS) {
+      if (!token) {
+        setToken(tokenLS);
+      };
+      history.push('./home');
+
+      return;
+    };
+  }, [token, setToken, tokenLS, history]);
 
   async function onSubmit(data) {
     const body = {
-      email: data.email,
-      password: data.password
+      email: email,
+      password: password
     };
 
     setRequestError('');
     setLoading(true);
 
-    try {
-      const response = await fetch('https://academy-bills.herokuapp.com/login', {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          'Content-type': 'application/json',
-        },
-        body: JSON.stringify(body)
-      });
+    const response = await fetch('https://academy-bills.herokuapp.com/login', {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify(body)
+    });
 
-      const requestData = await response.json();
+    const requestData = await response.json();
 
-      if (response.ok) {
-        setToken(requestData.token);
-        setTokenLS(requestData.token);
-        history.push('/home');
-        return;
-      };
-
-      setRequestError(requestData);
-    } catch (error) {
-      setRequestError(error.message);
+    if (response.ok) {
+      setToken(requestData.token);
+      setTokenLS(requestData.token);
+      history.push('/home');
+      return;
     };
 
+    setRequestError(requestData);
     setLoading(false);
   };
 
@@ -73,26 +87,24 @@ function Login() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <img src={academy} alt='Logo Academy' />
         <label>
-          {errors.email ? <h4 className={styles.input__error}>E-mail</h4> : <h4>E-mail</h4>}
+          <h4>E-mail</h4>
           <TextField
-            {...register('email', { required: true })}
-            id='email'
             placeholder='exemplo@gmail.com'
+            type='email'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             variant='standard'
-            error={!!errors.email}
           />
-          {!!errors.email && <p>O campo E-mail é obrigatório!</p>}
         </label>
         <label>
-          {errors.password ? <h4 className={styles.input__error}>Senha</h4> : <h4>Senha</h4>}
+          <h4>Senha</h4>
           <PasswordInput
-            register={() => register('password', { required: true })}
-            id='password'
+            register={() => register('password')}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className={styles.password__input}
             variant='standard'
-            error={!!errors.password}
           />
-          {!!errors.password && <p>O campo Senha é obrigatório!</p>}
         </label>
 
         <Snackbar
@@ -110,7 +122,7 @@ function Login() {
         <Button
           className={styles.button__states}
           type='submit'
-          disabled={false}
+          disabled={!email || !password}
           variant='contained'
         >
           Entrar

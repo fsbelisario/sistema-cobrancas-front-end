@@ -1,5 +1,6 @@
 import {
   Backdrop,
+  Button,
   CircularProgress
 } from '@mui/material';
 import {
@@ -8,16 +9,22 @@ import {
   useState
 } from 'react';
 import { useHistory } from 'react-router';
-import CardBill from '../../components/CardBill';
+import CardClient from '../../components/CardClient';
 import Navbar from '../../components/Navbar';
 import UserProfile from '../../components/UserProfile';
 import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
-function Billing() {
-  const { token, setToken, tokenLS } = useContext(AuthContext);
+function ListClient() {
+  const {
+    token, setToken,
+    tokenLS,
+    updateClientsList, setUpdateClientsList
+  } = useContext(AuthContext);
+
   const history = useHistory();
-  const [billList, setBillList] = useState([]);
+
+  const [clientList, setClientList] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -26,12 +33,11 @@ function Billing() {
       history.push('/');
       return;
     };
-
-    async function getBillings() {
-
+    
+    async function getClientsList() {
       setLoading(true);
-
-      const response = await fetch('https://academy-bills.herokuapp.com/billings', {
+  
+      const response = await fetch('https://academy-bills.herokuapp.com/clients', {
         method: 'GET',
         mode: 'cors',
         headers: {
@@ -39,15 +45,26 @@ function Billing() {
           'Authorization': `Bearer ${token}`
         }
       });
-
+  
       const requestData = await response.json();
-      setBillList(requestData);
-
+  
+      setClientList(requestData);
+  
       setLoading(false);
-    }
+    };
+    
+    getClientsList();
 
-    getBillings();
-  }, [token, setToken, tokenLS, history]);
+    if (updateClientsList) {
+      getClientsList();
+  
+      setUpdateClientsList(false);
+    };
+  }, [token, setToken, tokenLS, history, updateClientsList, setUpdateClientsList]);
+
+  function enrollClient() {
+    history.push('/adicionar-cliente');
+  };
 
   return (
     <div className={styles.content__wrapper}>
@@ -55,15 +72,26 @@ function Billing() {
       <div className={styles.main__content}>
         <UserProfile />
         <div className={styles.content}>
+          <Button
+            className={styles.button__client}
+            onClick={enrollClient}
+            variant='contained'
+          >
+            Adicionar cliente
+          </Button>
           <div className={styles.table__title}>
-            <div className={styles.info__id}>ID</div>
-            <div className={styles.info__name}>Cliente</div>
-            <div className={styles.info__description}>Descrição</div>
-            <div>Valor</div>
-            <div>Status</div>
-            <div>Vencimento</div>
+            <div className={styles.table__client}>
+              Cliente
+            </div>
+            <div className={styles.table__others}>
+              <div>Cobranças Feitas</div>
+              <div>Cobranças Recebidas</div>
+              <div>Status</div>
+            </div>
+            <div className={styles.blank__space}>
+            </div>
           </div>
-          {billList.map((bill) => <CardBill key={bill.id} bill={bill} />)}
+          {clientList.map((client) => <CardClient key={client.id} client={client} />)}
           <Backdrop
             sx={{
               color: 'var(--color-white)',
@@ -77,6 +105,6 @@ function Billing() {
       </div>
     </div>
   );
-};
+}
 
-export default Billing;
+export default ListClient;

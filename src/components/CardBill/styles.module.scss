@@ -1,0 +1,57 @@
+.card__wrapper{
+  background-color: var(--color-white);
+  border-radius: 0.5rem;
+  color: var(--color-gray-500);
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 1rem 3.5rem 1rem 1.5rem;
+  text-align: center;
+  width: 100%;
+
+  > div {
+    width: 20%;
+  }
+
+  .info__id {
+    font-weight: 700;
+    width: 5%;
+  }
+
+  .info__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:hover {
+      overflow: visible;
+    }
+  }
+
+  .info__description {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 40%;
+
+    &:hover {
+      overflow: visible;
+    }
+  }
+
+  .text__green {
+    color: var(--color-green);
+    font-weight: 600;
+  }
+  
+  .text__red {
+    color: var(--color-red);
+    font-weight: 600;
+  }
+  
+  .text__blue {
+    color: var(--color-blue);
+    font-weight: 600;
+  }
+}
