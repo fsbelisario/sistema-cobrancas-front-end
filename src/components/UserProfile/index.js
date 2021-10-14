@@ -16,6 +16,7 @@ import styles from './styles.module.scss';
 function UserProfile() {
   const [editProfile, setEditProfile] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [requestResult, setRequestResult] = useState('');
 
   const history = useHistory();
 
@@ -28,18 +29,28 @@ function UserProfile() {
 
   useEffect(() => {
     async function getProfile() {
-      const response = await fetch('https://academy-bills.herokuapp.com/profile', {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-          'Content-type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      try {
+        setRequestResult('');
 
-      const requestData = await response.json();
+        const response = await fetch('https://academy-bills.herokuapp.com/profile', {
+          method: 'GET',
+          mode: 'cors',
+          headers: {
+            'Content-type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
 
-      user.current = requestData;
+        const requestData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(requestData);
+        };
+
+        user.current = requestData;
+      } catch (error) {
+        setRequestResult(error.message);
+      };
     };
 
     getProfile();
@@ -47,23 +58,18 @@ function UserProfile() {
 
   function handleIsVisible() {
     setIsVisible(!isVisible);
-
     setEditProfile(false);
   };
 
   function handleEditProfile() {
     setEditProfile(!editProfile);
-
     setIsVisible(!isVisible);
   };
 
   function handleLogout() {
     user.current = '';
-
     setToken('');
-
     removeTokenLS();
-
     history.push('/');
   };
 
