@@ -28,37 +28,46 @@ function Home() {
   const [dueBillings, setDueBillings] = useState(0);
   const [paidBillings, setPaidBillings] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [requestResult, setRequestResult] = useState('');
 
   useEffect(() => {
     setToken(tokenLS);
 
     if (!token) {
       history.push('/');
-
       return;
     };
 
     async function retrieveData() {
-      setLoading(true);
+      try {
+        setRequestResult('');
+        setLoading(true);
 
-      const response = await fetch('https://academy-bills.herokuapp.com/management', {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-          'Content-type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
+        const response = await fetch('https://academy-bills.herokuapp.com/management', {
+          method: 'GET',
+          mode: 'cors',
+          headers: {
+            'Content-type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
 
-      const requestData = await response.json();
+        const requestData = await response.json();
 
-      setOverdueClients(requestData.overdueClients);
-      setOnTimeClients(requestData.onTimeClients);
-      setOverdueBillings(requestData.overdueBillings);
-      setDueBillings(requestData.dueBillings);
-      setPaidBillings(requestData.paidBillings);
+        if (!response.ok) {
+          throw new Error(requestData);
+        };
 
-      setLoading(false);
+        setOverdueClients(requestData.overdueClients);
+        setOnTimeClients(requestData.onTimeClients);
+        setOverdueBillings(requestData.overdueBillings);
+        setDueBillings(requestData.dueBillings);
+        setPaidBillings(requestData.paidBillings);
+      } catch (error) {
+        setRequestResult(error.message);
+      } finally {
+        setLoading(false);
+      };
     };
 
     retrieveData();
@@ -89,7 +98,6 @@ function Home() {
               />
             ]}
           />
-
           <CardHome
             key='bill'
             icon={billIcon}
@@ -115,7 +123,6 @@ function Home() {
               />
             ]}
           />
-
           <Backdrop
             sx={{
               color: 'var(--color-white)',

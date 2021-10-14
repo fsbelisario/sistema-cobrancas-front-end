@@ -16,9 +16,12 @@ import styles from './styles.module.scss';
 
 function Billing() {
   const { token, setToken, tokenLS } = useContext(AuthContext);
+
   const history = useHistory();
+
   const [billList, setBillList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [requestResult, setRequestResult] = useState('');
 
   useEffect(() => {
     setToken(tokenLS);
@@ -28,23 +31,32 @@ function Billing() {
     };
 
     async function getBillings() {
+      try {
+        setRequestResult('');
+        setLoading(true);
 
-      setLoading(true);
+        const response = await fetch('https://academy-bills.herokuapp.com/billings', {
+          method: 'GET',
+          mode: 'cors',
+          headers: {
+            'Content-type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
 
-      const response = await fetch('https://academy-bills.herokuapp.com/billings', {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-          'Content-type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
+        const requestData = await response.json();
 
-      const requestData = await response.json();
-      setBillList(requestData);
+        if (!response.ok) {
+          throw new Error(requestData);
+        };
 
-      setLoading(false);
-    }
+        setBillList(requestData);
+      } catch (error) {
+        setRequestResult(error.message);
+      } finally {
+        setLoading(false);
+      };
+    };
 
     getBillings();
   }, [token, setToken, tokenLS, history]);

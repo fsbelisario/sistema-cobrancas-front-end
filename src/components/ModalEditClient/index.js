@@ -46,96 +46,95 @@ const ModalEditClient = ({ client, openEditModal, setOpenEditModal }) => {
   const [zipCodeError, setZipCodeError] = useState('');
 
   useEffect(() => {
-    if (zipCode !== client.zip_code) {
-      setZipCodeError('');
-      setStreet('');
-      setDistrict('');
-      setCity('');
-      setState('');
+    setZipCodeError('');
+    setStreet('');
+    setDistrict('');
+    setCity('');
+    setState('');
 
-      async function retrieveAddress() {
+    async function retrieveAddress() {
+      try {
+        setRequestResult('');
         setLoading(true);
 
         const response = await fetch(`https://viacep.com.br/ws/${zipCode}/json/`);
 
-        if (response.ok) {
-          const requestData = await response.json();
+        const requestData = await response.json();
 
-          if (!requestData.erro) {
-            setZipCodeError('');
-            setStreet(requestData.logradouro);
-            setDistrict(requestData.bairro);
-            setCity(requestData.localidade);
-            setState(requestData.uf);
-            return;
-          };
-
-          setZipCodeError('CEP inválido.');
-        } else {
-          setZipCodeError('CEP inválido.');
+        if (requestData.erro) {
+          throw new Error('CEP inválido.');
         };
-      };
 
-      if (zipCode.length === 8 && !!Number(zipCode)) {
-        retrieveAddress();
+        setStreet(requestData.logradouro);
+        setDistrict(requestData.bairro);
+        setCity(requestData.localidade);
+        setState(requestData.uf);
+      } catch (error) {
+        setZipCodeError(error.message);
+      } finally {
+        setLoading(false);
       };
+    };
 
-      setLoading(false);
+    if (zipCode.length === 8 && !!Number(zipCode) && zipCode !== client.zip_code) {
+      retrieveAddress();
     };
   }, [client.zip_code, zipCode, openEditModal]);
 
   async function onSubmit() {
-    if (!!zipCodeError) {
-      return;
-    };
+    try {
+      if (!!zipCodeError) {
+        return;
+      };
 
-    const newPhone = phone.replace('(', '').replace(')', '').replace('-', '');
-    const newTaxId = taxId.replace(/\./g, '').replace('-', '');
+      const newPhone = phone.replace('(', '').replace(')', '').replace('-', '');
+      const newTaxId = taxId.replace(/\./g, '').replace('-', '');
 
-    const body = {
-      name: name,
-      email: email,
-      taxId: newTaxId,
-      phone: newPhone,
-      zipCode: zipCode && zipCode,
-      street: street && street,
-      number: number && number,
-      addressDetails: addressDetails && addressDetails,
-      district: district && district,
-      reference: reference && reference,
-      city: city && city,
-      state: state && state
-    };
+      const body = {
+        name: name,
+        email: email,
+        taxId: newTaxId,
+        phone: newPhone,
+        zipCode: zipCode && zipCode,
+        street: street && street,
+        number: number && number,
+        addressDetails: addressDetails && addressDetails,
+        district: district && district,
+        reference: reference && reference,
+        city: city && city,
+        state: state && state
+      };
 
-    setRequestResult('');
-    setLoading(true);
-
-    const response = await fetch(`https://academy-bills.herokuapp.com/clients/${client.id}`, {
-      method: 'PUT',
-      mode: 'cors',
-      headers: {
-        'Content-type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(body)
-    });
-
-    const requestData = await response.json();
-
-    if (response.ok) {
-      setRequestResult(requestData);
+      setRequestResult('');
       setLoading(true);
 
+      const response = await fetch(`https://academy-bills.herokuapp.com/clients/${client.id}`, {
+        method: 'PUT',
+        mode: 'cors',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(body)
+      });
+
+      const requestData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(requestData);
+      };
+
+      setRequestResult(requestData);
+      setLoading(true);
       setTimeout(() => {
         setOpenEditModal(false);
         setUpdateClientsList(true);
       }, 2000);
-
-      return;
+    } catch (error) {
+      setRequestResult(error.message);
+    } finally {
+      setLoading(false);
     };
-
-    setRequestResult(requestData);
-    setLoading(false);
   };
 
   function handleAlertClose() {

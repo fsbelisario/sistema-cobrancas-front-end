@@ -26,6 +26,7 @@ function ListClient() {
 
   const [clientList, setClientList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [requestResult, setRequestResult] = useState('');
 
   useEffect(() => {
     setToken(tokenLS);
@@ -33,31 +34,39 @@ function ListClient() {
       history.push('/');
       return;
     };
-    
+
     async function getClientsList() {
-      setLoading(true);
-  
-      const response = await fetch('https://academy-bills.herokuapp.com/clients', {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-          'Content-type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
-  
-      const requestData = await response.json();
-  
-      setClientList(requestData);
-  
-      setLoading(false);
+      try {
+        setRequestResult('');
+        setLoading(true);
+
+        const response = await fetch('https://academy-bills.herokuapp.com/clients', {
+          method: 'GET',
+          mode: 'cors',
+          headers: {
+            'Content-type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const requestData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(requestData);
+        };
+
+        setClientList(requestData);
+      } catch (error) {
+        setRequestResult(error.message);
+      } finally {
+        setLoading(false);
+      };
     };
-    
+
     getClientsList();
 
     if (updateClientsList) {
       getClientsList();
-  
       setUpdateClientsList(false);
     };
   }, [token, setToken, tokenLS, history, updateClientsList, setUpdateClientsList]);
@@ -105,6 +114,6 @@ function ListClient() {
       </div>
     </div>
   );
-}
+};
 
 export default ListClient;
