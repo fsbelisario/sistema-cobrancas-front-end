@@ -97,54 +97,58 @@ function EnrollClient() {
   }, [zipCode]);
 
   async function onSubmit() {
-    if (!!zipCodeError) {
-      return;
-    };
+    try {
+      if (!!zipCodeError) {
+        return;
+      };
 
-    const newTaxId = taxId.replace(/\./g, '').replace('-', '');
-    const newPhone = phone.replace('(', '').replace(')', '').replace('-', '');
+      const newTaxId = taxId.replace(/\./g, '').replace('-', '');
+      const newPhone = phone.replace('(', '').replace(')', '').replace('-', '');
 
-    const body = {
-      name: name,
-      email: email,
-      taxId: newTaxId,
-      phone: newPhone,
-      zipCode: zipCode && zipCode,
-      street: street && street,
-      number: number && number,
-      addressDetails: addressDetails && addressDetails,
-      district: district && district,
-      reference: reference && reference,
-      city: city && city,
-      state: state && state
-    };
+      const body = {
+        name: name,
+        email: email,
+        taxId: newTaxId,
+        phone: newPhone,
+        zipCode: zipCode && zipCode,
+        street: street && street,
+        number: number && number,
+        addressDetails: addressDetails && addressDetails,
+        district: district && district,
+        reference: reference && reference,
+        city: city && city,
+        state: state && state
+      };
 
-    setRequestResult('');
-    setLoading(true);
+      setRequestResult('');
+      setLoading(true);
 
-    const response = await fetch('https://academy-bills.herokuapp.com/clients', {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(body)
-    });
+      const response = await fetch('https://academy-bills.herokuapp.com/clients', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(body)
+      });
 
-    const requestData = await response.json();
+      const requestData = await response.json();
 
-    if (response.ok) {
+      if (!response.ok) {
+        throw new Error(requestData);
+      };
+
       setRequestResult(requestData);
       setLoading(true);
       setTimeout(() => {
         history.push('/clientes');
       }, 2000);
-      return;
+    } catch (error) {
+      setRequestResult(error.message);
+    } finally {
+      setLoading(false);
     };
-
-    setRequestResult(requestData);
-    setLoading(false);
   };
 
   function handleAlertClose() {
