@@ -34,7 +34,7 @@ function Login() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState('');
-  const [requestError, setRequestError] = useState('');
+  const [requestResult, setRequestResult] = useState('');
 
   useEffect(() => {
     if (tokenLS) {
@@ -53,7 +53,7 @@ function Login() {
       password: password
     };
 
-    setRequestError('');
+    setRequestResult('');
     setLoading(true);
 
     const response = await fetch('https://academy-bills.herokuapp.com/login', {
@@ -74,12 +74,12 @@ function Login() {
       return;
     };
 
-    setRequestError(requestData);
+    setRequestResult(requestData);
     setLoading(false);
   };
 
   function handleAlertClose() {
-    setRequestError('');
+    setRequestResult('');
   };
 
   return (
@@ -111,13 +111,13 @@ function Login() {
 
         <Snackbar
           className={styles.snackbar}
-          open={!!requestError}
+          open={!!requestResult}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           autoHideDuration={3000}
           onClose={handleAlertClose}
         >
           <Alert severity='error'>
-            {requestError}
+            {requestResult}
           </Alert>
         </Snackbar>
 

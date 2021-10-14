@@ -25,7 +25,7 @@ function EnrollUser() {
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
-  const [requestError, setRequestError] = useState('');
+  const [requestResult, setRequestResult] = useState('');
 
   async function onSubmit(data) {
     const body = {
@@ -34,7 +34,7 @@ function EnrollUser() {
       password: password
     };
 
-    setRequestError('');
+    setRequestResult('');
     setLoading(true);
 
     const response = await fetch('https://academy-bills.herokuapp.com/users', {
@@ -47,9 +47,9 @@ function EnrollUser() {
     });
 
     const requestData = await response.json();
-    
+
     if (response.ok) {
-      setRequestError(requestData);
+      setRequestResult(requestData);
       setLoading(true);
       setTimeout(() => {
         history.push('/');
@@ -57,12 +57,12 @@ function EnrollUser() {
       return;
     };
 
-    setRequestError(requestData);
+    setRequestResult(requestData);
     setLoading(false);
   };
 
   function handleAlertClose() {
-    setRequestError('');
+    setRequestResult('');
   };
 
   return (
@@ -113,11 +113,11 @@ function EnrollUser() {
         <Snackbar
           className={styles.snackbar}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          open={!!requestError}
+          open={!!requestResult}
           autoHideDuration={3000}
           onClose={handleAlertClose}>
-          <Alert severity={requestError === 'Usuário cadastrado com sucesso.' ? 'success' : 'error'}>
-            {requestError}
+          <Alert severity={requestResult === 'Usuário cadastrado com sucesso.' ? 'success' : 'error'}>
+            {requestResult}
           </Alert>
         </Snackbar>
 

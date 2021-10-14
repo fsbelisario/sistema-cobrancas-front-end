@@ -27,13 +27,13 @@ function EditUserProfile({ user }) {
   const [name, setName] = useState(user.current.name);
   const [open, setOpen] = useState(true);
   const [password, setPassword] = useState('');
-  const [phone, setPhone] = useState(user.current.phone 
-    ? `(${user.current.phone.substr(0, 2)})${user.current.phone.substr(2, 5)}-${user.current.phone.substr(7)}` 
+  const [phone, setPhone] = useState(user.current.phone
+    ? `(${user.current.phone.substr(0, 2)})${user.current.phone.substr(2, 5)}-${user.current.phone.substr(7)}`
     : ''
   );
-  const [requestError, setRequestError] = useState('');
-  const [taxId, setTaxId] = useState(user.current.tax_id 
-    ? `${user.current.tax_id.substr(0, 3)}.${user.current.tax_id.substr(3, 3)}.${user.current.tax_id.substr(6, 3)}-${user.current.tax_id.substr(9, 2)}` 
+  const [requestResult, setRequestResult] = useState('');
+  const [taxId, setTaxId] = useState(user.current.tax_id
+    ? `${user.current.tax_id.substr(0, 3)}.${user.current.tax_id.substr(3, 3)}.${user.current.tax_id.substr(6, 3)}-${user.current.tax_id.substr(9, 2)}`
     : ''
   );
 
@@ -58,7 +58,7 @@ function EditUserProfile({ user }) {
       taxId: taxId === '' ? taxId : newTaxId
     };
 
-    setRequestError('');
+    setRequestResult('');
     setLoading(true);
 
     const response = await fetch('https://academy-bills.herokuapp.com/profile', {
@@ -74,7 +74,7 @@ function EditUserProfile({ user }) {
     const requestData = await response.json();
 
     if (response.ok) {
-      setRequestError(requestData);
+      setRequestResult(requestData);
       setLoading(true);
       setTimeout(() => {
         setOpen(!open);
@@ -82,12 +82,12 @@ function EditUserProfile({ user }) {
       return;
     };
 
-    setRequestError(requestData);
+    setRequestResult(requestData);
     setLoading(false);
   };
 
   function handleAlertClose() {
-    setRequestError('');
+    setRequestResult('');
   };
 
   function handleModalClose() {
@@ -97,55 +97,55 @@ function EditUserProfile({ user }) {
   function formatPhone(phone) {
     const newPhone = phone.replace('(', '').replace(')', '').replace('-', '');
 
-    if(newPhone.length === 0) {
+    if (newPhone.length === 0) {
       setPhone('');
       return;
     };
 
-    if(newPhone.length <= 2) {
+    if (newPhone.length <= 2) {
       const finalPhone = `(${newPhone.substr(0, 2)}`;
       setPhone(finalPhone);
       return;
     };
 
-    if(newPhone.length === 10) {
+    if (newPhone.length === 10) {
       const finalPhone = `(${newPhone.substr(0, 2)})${newPhone.substr(2, 4)}-${newPhone.substr(6)}`;
       setPhone(finalPhone);
       return;
     };
-    
-    if(newPhone.length > 8) {
+
+    if (newPhone.length > 8) {
       const finalPhone = `(${newPhone.substr(0, 2)})${newPhone.substr(2, 5)}-${newPhone.substr(7)}`;
       setPhone(finalPhone);
       return;
     };
 
     const finalPhone = `(${newPhone.substr(0, 2)})${newPhone.substr(2, (newPhone.length - 2))}`;
-    
+
     setPhone(finalPhone);
   }
 
   function formatTaxId(taxId) {
     const newTaxId = taxId.replace(/\./g, '').replace('-', '');
 
-    if(newTaxId.length <= 3) {
+    if (newTaxId.length <= 3) {
       setTaxId(newTaxId);
       return;
     };
 
-    if(newTaxId.length >= 10) {
+    if (newTaxId.length >= 10) {
       const finalTaxId = `${newTaxId.substr(0, 3)}.${newTaxId.substr(3, 3)}.${newTaxId.substr(6, 3)}-${newTaxId.substr(9, (newTaxId.length - 9))}`;
       setTaxId(finalTaxId);
       return;
     };
 
-    if(newTaxId.length >= 7) {
+    if (newTaxId.length >= 7) {
       const finalTaxId = `${newTaxId.substr(0, 3)}.${newTaxId.substr(3, 3)}.${newTaxId.substr(6, newTaxId.length - 6)}`;
       setTaxId(finalTaxId);
       return;
     };
 
-    if(newTaxId.length >= 4) {
+    if (newTaxId.length >= 4) {
       const finalTaxId = `${newTaxId.substr(0, 3)}.${newTaxId.substr(3, (newTaxId.length - 3))}`;
       setTaxId(finalTaxId);
       return;
@@ -227,16 +227,16 @@ function EditUserProfile({ user }) {
 
         <Snackbar
           className={styles.snackbar}
-          open={!!requestError}
+          open={!!requestResult}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           autoHideDuration={3000}
           onClose={handleAlertClose}
         >
-          <Alert severity={requestError === 'Perfil do usuário atualizado com sucesso.'
+          <Alert severity={requestResult === 'Perfil do usuário atualizado com sucesso.'
             ? 'success'
             : 'error'}
           >
-            {requestError}
+            {requestResult}
           </Alert>
         </Snackbar>
 
