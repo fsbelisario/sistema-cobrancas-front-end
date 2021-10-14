@@ -2,10 +2,10 @@ import styles from './styles.module.scss';
 
 function formatDate(date) {
   return `${date.substr(8, 2)}/${date.substr(5, 2)}/${date.substr(0, 4)}`;
-}
+};
 
 function CardBill({ bill }) {
-  return(
+  return (
     <div className={styles.card__wrapper}>
       <div className={styles.info__id}>
         {`#${bill.id}`}
@@ -17,7 +17,7 @@ function CardBill({ bill }) {
         {bill.description}
       </div>
       <div>
-        {Number((bill.value/100)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+        {Number((bill.value / 100)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
       </div>
       <div className={
         (bill.status === 'VENCIDO' && styles.text__red)
@@ -31,6 +31,6 @@ function CardBill({ bill }) {
       </div>
     </div>
   );
-}
+};
 
 export default CardBill;
