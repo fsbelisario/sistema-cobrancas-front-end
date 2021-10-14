@@ -77,7 +77,6 @@ function EnrollClient() {
           throw new Error('CEP inválido.');
         };
 
-        setZipCodeError('');
         setStreet(requestData.logradouro);
         setDistrict(requestData.bairro);
         setCity(requestData.localidade);
@@ -92,8 +91,6 @@ function EnrollClient() {
     if (zipCode.length === 8 && !!Number(zipCode)) {
       retrieveAddress();
     };
-
-    setLoading(false);
   }, [zipCode]);
 
   async function onSubmit() {
