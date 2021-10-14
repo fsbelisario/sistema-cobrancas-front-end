@@ -60,40 +60,32 @@ function EnrollClient() {
 
   useEffect(() => {
     setZipCodeError('');
-
     setStreet('');
-
     setDistrict('');
-
     setCity('');
-
     setState('');
 
     async function retrieveAddress() {
-      setLoading(true);
+      try {
+        setLoading(true);
 
-      const response = await fetch(`https://viacep.com.br/ws/${zipCode}/json/`);
+        const response = await fetch(`https://viacep.com.br/ws/${zipCode}/json/`);
 
-      if (response.ok) {
         const requestData = await response.json();
 
-        if (!requestData.erro) {
-          setZipCodeError('');
-
-          setStreet(requestData.logradouro);
-
-          setDistrict(requestData.bairro);
-
-          setCity(requestData.localidade);
-
-          setState(requestData.uf);
-
-          return;
+        if (requestData.erro) {
+          throw new Error('CEP inválido.');
         };
 
-        setZipCodeError('CEP inválido.');
-      } else {
-        setZipCodeError('CEP inválido.');
+        setZipCodeError('');
+        setStreet(requestData.logradouro);
+        setDistrict(requestData.bairro);
+        setCity(requestData.localidade);
+        setState(requestData.uf);
+      } catch (error) {
+        setZipCodeError(error.message);
+      } finally {
+        setLoading(false);
       };
     };
 
@@ -110,7 +102,6 @@ function EnrollClient() {
     };
 
     const newTaxId = taxId.replace(/\./g, '').replace('-', '');
-
     const newPhone = phone.replace('(', '').replace(')', '').replace('-', '');
 
     const body = {
@@ -129,7 +120,6 @@ function EnrollClient() {
     };
 
     setRequestResult('');
-
     setLoading(true);
 
     const response = await fetch('https://academy-bills.herokuapp.com/clients', {
@@ -146,18 +136,14 @@ function EnrollClient() {
 
     if (response.ok) {
       setRequestResult(requestData);
-
       setLoading(true);
-
       setTimeout(() => {
         history.push('/clientes');
       }, 2000);
-
       return;
     };
 
     setRequestResult(requestData);
-
     setLoading(false);
   };
 
@@ -196,7 +182,6 @@ function EnrollClient() {
     };
 
     const finalPhone = `(${newPhone.substr(0, 2)})${newPhone.substr(2, (newPhone.length - 2))}`;
-
     setPhone(finalPhone);
   }
 
@@ -393,7 +378,6 @@ function EnrollClient() {
                   />
                 </label>
               </div>
-
               <div className={styles.input__wrapper}>
                 <label>
                   <h4>Cidade</h4>
@@ -404,7 +388,6 @@ function EnrollClient() {
                     variant='outlined'
                   />
                 </label>
-
                 <label>
                   {errors.state ? <h4 className={styles.input__error}>Estado</h4> : <h4>Estado</h4>}
                   <TextField
@@ -424,7 +407,6 @@ function EnrollClient() {
                   {errors.state?.type === 'pattern' && <p>O CEP deve conter apenas números</p>}
                 </label>
               </div>
-
               <Snackbar
                 className={styles.snackbar}
                 open={!!requestResult}
@@ -436,7 +418,6 @@ function EnrollClient() {
                   {requestResult}
                 </Alert>
               </Snackbar>
-
               <div className={styles.button__wrapper}>
                 <Button
                   className={`${styles.button__states} ${styles.button__cancel}`}
@@ -453,7 +434,6 @@ function EnrollClient() {
                   Adicionar Cliente
                 </Button>
               </div>
-
               <Backdrop
                 sx={{
                   color: 'var(--color-white)',
