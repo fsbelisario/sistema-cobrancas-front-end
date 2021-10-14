@@ -42,7 +42,7 @@ function EnrollBill() {
 
   const [listClients, setListClients] = useState([]);
 
-  const [requestError, setRequestError] = useState('');
+  const [requestResult, setRequestResult] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ function EnrollBill() {
     };
 
     async function retrieveClients() {
-      setRequestError('');
+      setRequestResult('');
       setLoading(true);
 
       const response = await fetch('https://academy-bills.herokuapp.com/clients/options', {
@@ -67,14 +67,14 @@ function EnrollBill() {
       });
 
       const requestData = await response.json();
-      
+
       if (response.ok) {
         setListClients(requestData);
         setLoading(false);
         return;
       };
 
-      setRequestError(requestData);
+      setRequestResult(requestData);
       setLoading(false);
     }
 
@@ -85,8 +85,8 @@ function EnrollBill() {
   async function onSubmit() {
     const newValue = Number(value.replace('.', '').replace(',', ''));
 
-    if(newValue === 0) {
-      setRequestError('O valor da cobrança deve ser maior que zero.');
+    if (newValue === 0) {
+      setRequestResult('O valor da cobrança deve ser maior que zero.');
       errors.value = !!errors.value;
       return;
     }
@@ -99,7 +99,7 @@ function EnrollBill() {
       dueDate: dueDate
     };
 
-    setRequestError('');
+    setRequestResult('');
     setLoading(true);
 
     const response = await fetch('https://academy-bills.herokuapp.com/billings', {
@@ -115,7 +115,7 @@ function EnrollBill() {
     const requestData = await response.json();
 
     if (response.ok) {
-      setRequestError(requestData);
+      setRequestResult(requestData);
       setLoading(true);
       setTimeout(() => {
         history.push('/cobrancas');
@@ -124,12 +124,12 @@ function EnrollBill() {
       return;
     };
 
-    setRequestError(requestData);
+    setRequestResult(requestData);
     setLoading(false);
   };
 
   function handleAlertClose() {
-    setRequestError('');
+    setRequestResult('');
   };
 
   function cancelButton() {
@@ -137,17 +137,17 @@ function EnrollBill() {
   };
 
   function formatValue(value) {
-    if(value.length < 3) {
+    if (value.length < 3) {
       setValue(value);
       return;
     };
 
     const newValue = value.replace(',', '').replace('.', '');
-    
+
     const centIndex = (newValue.length - 2);
     const thousandIndex = (newValue.length - 5);
 
-    if(newValue.length >= 6) {
+    if (newValue.length >= 6) {
       const finalValue = `${newValue.substr(0, thousandIndex)}.${newValue.substr(thousandIndex, 3)},${newValue.substr(centIndex, 2)}`;
       setValue(finalValue);
       return;
@@ -249,7 +249,7 @@ function EnrollBill() {
                     variant='outlined'
                     error={errors.status}
                     sx={menuItemStyle}
-                  > 
+                  >
                     <MenuItem disabled value='Selecione um status' sx={menuItemStyle}>
                       Selecione um status
                     </MenuItem>
@@ -279,7 +279,7 @@ function EnrollBill() {
                   />
                   {errors.value?.type === 'pattern' && <p className={styles.alert__error}>O valor deve conter apenas números</p>}
                 </label>
-                
+
                 <label className={styles.divided__label}>
                   <h4>Vencimento</h4>
                   <TextField
@@ -301,13 +301,13 @@ function EnrollBill() {
 
               <Snackbar
                 className={styles.snackbar}
-                open={!!requestError}
+                open={!!requestResult}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
                 autoHideDuration={3000}
                 onClose={handleAlertClose}
               >
-                <Alert severity={requestError === 'Cobrança cadastrada com sucesso.' ? 'success' : 'error'}>
-                  {requestError}
+                <Alert severity={requestResult === 'Cobrança cadastrada com sucesso.' ? 'success' : 'error'}>
+                  {requestResult}
                 </Alert>
               </Snackbar>
 

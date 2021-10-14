@@ -41,7 +41,7 @@ function EnrollClient() {
   const [number, setNumber] = useState('');
   const [phone, setPhone] = useState('');
   const [reference, setReference] = useState('');
-  const [requestError, setRequestError] = useState('');
+  const [requestResult, setRequestResult] = useState('');
   const [state, setState] = useState('');
   const [street, setStreet] = useState('');
   const [taxId, setTaxId] = useState('');
@@ -128,7 +128,7 @@ function EnrollClient() {
       state: state && state
     };
 
-    setRequestError('');
+    setRequestResult('');
 
     setLoading(true);
 
@@ -145,7 +145,7 @@ function EnrollClient() {
     const requestData = await response.json();
 
     if (response.ok) {
-      setRequestError(requestData);
+      setRequestResult(requestData);
 
       setLoading(true);
 
@@ -156,13 +156,13 @@ function EnrollClient() {
       return;
     };
 
-    setRequestError(requestData);
+    setRequestResult(requestData);
 
     setLoading(false);
   };
 
   function handleAlertClose() {
-    setRequestError('');
+    setRequestResult('');
   };
 
   function cancelButton() {
@@ -172,55 +172,55 @@ function EnrollClient() {
   function formatPhone(phone) {
     const newPhone = phone.replace('(', '').replace(')', '').replace('-', '');
 
-    if(newPhone.length === 0) {
+    if (newPhone.length === 0) {
       setPhone('');
       return;
     };
 
-    if(newPhone.length <= 2) {
+    if (newPhone.length <= 2) {
       const finalPhone = `(${newPhone.substr(0, 2)}`;
       setPhone(finalPhone);
       return;
     };
 
-    if(newPhone.length === 10) {
+    if (newPhone.length === 10) {
       const finalPhone = `(${newPhone.substr(0, 2)})${newPhone.substr(2, 4)}-${newPhone.substr(6)}`;
       setPhone(finalPhone);
       return;
     };
-    
-    if(newPhone.length > 8) {
+
+    if (newPhone.length > 8) {
       const finalPhone = `(${newPhone.substr(0, 2)})${newPhone.substr(2, 5)}-${newPhone.substr(7)}`;
       setPhone(finalPhone);
       return;
     };
 
     const finalPhone = `(${newPhone.substr(0, 2)})${newPhone.substr(2, (newPhone.length - 2))}`;
-    
+
     setPhone(finalPhone);
   }
 
   function formatTaxId(taxId) {
     const newTaxId = taxId.replace(/\./g, '').replace('-', '');
 
-    if(newTaxId.length <= 3) {
+    if (newTaxId.length <= 3) {
       setTaxId(newTaxId);
       return;
     };
 
-    if(newTaxId.length >= 10) {
+    if (newTaxId.length >= 10) {
       const finalTaxId = `${newTaxId.substr(0, 3)}.${newTaxId.substr(3, 3)}.${newTaxId.substr(6, 3)}-${newTaxId.substr(9, (newTaxId.length - 9))}`;
       setTaxId(finalTaxId);
       return;
     };
 
-    if(newTaxId.length >= 7) {
+    if (newTaxId.length >= 7) {
       const finalTaxId = `${newTaxId.substr(0, 3)}.${newTaxId.substr(3, 3)}.${newTaxId.substr(6, newTaxId.length - 6)}`;
       setTaxId(finalTaxId);
       return;
     };
 
-    if(newTaxId.length >= 4) {
+    if (newTaxId.length >= 4) {
       const finalTaxId = `${newTaxId.substr(0, 3)}.${newTaxId.substr(3, (newTaxId.length - 3))}`;
       setTaxId(finalTaxId);
       return;
@@ -427,13 +427,13 @@ function EnrollClient() {
 
               <Snackbar
                 className={styles.snackbar}
-                open={!!requestError}
+                open={!!requestResult}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
                 autoHideDuration={3000}
                 onClose={handleAlertClose}
               >
-                <Alert severity={requestError === 'Cliente cadastrado com sucesso.' ? 'success' : 'error'}>
-                  {requestError}
+                <Alert severity={requestResult === 'Cliente cadastrado com sucesso.' ? 'success' : 'error'}>
+                  {requestResult}
                 </Alert>
               </Snackbar>
 
