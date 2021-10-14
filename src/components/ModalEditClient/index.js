@@ -21,13 +21,12 @@ import closeIcon from '../../assets/close-icon.svg';
 import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
-const ModalEditClient = ({ client }) => {
+const ModalEditClient = ({ client, openEditModal, setOpenEditModal }) => {
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const {
     setUpdateClientsList,
-    token,
-    setResetModal
+    token
   } = useContext(AuthContext);
 
   const [addressDetails, setAddressDetails] = useState(client.address_details ? client.address_details : '');
@@ -37,7 +36,6 @@ const ModalEditClient = ({ client }) => {
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState(client.name ? client.name : '');
   const [number, setNumber] = useState(client.number ? client.number : '');
-  const [openModal, setOpenModal] = useState(true);
   const [phone, setPhone] = useState(`(${client.phone.substr(0, 2)})${client.phone.substr(2, 5)}-${client.phone.substr(7)}`);
   const [reference, setReference] = useState(client.reference ? client.reference : '');
   const [requestResult, setRequestResult] = useState();
@@ -50,13 +48,9 @@ const ModalEditClient = ({ client }) => {
   useEffect(() => {
     if (zipCode !== client.zip_code) {
       setZipCodeError('');
-
       setStreet('');
-
       setDistrict('');
-
       setCity('');
-
       setState('');
 
       async function retrieveAddress() {
@@ -69,15 +63,10 @@ const ModalEditClient = ({ client }) => {
 
           if (!requestData.erro) {
             setZipCodeError('');
-
             setStreet(requestData.logradouro);
-
             setDistrict(requestData.bairro);
-
             setCity(requestData.localidade);
-
             setState(requestData.uf);
-
             return;
           };
 
@@ -93,7 +82,7 @@ const ModalEditClient = ({ client }) => {
 
       setLoading(false);
     };
-  }, [client.zip_code, zipCode, openModal]);
+  }, [client.zip_code, zipCode, openEditModal]);
 
   async function onSubmit() {
     if (!!zipCodeError) {
@@ -101,7 +90,6 @@ const ModalEditClient = ({ client }) => {
     };
 
     const newPhone = phone.replace('(', '').replace(')', '').replace('-', '');
-
     const newTaxId = taxId.replace(/\./g, '').replace('-', '');
 
     const body = {
@@ -139,7 +127,7 @@ const ModalEditClient = ({ client }) => {
       setLoading(true);
 
       setTimeout(() => {
-        setOpenModal(false);
+        setOpenEditModal(false);
         setUpdateClientsList(true);
       }, 2000);
 
@@ -156,12 +144,8 @@ const ModalEditClient = ({ client }) => {
 
   function handleEditClient() {
     setRequestResult('');
-
     setZipCode('');
-
-    setOpenModal(false);
-
-    setResetModal(true);
+    setOpenEditModal(false);
   }
 
   function formatPhone(phone) {
@@ -191,7 +175,6 @@ const ModalEditClient = ({ client }) => {
     };
 
     const finalPhone = `(${newPhone.substr(0, 2)})${newPhone.substr(2, (newPhone.length - 2))}`;
-
     setPhone(finalPhone);
   }
 
@@ -232,7 +215,7 @@ const ModalEditClient = ({ client }) => {
 
   return (
     <Modal
-      open={openModal}
+      open={openEditModal}
       onClose={handleEditClient}
       className={styles.modal__wrapper}
     >
@@ -252,7 +235,6 @@ const ModalEditClient = ({ client }) => {
               />
               {!!errors.clientName && <p>O campo Nome é obrigatório!</p>}
             </label>
-
             <label>
               <h4>E-mail</h4>
               <TextField
@@ -268,7 +250,6 @@ const ModalEditClient = ({ client }) => {
               {!!errors.clientEmail && <p>O campo E-mail é obrigatório!</p>}
             </label>
           </div>
-
           <div className={styles.input__wrapper}>
             <label>
               <h4>CPF</h4>
@@ -290,7 +271,6 @@ const ModalEditClient = ({ client }) => {
               }
               {errors.clientTaxId?.type === 'pattern' && <p>O CPF deve conter apenas números</p>}
             </label>
-
             <label>
               <h4>Telefone</h4>
               <TextField
@@ -312,7 +292,6 @@ const ModalEditClient = ({ client }) => {
               {errors.clientPhone?.type === 'pattern' && <p>O telefone deve conter apenas números</p>}
             </label>
           </div>
-
           <div className={styles.input__wrapper}>
             <label>
               {(errors.zipCode || zipCodeError) ? <h4 className={styles.input__error}>CEP</h4> : <h4>CEP</h4>}
@@ -334,7 +313,6 @@ const ModalEditClient = ({ client }) => {
               }
               {errors.zipCode?.type === 'pattern' && <p>O CEP deve conter apenas números</p>}
             </label>
-
             <label>
               <h4>Logradouro</h4>
               <TextField
@@ -345,7 +323,6 @@ const ModalEditClient = ({ client }) => {
               />
             </label>
           </div>
-
           <div className={styles.input__wrapper}>
             <label>
               <h4>Número</h4>
@@ -356,7 +333,6 @@ const ModalEditClient = ({ client }) => {
                 variant='outlined'
               />
             </label>
-
             <label>
               <h4>Complemento</h4>
               <TextField
@@ -367,7 +343,6 @@ const ModalEditClient = ({ client }) => {
               />
             </label>
           </div>
-
           <div className={styles.input__wrapper}>
             <label>
               <h4>Bairro</h4>
@@ -378,7 +353,6 @@ const ModalEditClient = ({ client }) => {
                 variant='outlined'
               />
             </label>
-
             <label>
               <h4>Ponto de referência</h4>
               <TextField
@@ -389,7 +363,6 @@ const ModalEditClient = ({ client }) => {
               />
             </label>
           </div>
-
           <div className={styles.input__wrapper}>
             <label>
               <h4>Cidade</h4>
@@ -400,7 +373,6 @@ const ModalEditClient = ({ client }) => {
                 variant='outlined'
               />
             </label>
-
             <label>
               {errors.state ? <h4 className={styles.input__error}>Estado</h4> : <h4>Estado</h4>}
               <TextField
@@ -417,7 +389,6 @@ const ModalEditClient = ({ client }) => {
               {errors.state?.type === 'pattern' && <p>O CEP deve conter apenas números</p>}
             </label>
           </div>
-
           <Snackbar
             className={styles.snackbar}
             open={!!requestResult}
@@ -429,7 +400,6 @@ const ModalEditClient = ({ client }) => {
               {requestResult}
             </Alert>
           </Snackbar>
-
           <div className={styles.button__wrapper}>
             <Button
               className={`${styles.button__states} ${styles.button__cancel}`}
@@ -446,7 +416,6 @@ const ModalEditClient = ({ client }) => {
               Editar Cliente
             </Button>
           </div>
-
           <Backdrop
             sx={{
               color: 'var(--color-white)',
