@@ -38,52 +38,57 @@ function EditUserProfile({ user }) {
   );
 
   async function onSubmit() {
-    if (user.current.phone && phone === '') {
-      setPhone('');
-    };
+    try {
+      if (user.current.phone && phone === '') {
+        setPhone('');
+      };
 
-    if (user.current.tax_id && taxId === '') {
-      setTaxId('');
-    };
+      if (user.current.tax_id && taxId === '') {
+        setTaxId('');
+      };
 
-    const newPhone = phone.replace('(', '').replace(')', '').replace('-', '');
+      const newPhone = phone.replace('(', '').replace(')', '').replace('-', '');
+      const newTaxId = taxId.replace(/\./g, '').replace('-', '');
 
-    const newTaxId = taxId.replace(/\./g, '').replace('-', '');
+      const body = {
+        name: name,
+        email: email,
+        password: password === '' ? user.current.password : password,
+        phone: phone === '' ? phone : newPhone,
+        taxId: taxId === '' ? taxId : newTaxId
+      };
 
-    const body = {
-      name: name,
-      email: email,
-      password: password === '' ? user.current.password : password,
-      phone: phone === '' ? phone : newPhone,
-      taxId: taxId === '' ? taxId : newTaxId
-    };
-
-    setRequestResult('');
-    setLoading(true);
-
-    const response = await fetch('https://academy-bills.herokuapp.com/profile', {
-      method: 'PUT',
-      mode: 'cors',
-      headers: {
-        'Content-type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(body)
-    });
-
-    const requestData = await response.json();
-
-    if (response.ok) {
-      setRequestResult(requestData);
+      setRequestResult('');
       setLoading(true);
+
+
+
+      const response = await fetch('https://academy-bills.herokuapp.com/profile', {
+        method: 'PUT',
+        mode: 'cors',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(body)
+      });
+
+      const requestData = await response.json();
+
+      if (!response.ok) {
+        setRequestResult(requestData);
+        return;
+      };
+
+      setRequestResult(requestData);
       setTimeout(() => {
         setOpen(!open);
       }, 2000);
-      return;
+    } catch (error) {
+      setRequestResult(error.messsage);
+    } finally {
+      setLoading(false);
     };
-
-    setRequestResult(requestData);
-    setLoading(false);
   };
 
   function handleAlertClose() {
@@ -121,7 +126,6 @@ function EditUserProfile({ user }) {
     };
 
     const finalPhone = `(${newPhone.substr(0, 2)})${newPhone.substr(2, (newPhone.length - 2))}`;
-
     setPhone(finalPhone);
   }
 
@@ -150,7 +154,7 @@ function EditUserProfile({ user }) {
       setTaxId(finalTaxId);
       return;
     };
-  }
+  };
 
   return (
     <Modal
@@ -224,7 +228,6 @@ function EditUserProfile({ user }) {
           }
           {errors.tax_id?.type === 'pattern' && <p>O CPF deve conter apenas números</p>}
         </label>
-
         <Snackbar
           className={styles.snackbar}
           open={!!requestResult}
@@ -239,7 +242,6 @@ function EditUserProfile({ user }) {
             {requestResult}
           </Alert>
         </Snackbar>
-
         <Button
           className={styles.button__states}
           type='submit'
@@ -248,7 +250,6 @@ function EditUserProfile({ user }) {
         >
           Editar conta
         </Button>
-
         <Backdrop sx={{
           color: 'var(--color-white)',
           zIndex: (theme) => theme.zIndex.drawer + 1
