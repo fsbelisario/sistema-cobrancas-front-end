@@ -18,7 +18,6 @@ import {
 } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
-import calendarIcon from '../../assets/calendar-icon.svg';
 import Navbar from '../../components/Navbar';
 import UserProfile from '../../components/UserProfile';
 import AuthContext from '../../contexts/AuthContext';
@@ -287,11 +286,11 @@ function EnrollBill() {
                     {...register('dueDate', { required: true })}
                     value={dueDate}
                     onChange={(e) => setDueDate(e.target.value)}
-                    InputProps={{
+                    /*InputProps={{
                       endAdornment: <InputAdornment position="start">
                         <img src={calendarIcon} alt='' className={styles.calendar__icon} />
                       </InputAdornment>,
-                    }}
+                    }}*/
                     color='secondary'
                     variant='outlined'
                     error={errors.dueDate}
