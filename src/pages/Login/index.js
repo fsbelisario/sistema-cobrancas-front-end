@@ -34,7 +34,7 @@ function Login() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState('');
-  const [requestError, setRequestError] = useState('');
+  const [requestResult, setRequestResult] = useState('');
 
   useEffect(() => {
     if (tokenLS) {
@@ -48,38 +48,42 @@ function Login() {
   }, [token, setToken, tokenLS, history]);
 
   async function onSubmit(data) {
-    const body = {
-      email: email,
-      password: password
-    };
+    try {
+      const body = {
+        email: email,
+        password: password
+      };
 
-    setRequestError('');
-    setLoading(true);
+      setRequestResult('');
+      setLoading(true);
 
-    const response = await fetch('https://academy-bills.herokuapp.com/login', {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-type': 'application/json',
-      },
-      body: JSON.stringify(body)
-    });
+      const response = await fetch('https://academy-bills.herokuapp.com/login', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        body: JSON.stringify(body)
+      });
 
-    const requestData = await response.json();
+      const requestData = await response.json();
 
-    if (response.ok) {
+      if (!response.ok) {
+        throw new Error(requestData);
+      };
+
       setToken(requestData.token);
       setTokenLS(requestData.token);
       history.push('/home');
-      return;
+    } catch (error) {
+      setRequestResult(error.message);
+    } finally {
+      setLoading(false);
     };
-
-    setRequestError(requestData);
-    setLoading(false);
   };
 
   function handleAlertClose() {
-    setRequestError('');
+    setRequestResult('');
   };
 
   return (
@@ -108,19 +112,17 @@ function Login() {
             variant='standard'
           />
         </label>
-
         <Snackbar
           className={styles.snackbar}
-          open={!!requestError}
+          open={!!requestResult}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           autoHideDuration={3000}
           onClose={handleAlertClose}
         >
           <Alert severity='error'>
-            {requestError}
+            {requestResult}
           </Alert>
         </Snackbar>
-
         <Button
           className={styles.button__states}
           type='submit'
@@ -129,7 +131,6 @@ function Login() {
         >
           Entrar
         </Button>
-
         <Backdrop
           sx={{
             color: 'var(--color-white)',
@@ -140,7 +141,6 @@ function Login() {
           <CircularProgress color='inherit' />
         </Backdrop>
       </form>
-
       <footer>
         Ainda não possui uma conta? <Link to='/cadastro'>Crie agora!</Link>
       </footer>

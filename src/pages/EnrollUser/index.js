@@ -25,44 +25,48 @@ function EnrollUser() {
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
-  const [requestError, setRequestError] = useState('');
+  const [requestResult, setRequestResult] = useState('');
 
   async function onSubmit(data) {
-    const body = {
-      name: name,
-      email: email,
-      password: password
-    };
+    try {
+      const body = {
+        name: name,
+        email: email,
+        password: password
+      };
 
-    setRequestError('');
-    setLoading(true);
+      setRequestResult('');
+      setLoading(true);
 
-    const response = await fetch('https://academy-bills.herokuapp.com/users', {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-type': 'application/json',
-      },
-      body: JSON.stringify(body)
-    });
+      const response = await fetch('https://academy-bills.herokuapp.com/users', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        body: JSON.stringify(body)
+      });
 
-    const requestData = await response.json();
-    
-    if (response.ok) {
-      setRequestError(requestData);
+      const requestData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(requestData);
+      };
+
+      setRequestResult(requestData);
       setLoading(true);
       setTimeout(() => {
         history.push('/');
       }, 2000);
-      return;
+    } catch (error) {
+      setRequestResult(error.message);
+    } finally {
+      setLoading(false);
     };
-
-    setRequestError(requestData);
-    setLoading(false);
   };
 
   function handleAlertClose() {
-    setRequestError('');
+    setRequestResult('');
   };
 
   return (
@@ -109,25 +113,22 @@ function EnrollUser() {
           {errors.password?.type === 'required' && <p>O campo Senha é obrigatório!</p>}
           {errors.password?.type === 'minLength' && <p>A senha deve conter no mínimo 5 caracteres</p>}
         </label>
-
         <Snackbar
           className={styles.snackbar}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          open={!!requestError}
+          open={!!requestResult}
           autoHideDuration={3000}
           onClose={handleAlertClose}>
-          <Alert severity={requestError === 'Usuário cadastrado com sucesso.' ? 'success' : 'error'}>
-            {requestError}
+          <Alert severity={requestResult === 'Usuário cadastrado com sucesso.' ? 'success' : 'error'}>
+            {requestResult}
           </Alert>
         </Snackbar>
-
         <Button
           className={styles.button__states}
           type='submit'
           disabled={!name || !email || !password}
           variant='contained'>Criar conta
         </Button>
-
         <Backdrop
           sx={{
             color: 'var(--color-white)',
@@ -138,7 +139,6 @@ function EnrollUser() {
           <CircularProgress color='inherit' />
         </Backdrop>
       </form>
-
       <footer>
         Já possui uma conta? <Link to='/'>Acesse agora!</Link>
       </footer>

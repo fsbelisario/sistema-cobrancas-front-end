@@ -35,14 +35,12 @@ function EnrollBill() {
 
   const [clientId, setClientId] = useState('Selecione um(a) cliente');
   const [description, setDescription] = useState('');
+  const [dueDate, setDueDate] = useState('');
+  const [listClients, setListClients] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [requestResult, setRequestResult] = useState('');
   const [status, setStatus] = useState('Selecione um status');
   const [value, setValue] = useState('');
-  const [dueDate, setDueDate] = useState('');
-
-  const [listClients, setListClients] = useState([]);
-
-  const [requestError, setRequestError] = useState('');
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setToken(tokenLS);
@@ -53,82 +51,89 @@ function EnrollBill() {
     };
 
     async function retrieveClients() {
-      setRequestError('');
-      setLoading(true);
+      try {
+        setRequestResult('');
+        setLoading(true);
 
-      const response = await fetch('https://academy-bills.herokuapp.com/clients/options', {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-          'Content-type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
+        const response = await fetch('https://academy-bills.herokuapp.com/clients/options', {
+          method: 'GET',
+          mode: 'cors',
+          headers: {
+            'Content-type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
 
-      const requestData = await response.json();
-      
-      if (response.ok) {
+        const requestData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(requestData);
+        };
+
         setListClients(requestData);
         setLoading(false);
-        return;
+      } catch (error) {
+        setRequestResult(error.message);
+      } finally {
+        setLoading(false);
       };
-
-      setRequestError(requestData);
-      setLoading(false);
-    }
+    };
 
     retrieveClients();
   }, [token, setToken, tokenLS, history]);
 
 
   async function onSubmit() {
-    const newValue = Number(value.replace('.', '').replace(',', ''));
+    try {
+      const newValue = Number(value.replace('.', '').replace(',', ''));
 
-    if(newValue === 0) {
-      setRequestError('O valor da cobrança deve ser maior que zero.');
-      errors.value = !!errors.value;
-      return;
-    }
+      if (newValue === 0) {
+        setRequestResult('O valor da cobrança deve ser maior que zero.');
+        errors.value = !!errors.value;
+        return;
+      };
 
-    const body = {
-      clientId: clientId,
-      description: description,
-      status: status,
-      value: newValue,
-      dueDate: dueDate
-    };
+      const body = {
+        clientId: clientId,
+        description: description,
+        status: status,
+        value: newValue,
+        dueDate: dueDate
+      };
 
-    setRequestError('');
-    setLoading(true);
+      setRequestResult('');
+      setLoading(true);
 
-    const response = await fetch('https://academy-bills.herokuapp.com/billings', {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(body)
-    });
+      const response = await fetch('https://academy-bills.herokuapp.com/billings', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(body)
+      });
 
-    const requestData = await response.json();
+      const requestData = await response.json();
 
-    if (response.ok) {
-      setRequestError(requestData);
+      if (!response.ok) {
+        throw new Error(requestData);
+      };
+
+      setRequestResult(requestData);
       setLoading(true);
       setTimeout(() => {
         history.push('/cobrancas');
       }, 2000);
-
-      return;
+    } catch (error) {
+      setRequestResult(error.message);
+    } finally {
+      setLoading(false);
     };
-
-    setRequestError(requestData);
-    setLoading(false);
   };
 
   function handleAlertClose() {
-    setRequestError('');
+    setRequestResult('');
   };
 
   function cancelButton() {
@@ -136,24 +141,22 @@ function EnrollBill() {
   };
 
   function formatValue(value) {
-    if(value.length < 3) {
+    if (value.length < 3) {
       setValue(value);
       return;
     };
 
     const newValue = value.replace(',', '').replace('.', '');
-    
     const centIndex = (newValue.length - 2);
     const thousandIndex = (newValue.length - 5);
 
-    if(newValue.length >= 6) {
+    if (newValue.length >= 6) {
       const finalValue = `${newValue.substr(0, thousandIndex)}.${newValue.substr(thousandIndex, 3)},${newValue.substr(centIndex, 2)}`;
       setValue(finalValue);
       return;
     }
 
     const finalValue = `${newValue.substr(0, centIndex)},${newValue.substr(centIndex, 2)}`;
-
     setValue(finalValue);
   }
 
@@ -217,7 +220,6 @@ function EnrollBill() {
                   </Select>
                 </label>
               </div>
-
               <div className={styles.input__wrapper}>
                 <label>
                   <h4>Descrição</h4>
@@ -235,7 +237,6 @@ function EnrollBill() {
                   <h6>A descrição informada será impressa no boleto</h6>
                 </label>
               </div>
-
               <div className={styles.input__wrapper}>
                 <label>
                   <h4>Status</h4>
@@ -248,7 +249,7 @@ function EnrollBill() {
                     variant='outlined'
                     error={errors.status}
                     sx={menuItemStyle}
-                  > 
+                  >
                     <MenuItem disabled value='Selecione um status' sx={menuItemStyle}>
                       Selecione um status
                     </MenuItem>
@@ -260,7 +261,6 @@ function EnrollBill() {
                   </Select>
                 </label>
               </div>
-
               <div className={styles.input__wrapper}>
                 <label className={styles.divided__label}>
                   {errors.value ? <h4 className={styles.input__error}>Valor</h4> : <h4>Valor</h4>}
@@ -278,7 +278,6 @@ function EnrollBill() {
                   />
                   {errors.value?.type === 'pattern' && <p className={styles.alert__error}>O valor deve conter apenas números</p>}
                 </label>
-                
                 <label className={styles.divided__label}>
                   <h4>Vencimento</h4>
                   <TextField
@@ -297,19 +296,17 @@ function EnrollBill() {
                   />
                 </label>
               </div>
-
               <Snackbar
                 className={styles.snackbar}
-                open={!!requestError}
+                open={!!requestResult}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
                 autoHideDuration={3000}
                 onClose={handleAlertClose}
               >
-                <Alert severity={requestError === 'Cobrança cadastrada com sucesso.' ? 'success' : 'error'}>
-                  {requestError}
+                <Alert severity={requestResult === 'Cobrança cadastrada com sucesso.' ? 'success' : 'error'}>
+                  {requestResult}
                 </Alert>
               </Snackbar>
-
               <div className={styles.button__wrapper}>
                 <Button
                   className={`${styles.button__states} ${styles.button__cancel}`}
@@ -328,7 +325,6 @@ function EnrollBill() {
                   Criar Cobrança
                 </Button>
               </div>
-
               <Backdrop
                 sx={{
                   color: 'var(--color-white)',

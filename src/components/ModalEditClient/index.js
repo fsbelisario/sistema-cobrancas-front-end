@@ -21,13 +21,12 @@ import closeIcon from '../../assets/close-icon.svg';
 import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
-const ModalEditClient = ({ client }) => {
+const ModalEditClient = ({ client, openEditModal, setOpenEditModal }) => {
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const {
     setUpdateClientsList,
-    token,
-    setResetModal
+    token
   } = useContext(AuthContext);
 
   const [addressDetails, setAddressDetails] = useState(client.address_details ? client.address_details : '');
@@ -37,10 +36,9 @@ const ModalEditClient = ({ client }) => {
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState(client.name ? client.name : '');
   const [number, setNumber] = useState(client.number ? client.number : '');
-  const [openModal, setOpenModal] = useState(true);
   const [phone, setPhone] = useState(`(${client.phone.substr(0, 2)})${client.phone.substr(2, 5)}-${client.phone.substr(7)}`);
   const [reference, setReference] = useState(client.reference ? client.reference : '');
-  const [requestError, setRequestError] = useState();
+  const [requestResult, setRequestResult] = useState();
   const [state, setState] = useState(client.state ? client.state : '');
   const [street, setStreet] = useState(client.street ? client.street : '');
   const [taxId, setTaxId] = useState(`${client.tax_id.substr(0, 3)}.${client.tax_id.substr(3, 3)}.${client.tax_id.substr(6, 3)}-${client.tax_id.substr(9, 2)}`);
@@ -48,174 +46,158 @@ const ModalEditClient = ({ client }) => {
   const [zipCodeError, setZipCodeError] = useState('');
 
   useEffect(() => {
-    if (zipCode !== client.zip_code) {
-      setZipCodeError('');
+    setZipCodeError('');
+    setStreet('');
+    setDistrict('');
+    setCity('');
+    setState('');
 
-      setStreet('');
-
-      setDistrict('');
-
-      setCity('');
-
-      setState('');
-
-      async function retrieveAddress() {
+    async function retrieveAddress() {
+      try {
+        setRequestResult('');
         setLoading(true);
 
         const response = await fetch(`https://viacep.com.br/ws/${zipCode}/json/`);
 
-        if (response.ok) {
-          const requestData = await response.json();
+        const requestData = await response.json();
 
-          if (!requestData.erro) {
-            setZipCodeError('');
-
-            setStreet(requestData.logradouro);
-
-            setDistrict(requestData.bairro);
-
-            setCity(requestData.localidade);
-
-            setState(requestData.uf);
-
-            return;
-          };
-
-          setZipCodeError('CEP inválido.');
-        } else {
-          setZipCodeError('CEP inválido.');
+        if (requestData.erro) {
+          throw new Error('CEP inválido.');
         };
-      };
 
-      if (zipCode.length === 8 && !!Number(zipCode)) {
-        retrieveAddress();
+        setStreet(requestData.logradouro);
+        setDistrict(requestData.bairro);
+        setCity(requestData.localidade);
+        setState(requestData.uf);
+      } catch (error) {
+        setZipCodeError(error.message);
+      } finally {
+        setLoading(false);
       };
-
-      setLoading(false);
     };
-  }, [client.zip_code, zipCode, openModal]);
+
+    if (zipCode.length === 8 && !!Number(zipCode) && zipCode !== client.zip_code) {
+      retrieveAddress();
+    };
+  }, [client.zip_code, zipCode, openEditModal]);
 
   async function onSubmit() {
-    if (!!zipCodeError) {
-      return;
-    };
+    try {
+      if (!!zipCodeError) {
+        return;
+      };
 
-    const newPhone = phone.replace('(', '').replace(')', '').replace('-', '');
+      const newPhone = phone.replace('(', '').replace(')', '').replace('-', '');
+      const newTaxId = taxId.replace(/\./g, '').replace('-', '');
 
-    const newTaxId = taxId.replace(/\./g, '').replace('-', '');
+      const body = {
+        name: name,
+        email: email,
+        taxId: newTaxId,
+        phone: newPhone,
+        zipCode: zipCode && zipCode,
+        street: street && street,
+        number: number && number,
+        addressDetails: addressDetails && addressDetails,
+        district: district && district,
+        reference: reference && reference,
+        city: city && city,
+        state: state && state
+      };
 
-    const body = {
-      name: name,
-      email: email,
-      taxId: newTaxId,
-      phone: newPhone,
-      zipCode: zipCode && zipCode,
-      street: street && street,
-      number: number && number,
-      addressDetails: addressDetails && addressDetails,
-      district: district && district,
-      reference: reference && reference,
-      city: city && city,
-      state: state && state
-    };
-
-    setRequestError('');
-    setLoading(true);
-
-    const response = await fetch(`https://academy-bills.herokuapp.com/clients/${client.id}`, {
-      method: 'PUT',
-      mode: 'cors',
-      headers: {
-        'Content-type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(body)
-    });
-
-    const requestData = await response.json();
-
-    if (response.ok) {
-      setRequestError(requestData);
+      setRequestResult('');
       setLoading(true);
 
+      const response = await fetch(`https://academy-bills.herokuapp.com/clients/${client.id}`, {
+        method: 'PUT',
+        mode: 'cors',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(body)
+      });
+
+      const requestData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(requestData);
+      };
+
+      setRequestResult(requestData);
+      setLoading(true);
       setTimeout(() => {
-        setOpenModal(false);
+        setOpenEditModal(false);
         setUpdateClientsList(true);
       }, 2000);
-      
-      return;
+    } catch (error) {
+      setRequestResult(error.message);
+    } finally {
+      setLoading(false);
     };
-
-    setRequestError(requestData);
-    setLoading(false);
   };
 
   function handleAlertClose() {
-    setRequestError('');
+    setRequestResult('');
   };
 
   function handleEditClient() {
-    setRequestError('');
-
+    setRequestResult('');
     setZipCode('');
-
-    setOpenModal(false);
-
-    setResetModal(true);
+    setOpenEditModal(false);
   }
 
   function formatPhone(phone) {
     const newPhone = phone.replace('(', '').replace(')', '').replace('-', '');
 
-    if(newPhone.length === 0) {
+    if (newPhone.length === 0) {
       setPhone('');
       return;
     };
 
-    if(newPhone.length <= 2) {
+    if (newPhone.length <= 2) {
       const finalPhone = `(${newPhone.substr(0, 2)}`;
       setPhone(finalPhone);
       return;
     };
 
-    if(newPhone.length === 10) {
+    if (newPhone.length === 10) {
       const finalPhone = `(${newPhone.substr(0, 2)})${newPhone.substr(2, 4)}-${newPhone.substr(6)}`;
       setPhone(finalPhone);
       return;
     };
-    
-    if(newPhone.length > 8) {
+
+    if (newPhone.length > 8) {
       const finalPhone = `(${newPhone.substr(0, 2)})${newPhone.substr(2, 5)}-${newPhone.substr(7)}`;
       setPhone(finalPhone);
       return;
     };
 
     const finalPhone = `(${newPhone.substr(0, 2)})${newPhone.substr(2, (newPhone.length - 2))}`;
-    
     setPhone(finalPhone);
   }
 
   function formatTaxId(taxId) {
     const newTaxId = taxId.replace(/\./g, '').replace('-', '');
 
-    if(newTaxId.length <= 3) {
+    if (newTaxId.length <= 3) {
       setTaxId(newTaxId);
       return;
     };
 
-    if(newTaxId.length >= 10) {
+    if (newTaxId.length >= 10) {
       const finalTaxId = `${newTaxId.substr(0, 3)}.${newTaxId.substr(3, 3)}.${newTaxId.substr(6, 3)}-${newTaxId.substr(9, (newTaxId.length - 9))}`;
       setTaxId(finalTaxId);
       return;
     };
 
-    if(newTaxId.length >= 7) {
+    if (newTaxId.length >= 7) {
       const finalTaxId = `${newTaxId.substr(0, 3)}.${newTaxId.substr(3, 3)}.${newTaxId.substr(6, newTaxId.length - 6)}`;
       setTaxId(finalTaxId);
       return;
     };
 
-    if(newTaxId.length >= 4) {
+    if (newTaxId.length >= 4) {
       const finalTaxId = `${newTaxId.substr(0, 3)}.${newTaxId.substr(3, (newTaxId.length - 3))}`;
       setTaxId(finalTaxId);
       return;
@@ -232,7 +214,7 @@ const ModalEditClient = ({ client }) => {
 
   return (
     <Modal
-      open={openModal}
+      open={openEditModal}
       onClose={handleEditClient}
       className={styles.modal__wrapper}
     >
@@ -252,7 +234,6 @@ const ModalEditClient = ({ client }) => {
               />
               {!!errors.clientName && <p>O campo Nome é obrigatório!</p>}
             </label>
-
             <label>
               <h4>E-mail</h4>
               <TextField
@@ -268,7 +249,6 @@ const ModalEditClient = ({ client }) => {
               {!!errors.clientEmail && <p>O campo E-mail é obrigatório!</p>}
             </label>
           </div>
-
           <div className={styles.input__wrapper}>
             <label>
               <h4>CPF</h4>
@@ -290,7 +270,6 @@ const ModalEditClient = ({ client }) => {
               }
               {errors.clientTaxId?.type === 'pattern' && <p>O CPF deve conter apenas números</p>}
             </label>
-
             <label>
               <h4>Telefone</h4>
               <TextField
@@ -312,7 +291,6 @@ const ModalEditClient = ({ client }) => {
               {errors.clientPhone?.type === 'pattern' && <p>O telefone deve conter apenas números</p>}
             </label>
           </div>
-
           <div className={styles.input__wrapper}>
             <label>
               {(errors.zipCode || zipCodeError) ? <h4 className={styles.input__error}>CEP</h4> : <h4>CEP</h4>}
@@ -334,7 +312,6 @@ const ModalEditClient = ({ client }) => {
               }
               {errors.zipCode?.type === 'pattern' && <p>O CEP deve conter apenas números</p>}
             </label>
-
             <label>
               <h4>Logradouro</h4>
               <TextField
@@ -345,7 +322,6 @@ const ModalEditClient = ({ client }) => {
               />
             </label>
           </div>
-
           <div className={styles.input__wrapper}>
             <label>
               <h4>Número</h4>
@@ -356,7 +332,6 @@ const ModalEditClient = ({ client }) => {
                 variant='outlined'
               />
             </label>
-
             <label>
               <h4>Complemento</h4>
               <TextField
@@ -367,7 +342,6 @@ const ModalEditClient = ({ client }) => {
               />
             </label>
           </div>
-
           <div className={styles.input__wrapper}>
             <label>
               <h4>Bairro</h4>
@@ -378,7 +352,6 @@ const ModalEditClient = ({ client }) => {
                 variant='outlined'
               />
             </label>
-
             <label>
               <h4>Ponto de referência</h4>
               <TextField
@@ -389,7 +362,6 @@ const ModalEditClient = ({ client }) => {
               />
             </label>
           </div>
-
           <div className={styles.input__wrapper}>
             <label>
               <h4>Cidade</h4>
@@ -400,7 +372,6 @@ const ModalEditClient = ({ client }) => {
                 variant='outlined'
               />
             </label>
-
             <label>
               {errors.state ? <h4 className={styles.input__error}>Estado</h4> : <h4>Estado</h4>}
               <TextField
@@ -417,19 +388,17 @@ const ModalEditClient = ({ client }) => {
               {errors.state?.type === 'pattern' && <p>O CEP deve conter apenas números</p>}
             </label>
           </div>
-
           <Snackbar
             className={styles.snackbar}
-            open={!!requestError}
+            open={!!requestResult}
             anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             autoHideDuration={3000}
             onClose={handleAlertClose}
           >
-            <Alert severity={requestError === 'Cadastro do cliente atualizado com sucesso.' ? 'success' : 'error'}>
-              {requestError}
+            <Alert severity={requestResult === 'Cadastro do cliente atualizado com sucesso.' ? 'success' : 'error'}>
+              {requestResult}
             </Alert>
           </Snackbar>
-
           <div className={styles.button__wrapper}>
             <Button
               className={`${styles.button__states} ${styles.button__cancel}`}
@@ -446,7 +415,6 @@ const ModalEditClient = ({ client }) => {
               Editar Cliente
             </Button>
           </div>
-
           <Backdrop
             sx={{
               color: 'var(--color-white)',
