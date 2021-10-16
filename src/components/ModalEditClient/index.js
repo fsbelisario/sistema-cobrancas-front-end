@@ -22,7 +22,7 @@ import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
 const ModalEditClient = ({ client, openEditModal, setOpenEditModal }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, unregister, handleSubmit, clearErrors, formState: { errors } } = useForm();
 
   const {
     setUpdateClientsList,
@@ -32,9 +32,9 @@ const ModalEditClient = ({ client, openEditModal, setOpenEditModal }) => {
   const [addressDetails, setAddressDetails] = useState(client.address_details ? client.address_details : '');
   const [city, setCity] = useState(client.city ? client.city : '');
   const [district, setDistrict] = useState(client.district ? client.district : '');
-  const [email, setEmail] = useState(client.email ? client.email : '');
+  const [email, setEmail] = useState(client.email);
   const [loading, setLoading] = useState(false);
-  const [name, setName] = useState(client.name ? client.name : '');
+  const [name, setName] = useState(client.name);
   const [number, setNumber] = useState(client.number ? client.number : '');
   const [phone, setPhone] = useState(`(${client.phone.substr(0, 2)})${client.phone.substr(2, 5)}-${client.phone.substr(7)}`);
   const [reference, setReference] = useState(client.reference ? client.reference : '');
@@ -43,14 +43,11 @@ const ModalEditClient = ({ client, openEditModal, setOpenEditModal }) => {
   const [street, setStreet] = useState(client.street ? client.street : '');
   const [taxId, setTaxId] = useState(`${client.tax_id.substr(0, 3)}.${client.tax_id.substr(3, 3)}.${client.tax_id.substr(6, 3)}-${client.tax_id.substr(9, 2)}`);
   const [zipCode, setZipCode] = useState(client.zip_code ? client.zip_code : '');
-  const [zipCodeError, setZipCodeError] = useState('');
+  const [zipCodeError, setZipCodeError] = useState();
 
   useEffect(() => {
-    setZipCodeError('');
-    setStreet('');
-    setDistrict('');
-    setCity('');
-    setState('');
+    setRequestResult();
+    setZipCodeError();
 
     async function retrieveAddress() {
       try {
@@ -102,10 +99,10 @@ const ModalEditClient = ({ client, openEditModal, setOpenEditModal }) => {
         district: district && district,
         reference: reference && reference,
         city: city && city,
-        state: state && state
+        state: state && state.toUpperCase()
       };
 
-      setRequestResult('');
+      setRequestResult();
       setLoading(true);
 
       const response = await fetch(`https://academy-bills.herokuapp.com/clients/${client.id}`, {
@@ -125,25 +122,41 @@ const ModalEditClient = ({ client, openEditModal, setOpenEditModal }) => {
       };
 
       setRequestResult(requestData);
-      setLoading(true);
+      setUpdateClientsList(true);
       setTimeout(() => {
         setOpenEditModal(false);
-        setUpdateClientsList(true);
       }, 2000);
     } catch (error) {
       setRequestResult(error.message);
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
     };
   };
 
   function handleAlertClose() {
-    setRequestResult('');
+    setRequestResult();
   };
 
   function handleEditClient() {
-    setRequestResult('');
-    setZipCode('');
+    unregister(['clientName', 'clientEmail', 'clientTaxId', 'clientPhone', 'zipCode', 'state']);
+
+    setAddressDetails(client.address_details ? client.address_details : '');
+    setCity(client.city ? client.city : '');
+    setDistrict(client.district ? client.district : '');
+    setEmail(client.email);
+    setName(client.name);
+    setNumber(client.number ? client.number : '');
+    setPhone(`(${client.phone.substr(0, 2)})${client.phone.substr(2, 5)}-${client.phone.substr(7)}`);
+    setReference(client.reference ? client.reference : '');
+    setState(client.state ? client.state : '');
+    setStreet(client.street ? client.street : '');
+    setTaxId(`${client.tax_id.substr(0, 3)}.${client.tax_id.substr(3, 3)}.${client.tax_id.substr(6, 3)}-${client.tax_id.substr(9, 2)}`);
+    setZipCode(client.zip_code ? client.zip_code : '');
+
+    clearErrors();
+    setRequestResult();
     setOpenEditModal(false);
   }
 
@@ -375,6 +388,9 @@ const ModalEditClient = ({ client, openEditModal, setOpenEditModal }) => {
             <label>
               {errors.state ? <h4 className={styles.input__error}>Estado</h4> : <h4>Estado</h4>}
               <TextField
+                {...register('state', 
+                  { minLength: 2, maxLength: 2, pattern: /^[A-Za-z]+$/i })
+                }
                 value={state}
                 onChange={(e) => setState(e.target.value)}
                 color='secondary'
@@ -382,10 +398,10 @@ const ModalEditClient = ({ client, openEditModal, setOpenEditModal }) => {
                 variant='outlined'
                 error={errors.state}
               />
-              {(errors.state?.type === 'minLength' || errors.state?.type === 'maxLength')
-                && <p>O Estado deve conter 2 caracteres</p>
+              {(errors.state?.type === 'maxLength' || errors.state?.type === 'minLength')
+                && <p>O estado deve conter dois caracteres</p>
               }
-              {errors.state?.type === 'pattern' && <p>O CEP deve conter apenas números</p>}
+              {errors.state?.type === 'pattern' && <p>O estado deve conter apenas letras</p>}
             </label>
           </div>
           <Snackbar

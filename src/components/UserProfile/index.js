@@ -1,4 +1,8 @@
 import {
+  Alert,
+  Snackbar
+} from '@mui/material';
+import {
   useContext,
   useEffect,
   useRef,
@@ -30,7 +34,7 @@ function UserProfile() {
   useEffect(() => {
     async function getProfile() {
       try {
-        setRequestResult('');
+        setRequestResult();
 
         const response = await fetch('https://academy-bills.herokuapp.com/profile', {
           method: 'GET',
@@ -54,7 +58,7 @@ function UserProfile() {
     };
 
     getProfile();
-  }, [token, isVisible]);
+  }, [token, setRequestResult, isVisible]);
 
   function handleIsVisible() {
     setIsVisible(!isVisible);
@@ -71,6 +75,10 @@ function UserProfile() {
     setToken('');
     removeTokenLS();
     history.push('/');
+  };
+
+  function handleAlertClose() {
+    setRequestResult();
   };
 
   return (
@@ -95,6 +103,17 @@ function UserProfile() {
         </div>
       }
       {editProfile && <EditUserProfile user={user} />}
+      <Snackbar
+        className={styles.snackbar}
+        open={!!requestResult}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        autoHideDuration={6000}
+        onClose={handleAlertClose}
+      >
+        <Alert severity='error'>
+          {requestResult}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
