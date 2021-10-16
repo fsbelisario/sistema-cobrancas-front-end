@@ -1,6 +1,8 @@
 import {
+  Alert,
   Backdrop,
-  CircularProgress
+  CircularProgress,
+  Snackbar
 } from '@mui/material';
 import {
   useContext,
@@ -28,7 +30,7 @@ function Home() {
   const [dueBillings, setDueBillings] = useState(0);
   const [paidBillings, setPaidBillings] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [requestResult, setRequestResult] = useState('');
+  const [requestResult, setRequestResult] = useState();
 
   useEffect(() => {
     setToken(tokenLS);
@@ -40,7 +42,7 @@ function Home() {
 
     async function retrieveData() {
       try {
-        setRequestResult('');
+        setRequestResult();
         setLoading(true);
 
         const response = await fetch('https://academy-bills.herokuapp.com/management', {
@@ -72,6 +74,10 @@ function Home() {
 
     retrieveData();
   }, [token, setToken, tokenLS, history]);
+
+  function handleAlertClose() {
+    setRequestResult();
+  };
 
   return (
     <div className={styles.content__wrapper}>
@@ -123,6 +129,17 @@ function Home() {
               />
             ]}
           />
+          <Snackbar
+            className={styles.snackbar}
+            open={!!requestResult}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            autoHideDuration={3000}
+            onClose={handleAlertClose}
+          >
+            <Alert severity='error'>
+              {requestResult}
+            </Alert>
+          </Snackbar>
           <Backdrop
             sx={{
               color: 'var(--color-white)',

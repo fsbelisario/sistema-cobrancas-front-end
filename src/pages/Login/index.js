@@ -22,7 +22,7 @@ import PasswordInput from './../../components/PasswordInput';
 import styles from './styles.module.scss';
 
 function Login() {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm();
 
   const {
     token, setToken,
@@ -34,7 +34,7 @@ function Login() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState('');
-  const [requestResult, setRequestResult] = useState('');
+  const [requestResult, setRequestResult] = useState();
 
   useEffect(() => {
     if (tokenLS) {
@@ -54,7 +54,7 @@ function Login() {
         password: password
       };
 
-      setRequestResult('');
+      setRequestResult();
       setLoading(true);
 
       const response = await fetch('https://academy-bills.herokuapp.com/login', {
@@ -83,7 +83,7 @@ function Login() {
   };
 
   function handleAlertClose() {
-    setRequestResult('');
+    setRequestResult();
   };
 
   return (
@@ -91,26 +91,31 @@ function Login() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <img src={academy} alt='Logo Academy' />
         <label>
-          <h4>E-mail</h4>
+          {errors.email ? <h4 className={styles.input__error}>E-mail</h4> : <h4>E-mail</h4>}
           <TextField
+            {...register('email', { required: true })}
             placeholder='exemplo@email.com'
             type='email'
             fullWidth
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             variant='standard'
+            error={!!errors.email}
           />
+          {errors.email && <p>O campo E-mail é obrigatório!</p>}
         </label>
         <label>
-          <h4>Senha</h4>
+          {errors.password ? <h4 className={styles.input__error}>Senha</h4> : <h4>Senha</h4>}
           <PasswordInput
-            register={() => register('password')}
+            register={() => register('password', { required: true })}
             value={password}
             fullWidth
             onChange={(e) => setPassword(e.target.value)}
             className={styles.password__input}
             variant='standard'
+            error={!!errors.password}
           />
+          {errors.password && <p>O campo Senha é obrigatório!</p>}
         </label>
         <Snackbar
           className={styles.snackbar}

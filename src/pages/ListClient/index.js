@@ -1,7 +1,9 @@
 import {
+  Alert,
   Backdrop,
   Button,
-  CircularProgress
+  CircularProgress,
+  Snackbar
 } from '@mui/material';
 import {
   useContext,
@@ -75,6 +77,10 @@ function ListClient() {
     history.push('/adicionar-cliente');
   };
 
+  function handleAlertClose() {
+    setRequestResult('');
+  };
+
   return (
     <div className={styles.content__wrapper}>
       <Navbar />
@@ -101,6 +107,17 @@ function ListClient() {
             </div>
           </div>
           {clientList.map((client) => <CardClient key={client.id} client={client} />)}
+          <Snackbar
+            className={styles.snackbar}
+            open={!!requestResult}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            autoHideDuration={3000}
+            onClose={handleAlertClose}
+          >
+            <Alert severity='error'>
+              {requestResult}
+            </Alert>
+          </Snackbar>
           <Backdrop
             sx={{
               color: 'var(--color-white)',

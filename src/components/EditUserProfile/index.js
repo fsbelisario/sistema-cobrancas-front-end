@@ -61,8 +61,6 @@ function EditUserProfile({ user }) {
       setRequestResult('');
       setLoading(true);
 
-
-
       const response = await fetch('https://academy-bills.herokuapp.com/profile', {
         method: 'PUT',
         mode: 'cors',
@@ -87,7 +85,9 @@ function EditUserProfile({ user }) {
     } catch (error) {
       setRequestResult(error.messsage);
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
     };
   };
 

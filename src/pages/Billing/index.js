@@ -1,6 +1,8 @@
 import {
+  Alert,
   Backdrop,
-  CircularProgress
+  CircularProgress,
+  Snackbar
 } from '@mui/material';
 import {
   useContext,
@@ -61,6 +63,10 @@ function Billing() {
     getBillings();
   }, [token, setToken, tokenLS, history]);
 
+  function handleAlertClose() {
+    setRequestResult('');
+  };
+
   return (
     <div className={styles.content__wrapper}>
       <Navbar />
@@ -76,6 +82,17 @@ function Billing() {
             <div>Vencimento</div>
           </div>
           {billList.map((bill) => <CardBill key={bill.id} bill={bill} />)}
+          <Snackbar
+            className={styles.snackbar}
+            open={!!requestResult}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            autoHideDuration={3000}
+            onClose={handleAlertClose}
+          >
+            <Alert severity='error'>
+              {requestResult}
+            </Alert>
+          </Snackbar>
           <Backdrop
             sx={{
               color: 'var(--color-white)',
