@@ -18,6 +18,7 @@ import {
 } from 'react';
 import { useForm } from 'react-hook-form';
 import closeIcon from '../../assets/close-icon.svg';
+import trashIcon from '../../assets/trash-icon.svg';
 import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
@@ -41,6 +42,8 @@ function ModalEditBill({ bill, openEditModal, setOpenEditModal, listClients }) {
   const [clientId, setClientId] = useState(formatBillClientId);
   const [description, setDescription] = useState(bill.description);
   const [dueDate, setDueDate] = useState(formatBillDueDate);
+  const [isStatus200, setIsStatus200] = useState(false);
+  const [openWarning, setOpenWarning] = useState(false);
   const [status, setStatus] = useState(formatBillStatus === 'Vencido' ? 'Pendente' : formatBillStatus);
   const [value, setValue] = useState(formatBillValue);
   
@@ -48,12 +51,13 @@ function ModalEditBill({ bill, openEditModal, setOpenEditModal, listClients }) {
   const [requestResult, setRequestResult] = useState();
 
   useEffect(() => {
+    setIsStatus200(false);
     setRequestResult();
   }, [openEditModal]);
 
   async function onSubmit() {
     try {
-      const newValue = Number(value.replace('.', '').replace(',', ''));
+      const newValue = Number(value.replace(/\./g, '').replace(',', ''));
 
       if (newValue === 0) {
         setRequestResult('O valor da cobrança deve ser maior que zero.');
@@ -70,6 +74,7 @@ function ModalEditBill({ bill, openEditModal, setOpenEditModal, listClients }) {
       };
 
       setRequestResult();
+      setIsStatus200(false);
       setLoading(true);
 
       const response = await fetch(`https://academy-bills.herokuapp.com/billings/${bill.id}`, {
@@ -88,6 +93,42 @@ function ModalEditBill({ bill, openEditModal, setOpenEditModal, listClients }) {
         throw new Error(requestData);
       };
 
+      setIsStatus200(true);
+      setRequestResult(requestData);
+      setTimeout(() => {
+        setOpenEditModal(false);
+        setUpdateBillingsList(true);
+      }, 2000);
+    } catch (error) {
+      setRequestResult(error.message);
+    } finally {
+      setLoading(false);
+    };
+  };
+
+  async function deleteBill() {
+    setOpenWarning(false);
+    
+    try {
+      setRequestResult();
+      setLoading(true);
+
+      const response = await fetch(`https://academy-bills.herokuapp.com/billings/${bill.id}`, {
+        method: 'DELETE',
+        mode: 'cors',
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+      });
+
+      const requestData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(requestData);
+      };
+
+      setIsStatus200(true);
       setRequestResult(requestData);
       setUpdateBillingsList(true);
       setTimeout(() => {
@@ -114,6 +155,7 @@ function ModalEditBill({ bill, openEditModal, setOpenEditModal, listClients }) {
     setDueDate(formatBillDueDate);
 
     setRequestResult();
+    setOpenWarning(false);
     setOpenEditModal(false);
   };
 
@@ -123,21 +165,28 @@ function ModalEditBill({ bill, openEditModal, setOpenEditModal, listClients }) {
       return;
     };
 
-    const newValue = value.replace(',', '').replace('.', '');
+    const newValue = value.replace(',', '').replace(/\./g, '');
     const centIndex = (newValue.length - 2);
     const thousandIndex = (newValue.length - 5);
+    const millionIndex = (newValue.length - 8);
 
     if(newValue === 3) {
       const finalValue = `${newValue.substr(0, 1)},${newValue.substr(centIndex, 2)}`;
       setValue(finalValue);
       return;
-    }
+    };
+
+    if (newValue.length >= 9) {
+      const finalValue = `${newValue.substr(0, millionIndex)}.${newValue.substr(millionIndex, 3)}.${newValue.substr(thousandIndex, 3)},${newValue.substr(centIndex, 2)}`;
+      setValue(finalValue);
+      return;
+    };
 
     if (newValue.length >= 6) {
       const finalValue = `${newValue.substr(0, thousandIndex)}.${newValue.substr(thousandIndex, 3)},${newValue.substr(centIndex, 2)}`;
       setValue(finalValue);
       return;
-    }
+    };
 
     const finalValue = `${newValue.substr(0, centIndex)},${newValue.substr(centIndex, 2)}`;
     setValue(finalValue);
@@ -150,6 +199,10 @@ function ModalEditBill({ bill, openEditModal, setOpenEditModal, listClients }) {
     const newDate = `${date.substr(8, 2)} de ${monthName[monthNumber - 1]} de ${date.substr(0, 4)}`;
     setDueDate(newDate);
   }*/
+
+  function handleWarningDelete() {
+    setOpenWarning(!openWarning);
+  }
 
   const statusOption = [
     {
@@ -265,6 +318,7 @@ function ModalEditBill({ bill, openEditModal, setOpenEditModal, listClients }) {
                 {...register('value', { required: true, pattern: /^[0-9.,]+$/ })}
                 value={value}
                 onChange={(e) => formatValue(e.target.value)}
+                inputProps={{ maxLength: 12 }}
                 InputProps={{
                   startAdornment: <InputAdornment position="start">R$</InputAdornment>,
                 }}
@@ -295,17 +349,21 @@ function ModalEditBill({ bill, openEditModal, setOpenEditModal, listClients }) {
               {errors.dueDate?.type === 'required' && <p className={styles.alert__error}>O campo Vencimento é obrigatório!</p>}
             </label>
           </div>
-          <Snackbar
-            className={styles.snackbar}
-            open={!!requestResult}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-            autoHideDuration={3000}
-            onClose={handleAlertClose}
-          >
-            <Alert severity={requestResult === 'Cobrança atualizada com sucesso.' ? 'success' : 'error'}>
-              {requestResult}
-            </Alert>
-          </Snackbar>
+          <div className={styles.delete__wrapper}>
+            <div className={styles.delete__info} onClick={handleWarningDelete}>
+              <img src={trashIcon} alt='' />
+              <div className={styles.warning__text}>Excluir Cobrança</div>
+            </div>
+            {openWarning &&
+              <div className={styles.warning__balloon}>
+                <div>Excluir essa cobrança?</div>
+                <div className={styles.button__wrapper}>
+                  <button className={styles.noButton} onClick={handleWarningDelete}>Não</button>
+                  <button className={styles.yesButton} onClick={deleteBill}>Sim</button>
+                </div>
+              </div>
+            }
+          </div>
           <div className={styles.button__wrapper}>
             <Button
               className={`${styles.button__states} ${styles.button__cancel}`}
@@ -322,6 +380,17 @@ function ModalEditBill({ bill, openEditModal, setOpenEditModal, listClients }) {
               Editar Cobrança
             </Button>
           </div>
+          <Snackbar
+            className={styles.snackbar}
+            open={!!requestResult}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            autoHideDuration={3000}
+            onClose={handleAlertClose}
+          >
+            <Alert severity={isStatus200 ? 'success' : 'error'}>
+              {requestResult}
+            </Alert>
+          </Snackbar>
           <Backdrop
             sx={{
               color: 'var(--color-white)',

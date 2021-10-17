@@ -33,6 +33,7 @@ const ModalEditClient = ({ client, openEditModal, setOpenEditModal }) => {
   const [city, setCity] = useState(client.city ? client.city : '');
   const [district, setDistrict] = useState(client.district ? client.district : '');
   const [email, setEmail] = useState(client.email);
+  const [isStatus200, setIsStatus200] = useState(false);
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState(client.name);
   const [number, setNumber] = useState(client.number ? client.number : '');
@@ -48,6 +49,7 @@ const ModalEditClient = ({ client, openEditModal, setOpenEditModal }) => {
   useEffect(() => {
     setRequestResult();
     setZipCodeError();
+    setIsStatus200(false);
 
     async function retrieveAddress() {
       try {
@@ -103,6 +105,7 @@ const ModalEditClient = ({ client, openEditModal, setOpenEditModal }) => {
       };
 
       setRequestResult();
+      setIsStatus200(false);
       setLoading(true);
 
       const response = await fetch(`https://academy-bills.herokuapp.com/clients/${client.id}`, {
@@ -121,6 +124,7 @@ const ModalEditClient = ({ client, openEditModal, setOpenEditModal }) => {
         throw new Error(requestData);
       };
 
+      setIsStatus200(true);
       setRequestResult(requestData);
       setUpdateClientsList(true);
       setTimeout(() => {
@@ -409,7 +413,7 @@ const ModalEditClient = ({ client, openEditModal, setOpenEditModal }) => {
             autoHideDuration={3000}
             onClose={handleAlertClose}
           >
-            <Alert severity={requestResult === 'Cadastro do cliente atualizado com sucesso.' ? 'success' : 'error'}>
+            <Alert severity={isStatus200 ? 'success' : 'error'}>
               {requestResult}
             </Alert>
           </Snackbar>

@@ -22,6 +22,7 @@ function EnrollUser() {
   const history = useHistory();
 
   const [email, setEmail] = useState('');
+  const [isStatus200, setIsStatus200] = useState(false);
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
@@ -36,6 +37,7 @@ function EnrollUser() {
       };
 
       setRequestResult();
+      setIsStatus200(false);
       setLoading(true);
 
       const response = await fetch('https://academy-bills.herokuapp.com/users', {
@@ -53,6 +55,7 @@ function EnrollUser() {
         throw new Error(requestData);
       };
 
+      setIsStatus200(true);
       setRequestResult(requestData);
       setLoading(true);
       setTimeout(() => {
@@ -113,22 +116,24 @@ function EnrollUser() {
           {errors.password?.type === 'required' && <p>O campo Senha é obrigatório!</p>}
           {errors.password?.type === 'minLength' && <p>A senha deve conter no mínimo 5 caracteres</p>}
         </label>
-        <Snackbar
-          className={styles.snackbar}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          open={!!requestResult}
-          autoHideDuration={3000}
-          onClose={handleAlertClose}>
-          <Alert severity={requestResult === 'Usuário cadastrado com sucesso.' ? 'success' : 'error'}>
-            {requestResult}
-          </Alert>
-        </Snackbar>
         <Button
           className={styles.button__states}
           type='submit'
           disabled={!name || !email || !password}
           variant='contained'>Criar conta
         </Button>
+
+        <Snackbar
+          className={styles.snackbar}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          open={!!requestResult}
+          autoHideDuration={3000}
+          onClose={handleAlertClose}>
+          <Alert severity={isStatus200 ? 'success' : 'error'}>
+            {requestResult}
+          </Alert>
+        </Snackbar>
+        
         <Backdrop
           sx={{
             color: 'var(--color-white)',

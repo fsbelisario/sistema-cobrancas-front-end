@@ -160,9 +160,84 @@
       }
     }*/
 
+    .delete__wrapper {
+      display: flex;
+      align-items: center;
+      align-self: flex-start;
+      cursor: pointer;
+      gap: 1.5rem;
+      justify-content: center;
+
+      .delete__info {
+        display: flex;
+        align-items: center;
+        gap: 0.2rem;
+
+        .warning__text {
+          color: var(--color-gray-300);
+          font-size: 0.8125rem;
+          text-decoration: underline;
+        }
+      }
+
+      .warning__balloon {
+        background-color: var(--color-white-100);
+        border-radius: 4px;
+        box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
+        color: var(--color-gray-800);
+        display: flex;
+        flex-direction: column;
+        font-size: 0.6875rem;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        position: relative;
+        z-index: 2;
+
+        &:before {
+          content: "";
+
+          width: 0;
+          height: 0;
+          position: absolute;
+        
+          border-left: 0.8rem solid var(--color-white-100);
+          border-right: 1rem solid var(--color-white-100);
+          border-top: 0.8rem solid var(--color-white-100);
+          border-bottom: 1rem solid var(--color-white-100);
+
+          left: -0.7rem;
+          bottom: 25%;
+          transform: rotate(45deg);
+          z-index: -1;
+        }
+
+        button {
+          all: unset;
+          border-radius: 4px;
+          color: var(--color-white);
+          font-size: 0.7rem;
+          font-weight: 600;
+          padding: 0.2rem 0.6rem;
+
+          &:hover {
+            transform: scale(1.25);
+            transition: all 0.3s;
+          }
+        }
+
+        .noButton {
+          background-color: var(--color-red);
+        }
+  
+        .yesButton {
+          background-color: var(--color-blue);
+        }
+      }
+    }
+
     .snackbar {
-      position: absolute;
-      bottom: 0;
+      margin-top: auto;
+      margin-bottom: -0.5rem;
       width: max-content;
     }
   }

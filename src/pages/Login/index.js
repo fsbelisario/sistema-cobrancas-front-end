@@ -117,6 +117,15 @@ function Login() {
           />
           {errors.password && <p>O campo Senha é obrigatório!</p>}
         </label>
+        <Button
+          className={styles.button__states}
+          type='submit'
+          disabled={!email || !password}
+          variant='contained'
+        >
+          Entrar
+        </Button>
+
         <Snackbar
           className={styles.snackbar}
           open={!!requestResult}
@@ -128,14 +137,7 @@ function Login() {
             {requestResult}
           </Alert>
         </Snackbar>
-        <Button
-          className={styles.button__states}
-          type='submit'
-          disabled={!email || !password}
-          variant='contained'
-        >
-          Entrar
-        </Button>
+        
         <Backdrop
           sx={{
             color: 'var(--color-white)',
