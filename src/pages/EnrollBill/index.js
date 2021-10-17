@@ -38,7 +38,7 @@ function EnrollBill() {
   const [dueDate, setDueDate] = useState('');
   const [listClients, setListClients] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [requestResult, setRequestResult] = useState('');
+  const [requestResult, setRequestResult] = useState();
   const [status, setStatus] = useState('Selecione um status');
   const [value, setValue] = useState('');
 
@@ -52,7 +52,7 @@ function EnrollBill() {
 
     async function retrieveClients() {
       try {
-        setRequestResult('');
+        setRequestResult();
         setLoading(true);
 
         const response = await fetch('https://academy-bills.herokuapp.com/clients/options', {
@@ -113,7 +113,7 @@ function EnrollBill() {
         dueDate: dueDate
       };
 
-      setRequestResult('');
+      setRequestResult();
       setLoading(true);
 
       const response = await fetch('https://academy-bills.herokuapp.com/billings', {
@@ -145,7 +145,7 @@ function EnrollBill() {
   };
 
   function handleAlertClose() {
-    setRequestResult('');
+    setRequestResult();
   };
 
   function cancelButton() {
@@ -171,6 +171,14 @@ function EnrollBill() {
     const finalValue = `${newValue.substr(0, centIndex)},${newValue.substr(centIndex, 2)}`;
     setValue(finalValue);
   }
+
+  /*function formatDate(date) {
+    const monthNumber = date.substr(5, 2);
+    const monthName = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+    
+    const newDate = `${date.substr(8, 2)} de ${monthName[monthNumber - 1]} de ${date.substr(0, 4)}`;
+    setDueDate(newDate);
+  }*/
 
   const statusOption = [
     {
@@ -297,7 +305,7 @@ function EnrollBill() {
                   {errors.value?.type === 'pattern' && <p className={styles.alert__error}>O valor deve conter apenas números</p>}
                 </label>
                 <label className={styles.divided__label}>
-                  <h4>Vencimento</h4>
+                  {errors.dueDate ? <h4 className={styles.input__error}>Vencimento</h4> : <h4>Vencimento</h4>}
                   <TextField
                     type='date'
                     {...register('dueDate', { required: true })}

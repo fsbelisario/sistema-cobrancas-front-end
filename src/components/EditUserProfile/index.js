@@ -31,7 +31,7 @@ function EditUserProfile({ user }) {
     ? `(${user.current.phone.substr(0, 2)})${user.current.phone.substr(2, 5)}-${user.current.phone.substr(7)}`
     : ''
   );
-  const [requestResult, setRequestResult] = useState('');
+  const [requestResult, setRequestResult] = useState();
   const [taxId, setTaxId] = useState(user.current.tax_id
     ? `${user.current.tax_id.substr(0, 3)}.${user.current.tax_id.substr(3, 3)}.${user.current.tax_id.substr(6, 3)}-${user.current.tax_id.substr(9, 2)}`
     : ''
@@ -58,7 +58,7 @@ function EditUserProfile({ user }) {
         taxId: taxId === '' ? taxId : newTaxId
       };
 
-      setRequestResult('');
+      setRequestResult();
       setLoading(true);
 
       const response = await fetch('https://academy-bills.herokuapp.com/profile', {
@@ -85,14 +85,12 @@ function EditUserProfile({ user }) {
     } catch (error) {
       setRequestResult(error.messsage);
     } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 2000);
+      setLoading(false);
     };
   };
 
   function handleAlertClose() {
-    setRequestResult('');
+    setRequestResult();
   };
 
   function handleModalClose() {

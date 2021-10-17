@@ -20,7 +20,7 @@ import styles from './styles.module.scss';
 function UserProfile() {
   const [editProfile, setEditProfile] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [requestResult, setRequestResult] = useState('');
+  const [requestResult, setRequestResult] = useState();
 
   const history = useHistory();
 

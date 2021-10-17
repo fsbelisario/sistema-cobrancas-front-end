@@ -17,13 +17,17 @@ import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
 function Billing() {
-  const { token, setToken, tokenLS } = useContext(AuthContext);
+  const { 
+    token, setToken, tokenLS,
+    updateBillingsList, setUpdateBillingsList
+  } = useContext(AuthContext);
 
   const history = useHistory();
 
   const [billList, setBillList] = useState([]);
+  const [listClients, setListClients] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [requestResult, setRequestResult] = useState('');
+  const [requestResult, setRequestResult] = useState();
 
   useEffect(() => {
     setToken(tokenLS);
@@ -34,7 +38,7 @@ function Billing() {
 
     async function getBillings() {
       try {
-        setRequestResult('');
+        setRequestResult();
         setLoading(true);
 
         const response = await fetch('https://academy-bills.herokuapp.com/billings', {
@@ -60,11 +64,45 @@ function Billing() {
       };
     };
 
+    async function retrieveClients() {
+      try {
+        setRequestResult();
+        setLoading(true);
+
+        const response = await fetch('https://academy-bills.herokuapp.com/clients/options', {
+          method: 'GET',
+          mode: 'cors',
+          headers: {
+            'Content-type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const requestData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(requestData);
+        };
+
+        setListClients(requestData);
+      } catch (error) {
+        setRequestResult(error.message);
+      } finally {
+        setLoading(false);
+      };
+    };
+
+    retrieveClients();
     getBillings();
-  }, [token, setToken, tokenLS, history]);
+
+    if (updateBillingsList) {
+      getBillings();
+      setUpdateBillingsList(false);
+    };
+  }, [token, setToken, tokenLS, updateBillingsList, setUpdateBillingsList, history]);
 
   function handleAlertClose() {
-    setRequestResult('');
+    setRequestResult();
   };
 
   return (
@@ -81,7 +119,9 @@ function Billing() {
             <div>Status</div>
             <div>Vencimento</div>
           </div>
-          {billList.map((bill) => <CardBill key={bill.id} bill={bill} />)}
+          {billList.map((bill) => 
+            <CardBill key={bill.id} bill={bill} listClients={listClients} />
+          )}
           <Snackbar
             className={styles.snackbar}
             open={!!requestResult}

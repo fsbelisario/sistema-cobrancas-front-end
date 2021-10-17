@@ -51,7 +51,7 @@ const ModalEditClient = ({ client, openEditModal, setOpenEditModal }) => {
 
     async function retrieveAddress() {
       try {
-        setRequestResult('');
+        setRequestResult();
         setLoading(true);
 
         const response = await fetch(`https://viacep.com.br/ws/${zipCode}/json/`);
@@ -129,9 +129,7 @@ const ModalEditClient = ({ client, openEditModal, setOpenEditModal }) => {
     } catch (error) {
       setRequestResult(error.message);
     } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 2000);
+      setLoading(false);
     };
   };
 

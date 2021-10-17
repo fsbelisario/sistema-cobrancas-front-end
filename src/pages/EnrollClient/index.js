@@ -41,7 +41,7 @@ function EnrollClient() {
   const [number, setNumber] = useState('');
   const [phone, setPhone] = useState('');
   const [reference, setReference] = useState('');
-  const [requestResult, setRequestResult] = useState('');
+  const [requestResult, setRequestResult] = useState();
   const [state, setState] = useState('');
   const [street, setStreet] = useState('');
   const [taxId, setTaxId] = useState('');
@@ -117,7 +117,7 @@ function EnrollClient() {
         state: state && state
       };
 
-      setRequestResult('');
+      setRequestResult();
       setLoading(true);
 
       const response = await fetch('https://academy-bills.herokuapp.com/clients', {
@@ -149,7 +149,7 @@ function EnrollClient() {
   };
 
   function handleAlertClose() {
-    setRequestResult('');
+    setRequestResult();
   };
 
   function cancelButton() {
