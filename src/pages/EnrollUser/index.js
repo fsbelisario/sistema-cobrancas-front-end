@@ -35,7 +35,7 @@ function EnrollUser() {
         password: password
       };
 
-      setRequestResult('');
+      setRequestResult();
       setLoading(true);
 
       const response = await fetch('https://academy-bills.herokuapp.com/users', {
@@ -66,7 +66,7 @@ function EnrollUser() {
   };
 
   function handleAlertClose() {
-    setRequestResult('');
+    setRequestResult();
   };
 
   return (

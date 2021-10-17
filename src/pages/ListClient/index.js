@@ -28,7 +28,7 @@ function ListClient() {
 
   const [clientList, setClientList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [requestResult, setRequestResult] = useState('');
+  const [requestResult, setRequestResult] = useState();
 
   useEffect(() => {
     setToken(tokenLS);
@@ -39,7 +39,7 @@ function ListClient() {
 
     async function getClientsList() {
       try {
-        setRequestResult('');
+        setRequestResult();
         setLoading(true);
 
         const response = await fetch('https://academy-bills.herokuapp.com/clients', {
@@ -78,7 +78,7 @@ function ListClient() {
   };
 
   function handleAlertClose() {
-    setRequestResult('');
+    setRequestResult();
   };
 
   return (
