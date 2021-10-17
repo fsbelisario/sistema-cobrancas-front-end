@@ -36,34 +36,6 @@ function Billing() {
       return;
     };
 
-    async function getBillings() {
-      try {
-        setRequestResult();
-        setLoading(true);
-
-        const response = await fetch('https://academy-bills.herokuapp.com/billings', {
-          method: 'GET',
-          mode: 'cors',
-          headers: {
-            'Content-type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        const requestData = await response.json();
-
-        if (!response.ok) {
-          throw new Error(requestData);
-        };
-
-        setBillList(requestData);
-      } catch (error) {
-        setRequestResult(error.message);
-      } finally {
-        setLoading(false);
-      };
-    };
-
     async function retrieveClients() {
       try {
         setRequestResult();
@@ -85,6 +57,34 @@ function Billing() {
         };
 
         setListClients(requestData);
+      } catch (error) {
+        setRequestResult(error.message);
+      } finally {
+        setLoading(false);
+      };
+    };
+
+    async function getBillings() {
+      try {
+        setRequestResult();
+        setLoading(true);
+
+        const response = await fetch('https://academy-bills.herokuapp.com/billings', {
+          method: 'GET',
+          mode: 'cors',
+          headers: {
+            'Content-type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const requestData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(requestData);
+        };
+
+        setBillList(requestData);
       } catch (error) {
         setRequestResult(error.message);
       } finally {
@@ -122,6 +122,7 @@ function Billing() {
           {billList.map((bill) => 
             <CardBill key={bill.id} bill={bill} listClients={listClients} />
           )}
+
           <Snackbar
             className={styles.snackbar}
             open={!!requestResult}
@@ -133,6 +134,7 @@ function Billing() {
               {requestResult}
             </Alert>
           </Snackbar>
+          
           <Backdrop
             sx={{
               color: 'var(--color-white)',

@@ -36,6 +36,7 @@ function EnrollClient() {
   const [city, setCity] = useState('');
   const [district, setDistrict] = useState('');
   const [email, setEmail] = useState('');
+  const [isStatus200, setIsStatus200] = useState(false);
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
@@ -49,6 +50,7 @@ function EnrollClient() {
   const [zipCodeError, setZipCodeError] = useState('');
 
   useEffect(() => {
+    setIsStatus200(false);
     setToken(tokenLS);
 
     if (!token) {
@@ -118,6 +120,7 @@ function EnrollClient() {
       };
 
       setRequestResult();
+      setIsStatus200(false);
       setLoading(true);
 
       const response = await fetch('https://academy-bills.herokuapp.com/clients', {
@@ -136,6 +139,7 @@ function EnrollClient() {
         throw new Error(requestData);
       };
 
+      setIsStatus200(true);
       setRequestResult(requestData);
       setLoading(true);
       setTimeout(() => {
@@ -408,17 +412,6 @@ function EnrollClient() {
                   {errors.state?.type === 'pattern' && <p>O CEP deve conter apenas números</p>}
                 </label>
               </div>
-              <Snackbar
-                className={styles.snackbar}
-                open={!!requestResult}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-                autoHideDuration={3000}
-                onClose={handleAlertClose}
-              >
-                <Alert severity={requestResult === 'Cliente cadastrado com sucesso.' ? 'success' : 'error'}>
-                  {requestResult}
-                </Alert>
-              </Snackbar>
               <div className={styles.button__wrapper}>
                 <Button
                   className={`${styles.button__states} ${styles.button__cancel}`}
@@ -435,6 +428,19 @@ function EnrollClient() {
                   Adicionar Cliente
                 </Button>
               </div>
+
+              <Snackbar
+                className={styles.snackbar}
+                open={!!requestResult}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                autoHideDuration={3000}
+                onClose={handleAlertClose}
+              >
+                <Alert severity={isStatus200 ? 'success' : 'error'}>
+                  {requestResult}
+                </Alert>
+              </Snackbar>
+              
               <Backdrop
                 sx={{
                   color: 'var(--color-white)',

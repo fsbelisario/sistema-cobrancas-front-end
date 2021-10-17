@@ -36,6 +36,7 @@ function EnrollBill() {
   const [clientId, setClientId] = useState('Selecione um(a) cliente');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
+  const [isStatus200, setIsStatus200] = useState(false);
   const [listClients, setListClients] = useState([]);
   const [loading, setLoading] = useState(false);
   const [requestResult, setRequestResult] = useState();
@@ -49,6 +50,8 @@ function EnrollBill() {
       history.push('/');
       return;
     };
+
+    setIsStatus200(false);
 
     async function retrieveClients() {
       try {
@@ -85,7 +88,7 @@ function EnrollBill() {
 
   async function onSubmit() {
     try {
-      const newValue = Number(value.replace('.', '').replace(',', ''));
+      const newValue = Number(value.replace(/\./g, '').replace(',', ''));
 
       if (newValue === 0) {
         setRequestResult('O valor da cobrança deve ser maior que zero.');
@@ -114,6 +117,7 @@ function EnrollBill() {
       };
 
       setRequestResult();
+      setIsStatus200(false);
       setLoading(true);
 
       const response = await fetch('https://academy-bills.herokuapp.com/billings', {
@@ -132,6 +136,7 @@ function EnrollBill() {
         throw new Error(requestData);
       };
 
+      setIsStatus200(true);
       setRequestResult(requestData);
       setLoading(true);
       setTimeout(() => {
@@ -153,24 +158,37 @@ function EnrollBill() {
   };
 
   function formatValue(value) {
-    if (value.length < 3) {
+    if (value.length < 2) {
       setValue(value);
       return;
     };
 
-    const newValue = value.replace(',', '').replace('.', '');
+    const newValue = value.replace(',', '').replace(/\./g, '');
     const centIndex = (newValue.length - 2);
     const thousandIndex = (newValue.length - 5);
+    const millionIndex = (newValue.length - 8);
+
+    if(newValue === 3) {
+      const finalValue = `${newValue.substr(0, 1)},${newValue.substr(centIndex, 2)}`;
+      setValue(finalValue);
+      return;
+    };
+
+    if (newValue.length >= 9) {
+      const finalValue = `${newValue.substr(0, millionIndex)}.${newValue.substr(millionIndex, 3)}.${newValue.substr(thousandIndex, 3)},${newValue.substr(centIndex, 2)}`;
+      setValue(finalValue);
+      return;
+    };
 
     if (newValue.length >= 6) {
       const finalValue = `${newValue.substr(0, thousandIndex)}.${newValue.substr(thousandIndex, 3)},${newValue.substr(centIndex, 2)}`;
       setValue(finalValue);
       return;
-    }
+    };
 
     const finalValue = `${newValue.substr(0, centIndex)},${newValue.substr(centIndex, 2)}`;
     setValue(finalValue);
-  }
+  };
 
   /*function formatDate(date) {
     const monthNumber = date.substr(5, 2);
@@ -293,8 +311,9 @@ function EnrollBill() {
                     {...register('value', { required: true, pattern: /^[0-9.,]+$/ })}
                     value={value}
                     onChange={(e) => formatValue(e.target.value)}
+                    inputProps={{ maxLength: 12 }}
                     InputProps={{
-                      startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+                      startAdornment: <InputAdornment position="start">R$</InputAdornment>
                     }}
                     color='secondary'
                     placeholder='0,00'
@@ -323,17 +342,6 @@ function EnrollBill() {
                   {errors.dueDate?.type === 'required' && <p className={styles.alert__error}>O campo Vencimento é obrigatório!</p>}
                 </label>
               </div>
-              <Snackbar
-                className={styles.snackbar}
-                open={!!requestResult}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-                autoHideDuration={3000}
-                onClose={handleAlertClose}
-              >
-                <Alert severity={requestResult === 'Cobrança cadastrada com sucesso.' ? 'success' : 'error'}>
-                  {requestResult}
-                </Alert>
-              </Snackbar>
               <div className={styles.button__wrapper}>
                 <Button
                   className={`${styles.button__states} ${styles.button__cancel}`}
@@ -352,6 +360,19 @@ function EnrollBill() {
                   Criar Cobrança
                 </Button>
               </div>
+
+              <Snackbar
+                className={styles.snackbar}
+                open={!!requestResult}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                autoHideDuration={3000}
+                onClose={handleAlertClose}
+              >
+                <Alert severity={isStatus200 ? 'success' : 'error'}>
+                  {requestResult}
+                </Alert>
+              </Snackbar>
+              
               <Backdrop
                 sx={{
                   color: 'var(--color-white)',

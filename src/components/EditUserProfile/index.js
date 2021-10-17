@@ -36,6 +36,7 @@ function EditUserProfile({ user }) {
     ? `${user.current.tax_id.substr(0, 3)}.${user.current.tax_id.substr(3, 3)}.${user.current.tax_id.substr(6, 3)}-${user.current.tax_id.substr(9, 2)}`
     : ''
   );
+  const [isStatus200, setIsStatus200] = useState(false);
 
   async function onSubmit() {
     try {
@@ -59,6 +60,7 @@ function EditUserProfile({ user }) {
       };
 
       setRequestResult();
+      setIsStatus200(false);
       setLoading(true);
 
       const response = await fetch('https://academy-bills.herokuapp.com/profile', {
@@ -78,6 +80,7 @@ function EditUserProfile({ user }) {
         return;
       };
 
+      setIsStatus200(true);
       setRequestResult(requestData);
       setTimeout(() => {
         setOpen(!open);
@@ -94,6 +97,7 @@ function EditUserProfile({ user }) {
   };
 
   function handleModalClose() {
+    setIsStatus200(false);
     setOpen(!open);
   };
 
@@ -233,10 +237,7 @@ function EditUserProfile({ user }) {
           autoHideDuration={3000}
           onClose={handleAlertClose}
         >
-          <Alert severity={requestResult === 'Perfil do usuário atualizado com sucesso.'
-            ? 'success'
-            : 'error'}
-          >
+          <Alert severity={isStatus200 ? 'success' : 'error'}>
             {requestResult}
           </Alert>
         </Snackbar>
