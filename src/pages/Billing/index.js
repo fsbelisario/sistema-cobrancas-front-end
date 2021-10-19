@@ -140,32 +140,6 @@ function Billing() {
       listManipulation = billList;
     };
 
-    if (isDescSort) {
-      listManipulation.sort((a, b) => {
-        if (a.name < b.name) {
-          return 1;
-        };
-
-        if (a.name > b.name) {
-          return -1;
-        };
-
-        return 0;
-      });
-    } else {
-      listManipulation.sort((a, b) => {
-        if (a.name > b.name) {
-          return 1;
-        };
-
-        if (a.name < b.name) {
-          return -1;
-        };
-
-        return 0;
-      });
-    };
-
     setCurrentList(listManipulation);
 
     console.log(currentList);
@@ -245,7 +219,10 @@ function Billing() {
           {(currentList.length > 0)
             && ((search.length !== 0)
               ? <div className={styles.cardNoResult}>Sem resultados...</div>
-              : currentList.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
+              : (isDescSort
+                ? currentList.reverse().map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
+                : currentList.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
+              )
             )
           }
           <Snackbar

@@ -107,32 +107,6 @@ function ListClient() {
       listManipulation = clientList;
     };
 
-    if (isDescSort) {
-      listManipulation.sort((a, b) => {
-        if (a.name < b.name) {
-          return 1;
-        };
-
-        if (a.name > b.name) {
-          return -1;
-        };
-
-        return 0;
-      });
-    } else {
-      listManipulation.sort((a, b) => {
-        if (a.name > b.name) {
-          return 1;
-        };
-
-        if (a.name < b.name) {
-          return -1;
-        };
-
-        return 0;
-      });
-    };
-
     setCurrentList(listManipulation);
 
     console.log(currentList);
@@ -225,9 +199,11 @@ function ListClient() {
           </div>
           {(currentList.length > 0)
             && ((search.length !== 0)
-              ?
-              <div className={styles.cardNoResult}>Sem resultados...</div>
-              : currentList.map((client) => <CardClient key={client.id} client={client} />)
+              ? <div className={styles.cardNoResult}>Sem resultados...</div>
+              : (isDescSort
+                ? currentList.reverse().map((client) => <CardClient key={client.id} client={client} />)
+                : currentList.map((client) => <CardClient key={client.id} client={client} />)
+              )
             )
           }
           <Snackbar
