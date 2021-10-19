@@ -26,7 +26,7 @@ import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
 function Billing() {
-  const { register } = useForm();
+  const { register, setValue, getValues } = useForm();
 
   const {
     token, setToken, tokenLS,
@@ -43,7 +43,6 @@ function Billing() {
   const [requestResult, setRequestResult] = useState();
   const [searchBills, setSearchBills] = useState([]);
   const [searchResult, setSearchResult] = useState('');
-  const [search, setSearch] = useState('');
 
   useEffect(() => {
     setToken(tokenLS);
@@ -117,6 +116,8 @@ function Billing() {
         });
 
         setBillList(requestData);
+        setSearchBills(requestData);
+        setValue('search', '');
       } catch (error) {
         setRequestResult(error.message);
       } finally {
@@ -130,7 +131,7 @@ function Billing() {
       getBillings();
       setUpdateBillingsList(false);
     };
-  }, [token, setToken, tokenLS, history, setUpdateBillingsList, updateBillingsList]);
+  }, [token, setToken, tokenLS, history, setUpdateBillingsList, updateBillingsList, setValue]);
 
   useEffect(() => {
     let listManipulation;
@@ -146,6 +147,8 @@ function Billing() {
 
   function handleSearch() {
     setSearchResult('');
+    setIsDescSort(false);
+    const search = getValues('search');
 
     if (search.trim().length > 0) {
       let filter = [];
@@ -199,10 +202,13 @@ function Billing() {
               <form onSubmit={e => { e.preventDefault() }}>
                 <TextField
                   {...register('search')}
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSearch();
+                    };
+                  }}
                   color='secondary'
-                  placeholder='Procurar por Nome, CPF, E-mail ou ID'
+                  placeholder='Procurar por Nome, E-mail, CPF ou ID'
                 />
                 <Button className={styles.search__button} onClick={handleSearch}>
                   <img src={searchIcon} alt='' />

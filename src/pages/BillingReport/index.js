@@ -28,7 +28,7 @@ import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
 function BillingReport() {
-  const { register } = useForm();
+  const { register, setValue, getValues } = useForm();
 
   const { 
     token, setToken, tokenLS,
@@ -39,10 +39,13 @@ function BillingReport() {
   const history = useHistory();
 
   const [billList, setBillList] = useState([]);
+  const [currentList, setCurrentList] = useState([]);
   const [isDescSort, setIsDescSort] = useState(false);
   const [listClients, setListClients] = useState([]);
   const [loading, setLoading] = useState(false);
   const [requestResult, setRequestResult] = useState();
+  const [searchBills, setSearchBills] = useState([]);
+  const [searchResult, setSearchResult] = useState('');
   const [isTypeVisible, setIsTypeVisible] = useState(false);
   const [isStatusVisible, setIsStatusVisible] = useState(false);
   const [statusText, setStatusText] = useState(reportBillType || 'Vencidas');
@@ -119,6 +122,8 @@ function BillingReport() {
         });
 
         setBillList(requestData);
+        setSearchBills(requestData);
+        setValue('search', '');
       } catch (error) {
         setRequestResult(error.message);
       } finally {
@@ -132,28 +137,19 @@ function BillingReport() {
       getBillings();
       setUpdateBillingsList(false);
     };
-  }, [token, setToken, tokenLS, history, setUpdateBillingsList, updateBillingsList]);
+  }, [token, setToken, tokenLS, history, setUpdateBillingsList, updateBillingsList, setValue]);
 
-  /*function handleSearch(data) {
-    setSearch('');
-    
-    const search = data.search;
-    let searchedBills = [];
+  useEffect(() => {
+    let listManipulation;
 
-    for (const bill of billList) {
-      if((bill.name.toLowerCase()).includes(search.toLowerCase())
-        || (String(bill.id).includes(search))
-      ) {
-        searchedBills.push(bill);
-      };
+    if (searchBills.length > 0) {
+      listManipulation = searchBills;
+    } else {
+      listManipulation = billList;
     };
 
-    if(search.length !== 0 && searchedBills.length === 0) {
-      setSearch('Sem resultados');
-    };
-
-    setSearchBills(searchedBills);
-  };*/
+    setCurrentList(listManipulation);
+  }, [isDescSort, searchBills, billList]);
 
   function handleAlertClose() {
     setRequestResult();
@@ -190,6 +186,36 @@ function BillingReport() {
 
     setReportBillType('Pagas');
     setStatusText('Pagas');
+  };
+
+  function handleSearch() {
+    setSearchResult('');
+    setIsDescSort(false);
+    const search = getValues('search');
+
+    if (search.trim().length > 0) {
+      let filter = [];
+
+      for (const bill of billList) {
+        if ((bill.name.toLowerCase()).includes(search.trim().toLowerCase())
+          || (bill.email.toLowerCase()).includes(search.trim().toLowerCase())
+          || (bill.tax_id).includes(search.trim())
+          || (String(bill.id).includes(search.trim()))
+        ) {
+          filter.push(bill);
+        };
+      };
+
+      if (filter.length === 0) {
+        setSearchResult('Sem resultados');
+        setSearchBills([]);
+        return;
+      };
+
+      setSearchBills(filter);
+    } else {
+      setSearchBills([]);
+    };
   };
 
   const theme = createTheme({
@@ -272,13 +298,13 @@ function BillingReport() {
                   }
                 </div>
               </div>
-              <form>
+              <form onSubmit={e => { e.preventDefault() }}>
                 <TextField
                   {...register('search')}
                   color='secondary'
                   placeholder='Procurar por Nome ou ID'
                 />
-                <Button className={styles.search__button} type='submit'>
+                <Button className={styles.search__button} onClick={handleSearch}>
                   <img src={searchIcon} alt='' />
                   Buscar
                 </Button>

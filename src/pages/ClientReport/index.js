@@ -27,7 +27,7 @@ import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
 function ClientReport() {
-  const { register } = useForm();
+  const { register, setValue, getValues } = useForm();
 
   const {
     token, setToken,
@@ -39,9 +39,12 @@ function ClientReport() {
   const history = useHistory();
 
   const [clientList, setClientList] = useState([]);
+  const [currentList, setCurrentList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [requestResult, setRequestResult] = useState();
   const [isDescSort, setIsDescSort] = useState(false);
+  const [searchClients, setSearchClients] = useState([]);
+  const [searchResult, setSearchResult] = useState('');
   const [isTypeVisible, setIsTypeVisible] = useState(false);
   const [isStatusVisible, setIsStatusVisible] = useState(false);
   const [statusText, setStatusText] = useState(reportClientType || 'Inadimplentes');
@@ -85,7 +88,10 @@ function ClientReport() {
           
           return 0;
         });
+
         setClientList(requestData);
+        setSearchClients(requestData);
+        setValue('search', '');
       } catch (error) {
         setRequestResult(error.message);
       } finally {
@@ -99,7 +105,19 @@ function ClientReport() {
       getClientsList();
       setUpdateClientsList(false);
     };
-  }, [token, setToken, tokenLS, history, updateClientsList, setUpdateClientsList]);
+  }, [token, setToken, tokenLS, history, updateClientsList, setUpdateClientsList, setValue]);
+
+  useEffect(() => {
+    let listManipulation;
+
+    if (searchClients.length > 0) {
+      listManipulation = searchClients;
+    } else {
+      listManipulation = clientList;
+    };
+
+    setCurrentList(listManipulation);
+  }, [isDescSort, searchClients, clientList]);
 
   function handleAlertClose() {
     setRequestResult();
@@ -132,27 +150,37 @@ function ClientReport() {
     setStatusText('Em dia');
   };
 
-  /*function handleSearch(data) {
-    setSearch('');
-    
-    const search = data.search;
-    let searchedClients = [];
+  function handleSearch() {
+    setSearchResult('');
+    setIsDescSort(false);
+    const search = getValues('search');
 
-    for (const client of clientList) {
-      if((client.name.toLowerCase()).includes(search.toLowerCase())
-          || (client.email.toLowerCase()).includes(search.toLowerCase())
-          || (client.tax_id).includes(search)
+    if (search.trim().length > 0) {
+      let filter = [];
+
+      for (const client of clientList) {
+        if ((client.name.toLowerCase()).includes(search.trim().toLowerCase())
+          || (client.email.toLowerCase()).includes(search.trim().toLowerCase())
+          || (client.tax_id).includes(search.trim())
         ) {
-        searchedClients.push(client);
+          filter.push(client);
+        };
       };
-    };
 
-    if(search.length !== 0 && searchedClients.length === 0) {
-      setSearch('Sem resultados');
-    };
+      if (filter.length === 0) {
+        setSearchResult('Sem resultados');
+        setSearchClients([]);
+        return;
+      };
 
-    setSearchClients(searchedClients);
-  };*/
+      setSearchClients(filter);
+    } else {
+      setSearchClients([]);
+    };
+  };
+
+    const onTimeClientList = clientList.filter((client) => client.status === 'EM DIA');
+    const overdueClientList = clientList.filter((client) => client.status === 'INADIMPLENTE');
 
   const theme = createTheme({
     palette: {
@@ -161,9 +189,6 @@ function ClientReport() {
       }
     }
   });
-
-  const onTimeClientList = clientList.filter((client) => client.status === 'EM DIA');
-  const overdueClientList = clientList.filter((client) => client.status === 'INADIMPLENTE');
 
   return (
     <div className={styles.content__wrapper}>
@@ -223,13 +248,18 @@ function ClientReport() {
                   }
                 </div>
               </div>
-              <form>
+              <form onSubmit={e => { e.preventDefault() }}>
                 <TextField
                   {...register('search')}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSearch();
+                    };
+                  }}
                   color='secondary'
                   placeholder='Procurar por Nome, E-mail ou CPF'
                 />
-                <Button className={styles.search__button} type='submit'>
+                <Button className={styles.search__button} onClick={handleSearch}>
                   <img src={searchIcon} alt='' />
                   Buscar
                 </Button>
@@ -250,9 +280,14 @@ function ClientReport() {
             </div>
           </div>
 
-          {statusText === 'Em dia'
-            ? onTimeClientList.map((client) => <CardClient key={client.id} client={client} />)
-            : overdueClientList.map((client) => <CardClient key={client.id} client={client} />)
+          {(currentList.length > 0)
+            && ((searchResult.length !== 0)
+              ? <div className={styles.cardNoResult}>Sem resultados...</div>
+              : (isDescSort
+                ? currentList.reverse().map((client) => <CardClient key={client.id} client={client} />)
+                : currentList.map((client) => <CardClient key={client.id} client={client} />)
+              )
+            )
           }
           
           <Snackbar

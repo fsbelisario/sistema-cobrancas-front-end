@@ -25,7 +25,7 @@ import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
 function ListClient() {
-  const { register } = useForm();
+  const { register, setValue, getValues } = useForm();
 
   const {
     token, setToken,
@@ -42,7 +42,6 @@ function ListClient() {
   const [isDescSort, setIsDescSort] = useState(false);
   const [searchClients, setSearchClients] = useState([]);
   const [searchResult, setSearchResult] = useState('');
-  const [search, setSearch] = useState('');
 
   useEffect(() => {
     setToken(tokenLS);
@@ -84,6 +83,8 @@ function ListClient() {
         });
 
         setClientList(requestData);
+        setSearchClients(requestData);
+        setValue('search', '');
       } catch (error) {
         setRequestResult(error.message);
       } finally {
@@ -97,7 +98,7 @@ function ListClient() {
       getClientsList();
       setUpdateClientsList(false);
     };
-  }, [token, setToken, tokenLS, history, updateClientsList, setUpdateClientsList]);
+  }, [token, setToken, tokenLS, history, updateClientsList, setUpdateClientsList, setValue]);
 
   useEffect(() => {
     let listManipulation;
@@ -125,6 +126,8 @@ function ListClient() {
 
   function handleSearch() {
     setSearchResult('');
+    setIsDescSort(false);
+    const search = getValues('search');
 
     if (search.trim().length > 0) {
       let filter = [];
@@ -176,8 +179,11 @@ function ListClient() {
               <form onSubmit={e => { e.preventDefault() }}>
                 <TextField
                   {...register('search')}
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSearch();
+                    };
+                  }}
                   color='secondary'
                   placeholder='Procurar por Nome, E-mail ou CPF'
                 />
@@ -201,6 +207,7 @@ function ListClient() {
             <div className={styles.blank__space}>
             </div>
           </div>
+
           {(currentList.length > 0)
             && ((searchResult.length !== 0)
               ? <div className={styles.cardNoResult}>Sem resultados...</div>
@@ -210,6 +217,7 @@ function ListClient() {
               )
             )
           }
+          
           <Snackbar
             className={styles.snackbar}
             open={!!requestResult}
