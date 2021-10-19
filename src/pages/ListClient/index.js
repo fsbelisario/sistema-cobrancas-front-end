@@ -25,7 +25,7 @@ import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
 function ListClient() {
-  const { register, handleSubmit } = useForm();
+  const { register } = useForm();
 
   const {
     token, setToken,
@@ -41,6 +41,7 @@ function ListClient() {
   const [requestResult, setRequestResult] = useState();
   const [isDescSort, setIsDescSort] = useState(false);
   const [searchClients, setSearchClients] = useState([]);
+  const [searchResult, setSearchResult] = useState('');
   const [search, setSearch] = useState('');
 
   useEffect(() => {
@@ -122,28 +123,31 @@ function ListClient() {
     setIsDescSort(!isDescSort);
   };
 
-  function handleSearch(data) {
-    setSearch('');
+  function handleSearch() {
+    setSearchResult('');
 
-    const search = data.search;
-    let searchedClients = [];
+    if (search.trim().length > 0) {
+      let filter = [];
 
-    for (const client of clientList) {
-      if ((client.name.toLowerCase()).includes(search.trim().toLowerCase())
-        || (client.email.toLowerCase()).includes(search.trim().toLowerCase())
-        || (client.tax_id).includes(search.trim())
-      ) {
-        searchedClients.push(client);
+      for (const client of clientList) {
+        if ((client.name.toLowerCase()).includes(search.trim().toLowerCase())
+          || (client.email.toLowerCase()).includes(search.trim().toLowerCase())
+          || (client.tax_id).includes(search.trim())
+        ) {
+          filter.push(client);
+        };
       };
-    };
 
-    if (search.length !== 0 && searchedClients.length === 0) {
-      setSearch('Sem resultados');
+      if (filter.length === 0) {
+        setSearchResult('Sem resultados');
+        setSearchClients([]);
+        return;
+      };
+
+      setSearchClients(filter);
+    } else {
       setSearchClients([]);
-      return;
     };
-
-    setSearchClients(searchedClients);
   };
 
   const theme = createTheme({
@@ -169,13 +173,15 @@ function ListClient() {
               >
                 Adicionar cliente
               </Button>
-              <form onSubmit={handleSubmit(handleSearch)}>
+              <form onSubmit={e => { e.preventDefault() }}>
                 <TextField
                   {...register('search')}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
                   color='secondary'
                   placeholder='Procurar por Nome, E-mail ou CPF'
                 />
-                <Button className={styles.search__button} type='submit'>
+                <Button className={styles.search__button} onClick={handleSearch}>
                   <img src={searchIcon} alt='' />
                   Buscar
                 </Button>
@@ -196,7 +202,7 @@ function ListClient() {
             </div>
           </div>
           {(currentList.length > 0)
-            && ((search.length !== 0)
+            && ((searchResult.length !== 0)
               ? <div className={styles.cardNoResult}>Sem resultados...</div>
               : (isDescSort
                 ? currentList.reverse().map((client) => <CardClient key={client.id} client={client} />)
