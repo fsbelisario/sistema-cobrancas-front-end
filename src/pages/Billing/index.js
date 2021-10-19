@@ -36,7 +36,6 @@ function Billing() {
   const history = useHistory();
 
   const [billList, setBillList] = useState([]);
-  //const [fullClientList, setFullClientList] = useState([]);
   const [isDescSort, setIsDescSort] = useState(false);
   const [listClients, setListClients] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -81,37 +80,6 @@ function Billing() {
 
     retrieveClients();
 
-    /*async function getFullClientList() {
-      try {
-        setRequestResult();
-        setLoading(true);
-
-        const response = await fetch('https://academy-bills.herokuapp.com/clients', {
-          method: 'GET',
-          mode: 'cors',
-          headers: {
-            'Content-type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        const requestData = await response.json();
-
-        if (!response.ok) {
-          throw new Error(requestData);
-        };
-
-        setFullClientList(requestData);
-      } catch (error) {
-        setRequestResult(error.message);
-      } finally {
-        setLoading(false);
-      };
-    };*/
-
-    
-    //getFullClientList();
-
     async function getBillings() {
       setIsDescSort(false);
       
@@ -134,7 +102,7 @@ function Billing() {
           throw new Error(requestData);
         };
 
-        const ascBillList = requestData.sort((a, b) => {
+        requestData.sort((a, b) => {
           if(a.name > b.name) {
             return 1;
           };
@@ -146,7 +114,7 @@ function Billing() {
           return 0;
         });
 
-        setBillList(ascBillList);
+        setBillList(requestData);
       } catch (error) {
         setRequestResult(error.message);
       } finally {

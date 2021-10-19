@@ -43,7 +43,6 @@ function ListClient() {
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    setIsDescSort(false);
     
     setToken(tokenLS);
     if (!token) {
@@ -70,7 +69,7 @@ function ListClient() {
         if (!response.ok) {
           throw new Error(requestData);
         };
-
+        
         requestData.sort((a, b) => {
           if(a.name > b.name) {
             return 1;
@@ -98,6 +97,10 @@ function ListClient() {
     };
   }, [token, setToken, tokenLS, history, updateClientsList, setUpdateClientsList]);
 
+
+  console.log(isDescSort);
+
+  
   function enrollClient() {
     history.push('/adicionar-cliente');
   };
@@ -132,9 +135,6 @@ function ListClient() {
     setSearchClients(searchedClients);
   };
 
-  const descClientList = clientList.reverse();
-  const descSearchClients = searchClients.reverse();
-
   const theme = createTheme({
     palette: {
       secondary: {
@@ -142,7 +142,7 @@ function ListClient() {
       }
     }
   });
-  
+
   return (
     <div className={styles.content__wrapper}>
       <Navbar />
@@ -187,7 +187,7 @@ function ListClient() {
           {(searchClients.length === 0 && isDescSort)
             && ((search.length !== 0)
               ? <div className={styles.cardNoResult}>Sem resultados...</div>
-              : descClientList.map((client) => <CardClient key={client.id} client={client} />)
+              : clientList.reverse().map((client) => <CardClient key={client.id} client={client} />)
             )
           }
           {(searchClients.length === 0 && !isDescSort)
@@ -197,10 +197,13 @@ function ListClient() {
             )
           }
           {(searchClients.length !== 0 && isDescSort)
-            && descSearchClients.map((client) => <CardClient key={client.id} client={client} />)
+            && searchClients.reverse().map((client) => <CardClient key={client.id} client={client} />)
           }
           {(searchClients.length !== 0 && !isDescSort)
-            && searchClients.map((client) => <CardClient key={client.id} client={client} />)
+            && searchClients.map((client) => {
+              console.log(searchClients.length, isDescSort, search.length)
+              return <CardClient key={client.id} client={client} />
+            })
           }
           <Snackbar
             className={styles.snackbar}
