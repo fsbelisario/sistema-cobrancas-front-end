@@ -1,8 +1,12 @@
 import {
+  Alert,
+  Snackbar
+} from '@mui/material';
+import {
   useContext,
-  useState,
   useEffect,
-  useRef
+  useRef,
+  useState
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import editIcon from '../../assets/edit-icon.svg';
@@ -14,36 +18,47 @@ import NavbarItem from '../NavbarItem';
 import styles from './styles.module.scss';
 
 function UserProfile() {
-  const [isVisible, setIsVisible] = useState(false);
   const [editProfile, setEditProfile] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [requestResult, setRequestResult] = useState();
 
   const history = useHistory();
 
-  const { token, setToken, removeTokenLS, userLS, removeUserLS  } = useContext(AuthContext);
+  const {
+    token, setToken,
+    removeTokenLS
+  } = useContext(AuthContext);
 
-  let user = useRef();
+  const user = useRef();
 
   useEffect(() => {
     async function getProfile() {
-      const response = await fetch('https://academy-bills.herokuapp.com/profile', {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-          'Content-type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      try {
+        setRequestResult();
 
-      const requestData = await response.json();
-      user.current = requestData;
-    }
+        const response = await fetch('https://academy-bills.herokuapp.com/profile', {
+          method: 'GET',
+          mode: 'cors',
+          headers: {
+            'Content-type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const requestData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(requestData);
+        };
+
+        user.current = requestData;
+      } catch (error) {
+        setRequestResult(error.message);
+      };
+    };
 
     getProfile();
-  }, [token]);
-  
-  if(userLS) {
-    user.current = userLS;
-  };
+  }, [token, setRequestResult, isVisible]);
 
   function handleIsVisible() {
     setIsVisible(!isVisible);
@@ -58,9 +73,12 @@ function UserProfile() {
   function handleLogout() {
     user.current = '';
     setToken('');
-    removeUserLS();
     removeTokenLS();
     history.push('/');
+  };
+
+  function handleAlertClose() {
+    setRequestResult();
   };
 
   return (
@@ -85,6 +103,17 @@ function UserProfile() {
         </div>
       }
       {editProfile && <EditUserProfile user={user} />}
+      <Snackbar
+        className={styles.snackbar}
+        open={!!requestResult}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        autoHideDuration={6000}
+        onClose={handleAlertClose}
+      >
+        <Alert severity='error'>
+          {requestResult}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

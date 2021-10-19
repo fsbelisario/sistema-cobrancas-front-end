@@ -1,4 +1,4 @@
-.content__wrapper {
+.modal__wrapper {
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -13,11 +13,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    padding: 2rem 4rem;
-    position: relative;
+    gap: 2rem;
     overflow-y: auto;
     overflow-x: hidden;
+    padding: 2rem 4rem;
+    position: relative;
 
     > img {
       position: absolute;
@@ -34,15 +34,22 @@
       align-self: flex-start;
       color: var(--color-dark-blue-600);
       font-weight: 600;
-      margin: 2rem 0 1rem 0.8rem;
+      margin: 0 0 0.5rem 0.8rem;
     }
     
     input {
-      color: var(--color-gray-500);
+      color: var(--color-gray-800);
       font-family: 'Montserrat', sans-serif;
-      font-size: 0.875rem;
-      padding: 0.8rem;
-      width: 16rem;
+      font-size: 0.75rem;
+      padding: 0.75rem;
+      min-width: 16rem;
+    }
+    
+    .input__wrapper {
+      display: flex;
+      column-gap: 1rem;
+      row-gap: 2rem;
+      justify-content: center;
     }
 
     p {
@@ -61,42 +68,45 @@
     .input__error {
       color: var(--color-red);
     }
+    
+    .button__wrapper {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      justify-content: center;
 
-    .input__warning {
-      color: var(--color-blue);
-    }
-
-    .password__input {
-      width: 17.55rem;
-
-      &:before {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.42);
-      }
-    }
-
-    ::after {
-      border-bottom: 2px solid var(--color-pink);
-    }
-
-    .button__states {
-      background-color: var(--color-pink);
-      border-radius: 20px;
-      color: var(--color-white);
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 600;
-      text-transform: none;
-      transition: none;
-      padding: 0.6rem 3.5rem;
-      margin: 1rem 0;
-
-      &:hover {
-        background-color: var(--color-white);
-        color: var(--color-pink);
-      }
+      .button__states {
+        background-color: var(--color-pink);
+        border-radius: 20px;
+        color: var(--color-white);
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 600;
+        padding: 0.6rem 2rem;
+        text-transform: none;
+        transition: none;
+        margin: 1.5rem 0;
+        width: fit-content;
   
-      &:disabled {
-        background-color: var(--color-pink-low-opacity);
-        color: var(--color-white-50);
+        &:hover {
+          background-color: var(--color-white);
+          color: var(--color-pink);
+        }
+    
+        &:disabled {
+          background-color: var(--color-pink-low-opacity);
+          color: var(--color-white-50);
+        }
+      }
+
+      .button__cancel {
+        background-color: var(--color-white);
+        border: 2px solid var(--color-pink);
+        color: var(--color-pink);
+        padding: 0.475rem 2rem;
+
+        &:hover {
+          background-color: var(--color-pink-lower-opacity);
+        }
       }
     }
 

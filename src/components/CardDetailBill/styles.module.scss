@@ -1,0 +1,47 @@
+.content__wrapper {
+  background-color: var(--color-white-200);
+  border-radius: 8px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  font-size: 0.875rem;
+  gap: 0.8rem;
+  padding: 1.25rem;
+  width: 100%;
+
+  .inline__info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: space-between;
+    width: 100%;
+    
+    > div {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .info__id {
+      font-weight: 700;
+    }
+
+    .info__value {
+      font-weight: 600;
+    }
+
+    .text__green {
+      color: var(--color-green);
+      font-weight: 600;
+    }
+    
+    .text__red {
+      color: var(--color-red);
+      font-weight: 600;
+    }
+    
+    .text__blue {
+      color: var(--color-blue);
+      font-weight: 600;
+    }
+  }
+}
