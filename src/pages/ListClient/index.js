@@ -25,7 +25,7 @@ import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
 function ListClient() {
-  const { register, handleSubmit } = useForm();
+  const { register } = useForm();
 
   const {
     token, setToken,
@@ -36,14 +36,15 @@ function ListClient() {
   const history = useHistory();
 
   const [clientList, setClientList] = useState([]);
+  const [currentList, setCurrentList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [requestResult, setRequestResult] = useState();
   const [isDescSort, setIsDescSort] = useState(false);
   const [searchClients, setSearchClients] = useState([]);
+  const [searchResult, setSearchResult] = useState('');
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    
     setToken(tokenLS);
     if (!token) {
       history.push('/');
@@ -69,18 +70,19 @@ function ListClient() {
         if (!response.ok) {
           throw new Error(requestData);
         };
-        
+
         requestData.sort((a, b) => {
-          if(a.name > b.name) {
+          if (a.name > b.name) {
             return 1;
           };
-      
+
           if (a.name < b.name) {
             return -1;
           };
-          
+
           return 0;
         });
+
         setClientList(requestData);
       } catch (error) {
         setRequestResult(error.message);
@@ -97,10 +99,18 @@ function ListClient() {
     };
   }, [token, setToken, tokenLS, history, updateClientsList, setUpdateClientsList]);
 
+  useEffect(() => {
+    let listManipulation;
 
-  console.log(isDescSort);
+    if (searchClients.length > 0) {
+      listManipulation = searchClients;
+    } else {
+      listManipulation = clientList;
+    };
 
-  
+    setCurrentList(listManipulation);
+  }, [isDescSort, searchClients, clientList]);
+
   function enrollClient() {
     history.push('/adicionar-cliente');
   };
@@ -113,26 +123,31 @@ function ListClient() {
     setIsDescSort(!isDescSort);
   };
 
-  function handleSearch(data) {
-    setSearch('');
-    
-    const search = data.search;
-    let searchedClients = [];
+  function handleSearch() {
+    setSearchResult('');
 
-    for (const client of clientList) {
-      if((client.name.toLowerCase()).includes(search.toLowerCase())
-          || (client.email.toLowerCase()).includes(search.toLowerCase())
-          || (client.tax_id).includes(search)
+    if (search.trim().length > 0) {
+      let filter = [];
+
+      for (const client of clientList) {
+        if ((client.name.toLowerCase()).includes(search.trim().toLowerCase())
+          || (client.email.toLowerCase()).includes(search.trim().toLowerCase())
+          || (client.tax_id).includes(search.trim())
         ) {
-        searchedClients.push(client);
+          filter.push(client);
+        };
       };
-    };
 
-    if(search.length !== 0 && searchedClients.length === 0) {
-      setSearch('Sem resultados');
-    };
+      if (filter.length === 0) {
+        setSearchResult('Sem resultados');
+        setSearchClients([]);
+        return;
+      };
 
-    setSearchClients(searchedClients);
+      setSearchClients(filter);
+    } else {
+      setSearchClients([]);
+    };
   };
 
   const theme = createTheme({
@@ -158,13 +173,15 @@ function ListClient() {
               >
                 Adicionar cliente
               </Button>
-              <form onSubmit={handleSubmit(handleSearch)}>
+              <form onSubmit={e => { e.preventDefault() }}>
                 <TextField
                   {...register('search')}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
                   color='secondary'
                   placeholder='Procurar por Nome, E-mail ou CPF'
                 />
-                <Button className={styles.search__button} type='submit'>
+                <Button className={styles.search__button} onClick={handleSearch}>
                   <img src={searchIcon} alt='' />
                   Buscar
                 </Button>
@@ -184,26 +201,14 @@ function ListClient() {
             <div className={styles.blank__space}>
             </div>
           </div>
-          {(searchClients.length === 0 && isDescSort)
-            && ((search.length !== 0)
+          {(currentList.length > 0)
+            && ((searchResult.length !== 0)
               ? <div className={styles.cardNoResult}>Sem resultados...</div>
-              : clientList.reverse().map((client) => <CardClient key={client.id} client={client} />)
+              : (isDescSort
+                ? currentList.reverse().map((client) => <CardClient key={client.id} client={client} />)
+                : currentList.map((client) => <CardClient key={client.id} client={client} />)
+              )
             )
-          }
-          {(searchClients.length === 0 && !isDescSort)
-            && ((search.length !== 0)
-              ? <div className={styles.cardNoResult}>Sem resultados...</div>
-              : clientList.map((client) => <CardClient key={client.id} client={client} />)
-            )
-          }
-          {(searchClients.length !== 0 && isDescSort)
-            && searchClients.reverse().map((client) => <CardClient key={client.id} client={client} />)
-          }
-          {(searchClients.length !== 0 && !isDescSort)
-            && searchClients.map((client) => {
-              console.log(searchClients.length, isDescSort, search.length)
-              return <CardClient key={client.id} client={client} />
-            })
           }
           <Snackbar
             className={styles.snackbar}
