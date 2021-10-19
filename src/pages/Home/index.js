@@ -79,6 +79,14 @@ function Home() {
     setRequestResult();
   };
 
+  function handleClientReports() {
+    history.push('/relatorio-cliente');
+  };
+
+  function handleBillReports() {
+    history.push('/relatorio-cobranca');
+  };
+
   return (
     <div className={styles.content__wrapper}>
       <Navbar />
@@ -93,12 +101,14 @@ function Home() {
               <CardHomeItem
                 key='client_item_1'
                 className={styles.item__red}
+                onClick={handleClientReports}
                 title='Inadimplentes'
                 number={overdueClients}
               />,
               <CardHomeItem
                 key='client_item_2'
                 className={styles.item__green}
+                onClick={handleClientReports}
                 title='Em dia'
                 number={onTimeClients}
               />
@@ -112,18 +122,21 @@ function Home() {
               <CardHomeItem
                 key='bill_item_1'
                 className={styles.item__red}
+                onClick={handleBillReports}
                 title='Vencidas'
                 number={Number((overdueBillings / 100)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               />,
               <CardHomeItem
                 key='bill_item_2'
                 className={styles.item__blue}
+                onClick={handleBillReports}
                 title='Previstas'
                 number={Number((dueBillings / 100)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               />,
               <CardHomeItem
                 key='bill_item_3'
                 className={styles.item__green}
+                onClick={handleBillReports}
                 title='Pagas'
                 number={Number((paidBillings / 100)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
               />

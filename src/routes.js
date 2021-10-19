@@ -12,6 +12,8 @@ import { useLocalStorage } from 'react-use';
 import AuthContext from './contexts/AuthContext';
 import './index.scss';
 import Billing from './pages/Billing/index';
+import BillingReport from './pages/BillingReport';
+import ClientReport from './pages/ClientReport';
 import EnrollBill from './pages/EnrollBill';
 import EnrollClient from './pages/EnrollClient';
 import EnrollUser from './pages/EnrollUser';
@@ -51,6 +53,8 @@ function Routes() {
           {<Route path='/clientes' component={ListClient} />}
           {<Route path='/adicionar-cliente' component={EnrollClient} />}
           {<Route path='/criar-cobranca' component={EnrollBill} />}
+          {<Route path='/relatorio-cobranca' component={BillingReport} />}
+          {<Route path='/relatorio-cliente' component={ClientReport} />}
         </Switch>
       </Router>
     </AuthContext.Provider >

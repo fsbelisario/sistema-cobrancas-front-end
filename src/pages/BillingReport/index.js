@@ -25,7 +25,7 @@ import UserProfile from '../../components/UserProfile';
 import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
-function Billing() {
+function BillingReport() {
   const { register } = useForm();
 
   const { 
@@ -197,7 +197,6 @@ function Billing() {
             <div>Status</div>
             <div>Vencimento</div>
           </div>
-          
           {billList.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)}
 
           <Snackbar
@@ -227,4 +226,4 @@ function Billing() {
   );
 };
 
-export default Billing;
+export default BillingReport;
