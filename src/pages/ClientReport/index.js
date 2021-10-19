@@ -17,9 +17,11 @@ import {
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import searchIcon from '../../assets/search-icon.svg';
+import sideArrow from '../../assets/side-arrow.svg';
 import sortArrow from '../../assets/sort-arrow.svg';
 import CardClient from '../../components/CardClient';
 import Navbar from '../../components/Navbar';
+import NavbarItem from '../../components/NavbarItem';
 import UserProfile from '../../components/UserProfile';
 import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
@@ -30,7 +32,8 @@ function ClientReport() {
   const {
     token, setToken,
     tokenLS,
-    updateClientsList, setUpdateClientsList
+    updateClientsList, setUpdateClientsList,
+    reportClientType, setReportClientType
   } = useContext(AuthContext);
 
   const history = useHistory();
@@ -39,6 +42,9 @@ function ClientReport() {
   const [loading, setLoading] = useState(false);
   const [requestResult, setRequestResult] = useState();
   const [isDescSort, setIsDescSort] = useState(false);
+  const [isTypeVisible, setIsTypeVisible] = useState(false);
+  const [isStatusVisible, setIsStatusVisible] = useState(false);
+  const [statusText, setStatusText] = useState(reportClientType || 'Inadimplentes');
 
   useEffect(() => {
     
@@ -103,6 +109,29 @@ function ClientReport() {
     setIsDescSort(!isDescSort);
   };
 
+  function handleBillReport() {
+    history.push('/relatorio-cobranca');
+  };
+
+  function handleTypeVisible() {
+    setIsTypeVisible(!isTypeVisible);
+  };
+
+  function handleStatusVisible() {
+    setIsStatusVisible(!isStatusVisible);
+  };
+
+  function handleStatus(e) {
+    if(e.target.innerText === 'Inadimplentes') {
+      setReportClientType('Inadimplentes');
+      setStatusText('Inadimplentes');
+      return;
+    };
+
+    setReportClientType('Em dia');
+    setStatusText('Em dia');
+  };
+
   /*function handleSearch(data) {
     setSearch('');
     
@@ -133,6 +162,9 @@ function ClientReport() {
     }
   });
 
+  const onTimeClientList = clientList.filter((client) => client.status === 'EM DIA');
+  const overdueClientList = clientList.filter((client) => client.status === 'INADIMPLENTE');
+
   return (
     <div className={styles.content__wrapper}>
       <Navbar />
@@ -141,8 +173,55 @@ function ClientReport() {
         <div className={styles.content}>
           <ThemeProvider theme={theme}>
             <div className={styles.search__wrapper}>
-              <div>
-
+              <div className={styles.report__search}>
+                <div className={styles.report__type} onClick={handleTypeVisible}>
+                  <div className={styles.type__text}>Clientes</div>
+                  {isTypeVisible &&
+                    <div className={styles.menuProfile}>
+                      <NavbarItem
+                        key='itemMenu_cliente'
+                        image=''
+                        title='Clientes'
+                        onClick={handleTypeVisible}
+                        className={styles.text__selected}
+                      />
+                      <NavbarItem
+                        key='itemMenu_cobranca'
+                        image=''
+                        title='Cobranças'
+                        onClick={handleBillReport}
+                      />
+                    </div>
+                  }
+                </div>
+                <img src={sideArrow} alt='' />
+                <div className={styles.report__status} onClick={handleStatusVisible}>
+                  <div className={styles.status__text}>{statusText}</div>
+                  {isStatusVisible &&
+                    <div className={styles.menuProfile}>
+                      <NavbarItem
+                        key='itemMenu_inadimplentes'
+                        image=''
+                        title='Inadimplentes'
+                        onClick={(e) => handleStatus(e)}
+                        className={
+                          (reportClientType === 'Inadimplentes' || statusText === 'Inadimplentes')
+                          && `${styles.text__selected}`
+                        }
+                      />
+                      <NavbarItem
+                        key='itemMenu_emDia'
+                        image=''
+                        title='Em dia'
+                        onClick={(e) => handleStatus(e)}
+                        className={
+                          (reportClientType === 'Em dia' || statusText === 'Em dia') 
+                          && `${styles.text__selected}`
+                        }
+                      />
+                    </div>
+                  }
+                </div>
               </div>
               <form>
                 <TextField
@@ -171,7 +250,10 @@ function ClientReport() {
             </div>
           </div>
 
-          {clientList.map((client) => <CardClient key={client.id} client={client} />)}
+          {statusText === 'Em dia'
+            ? onTimeClientList.map((client) => <CardClient key={client.id} client={client} />)
+            : overdueClientList.map((client) => <CardClient key={client.id} client={client} />)
+          }
           
           <Snackbar
             className={styles.snackbar}

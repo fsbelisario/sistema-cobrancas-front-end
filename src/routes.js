@@ -34,6 +34,8 @@ function Routes() {
   const [token, setToken] = useState(tokenLS || '');
   const [updateBillingsList, setUpdateBillingsList] = useState(false);
   const [updateClientsList, setUpdateClientsList] = useState(false);
+  const [reportBillType, setReportBillType] = useState('');
+  const [reportClientType, setReportClientType] = useState('');
 
   return (
     <AuthContext.Provider
@@ -41,7 +43,9 @@ function Routes() {
         token, setToken,
         tokenLS, setTokenLS, removeTokenLS,
         updateBillingsList, setUpdateBillingsList,
-        updateClientsList, setUpdateClientsList
+        updateClientsList, setUpdateClientsList,
+        reportBillType, setReportBillType,
+        reportClientType, setReportClientType
       }}
     >
       <Router>
