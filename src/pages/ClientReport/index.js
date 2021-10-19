@@ -17,20 +17,23 @@ import {
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import searchIcon from '../../assets/search-icon.svg';
+import sideArrow from '../../assets/side-arrow.svg';
 import sortArrow from '../../assets/sort-arrow.svg';
 import CardClient from '../../components/CardClient';
 import Navbar from '../../components/Navbar';
+import NavbarItem from '../../components/NavbarItem';
 import UserProfile from '../../components/UserProfile';
 import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
-function ListClient() {
-  const { register, handleSubmit } = useForm();
+function ClientReport() {
+  const { register } = useForm();
 
   const {
     token, setToken,
     tokenLS,
-    updateClientsList, setUpdateClientsList
+    updateClientsList, setUpdateClientsList,
+    reportClientType, setReportClientType
   } = useContext(AuthContext);
 
   const history = useHistory();
@@ -39,8 +42,9 @@ function ListClient() {
   const [loading, setLoading] = useState(false);
   const [requestResult, setRequestResult] = useState();
   const [isDescSort, setIsDescSort] = useState(false);
-  const [searchClients, setSearchClients] = useState([]);
-  const [search, setSearch] = useState('');
+  const [isTypeVisible, setIsTypeVisible] = useState(false);
+  const [isStatusVisible, setIsStatusVisible] = useState(false);
+  const [statusText, setStatusText] = useState(reportClientType || 'Inadimplentes');
 
   useEffect(() => {
     
@@ -97,14 +101,6 @@ function ListClient() {
     };
   }, [token, setToken, tokenLS, history, updateClientsList, setUpdateClientsList]);
 
-
-  console.log(isDescSort);
-
-  
-  function enrollClient() {
-    history.push('/adicionar-cliente');
-  };
-
   function handleAlertClose() {
     setRequestResult();
   };
@@ -113,7 +109,30 @@ function ListClient() {
     setIsDescSort(!isDescSort);
   };
 
-  function handleSearch(data) {
+  function handleBillReport() {
+    history.push('/relatorio-cobranca');
+  };
+
+  function handleTypeVisible() {
+    setIsTypeVisible(!isTypeVisible);
+  };
+
+  function handleStatusVisible() {
+    setIsStatusVisible(!isStatusVisible);
+  };
+
+  function handleStatus(e) {
+    if(e.target.innerText === 'Inadimplentes') {
+      setReportClientType('Inadimplentes');
+      setStatusText('Inadimplentes');
+      return;
+    };
+
+    setReportClientType('Em dia');
+    setStatusText('Em dia');
+  };
+
+  /*function handleSearch(data) {
     setSearch('');
     
     const search = data.search;
@@ -133,7 +152,7 @@ function ListClient() {
     };
 
     setSearchClients(searchedClients);
-  };
+  };*/
 
   const theme = createTheme({
     palette: {
@@ -143,6 +162,9 @@ function ListClient() {
     }
   });
 
+  const onTimeClientList = clientList.filter((client) => client.status === 'EM DIA');
+  const overdueClientList = clientList.filter((client) => client.status === 'INADIMPLENTE');
+
   return (
     <div className={styles.content__wrapper}>
       <Navbar />
@@ -151,14 +173,57 @@ function ListClient() {
         <div className={styles.content}>
           <ThemeProvider theme={theme}>
             <div className={styles.search__wrapper}>
-              <Button
-                className={styles.button__client}
-                onClick={enrollClient}
-                variant='contained'
-              >
-                Adicionar cliente
-              </Button>
-              <form onSubmit={handleSubmit(handleSearch)}>
+              <div className={styles.report__search}>
+                <div className={styles.report__type} onClick={handleTypeVisible}>
+                  <div className={styles.type__text}>Clientes</div>
+                  {isTypeVisible &&
+                    <div className={styles.menuProfile}>
+                      <NavbarItem
+                        key='itemMenu_cliente'
+                        image=''
+                        title='Clientes'
+                        onClick={handleTypeVisible}
+                        className={styles.text__selected}
+                      />
+                      <NavbarItem
+                        key='itemMenu_cobranca'
+                        image=''
+                        title='Cobranças'
+                        onClick={handleBillReport}
+                      />
+                    </div>
+                  }
+                </div>
+                <img src={sideArrow} alt='' />
+                <div className={styles.report__status} onClick={handleStatusVisible}>
+                  <div className={styles.status__text}>{statusText}</div>
+                  {isStatusVisible &&
+                    <div className={styles.menuProfile}>
+                      <NavbarItem
+                        key='itemMenu_inadimplentes'
+                        image=''
+                        title='Inadimplentes'
+                        onClick={(e) => handleStatus(e)}
+                        className={
+                          (reportClientType === 'Inadimplentes' || statusText === 'Inadimplentes')
+                          && `${styles.text__selected}`
+                        }
+                      />
+                      <NavbarItem
+                        key='itemMenu_emDia'
+                        image=''
+                        title='Em dia'
+                        onClick={(e) => handleStatus(e)}
+                        className={
+                          (reportClientType === 'Em dia' || statusText === 'Em dia') 
+                          && `${styles.text__selected}`
+                        }
+                      />
+                    </div>
+                  }
+                </div>
+              </div>
+              <form>
                 <TextField
                   {...register('search')}
                   color='secondary'
@@ -184,27 +249,12 @@ function ListClient() {
             <div className={styles.blank__space}>
             </div>
           </div>
-          {(searchClients.length === 0 && isDescSort)
-            && ((search.length !== 0)
-              ? <div className={styles.cardNoResult}>Sem resultados...</div>
-              : clientList.reverse().map((client) => <CardClient key={client.id} client={client} />)
-            )
+
+          {statusText === 'Em dia'
+            ? onTimeClientList.map((client) => <CardClient key={client.id} client={client} />)
+            : overdueClientList.map((client) => <CardClient key={client.id} client={client} />)
           }
-          {(searchClients.length === 0 && !isDescSort)
-            && ((search.length !== 0)
-              ? <div className={styles.cardNoResult}>Sem resultados...</div>
-              : clientList.map((client) => <CardClient key={client.id} client={client} />)
-            )
-          }
-          {(searchClients.length !== 0 && isDescSort)
-            && searchClients.reverse().map((client) => <CardClient key={client.id} client={client} />)
-          }
-          {(searchClients.length !== 0 && !isDescSort)
-            && searchClients.map((client) => {
-              console.log(searchClients.length, isDescSort, search.length)
-              return <CardClient key={client.id} client={client} />
-            })
-          }
+          
           <Snackbar
             className={styles.snackbar}
             open={!!requestResult}
@@ -231,4 +281,4 @@ function ListClient() {
   );
 };
 
-export default ListClient;
+export default ClientReport;

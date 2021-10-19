@@ -18,19 +18,22 @@ import {
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import searchIcon from '../../assets/search-icon.svg';
+import sideArrow from '../../assets/side-arrow.svg';
 import sortArrow from '../../assets/sort-arrow.svg';
 import CardBill from '../../components/CardBill';
 import Navbar from '../../components/Navbar';
+import NavbarItem from '../../components/NavbarItem';
 import UserProfile from '../../components/UserProfile';
 import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
-function Billing() {
+function BillingReport() {
   const { register } = useForm();
 
   const { 
     token, setToken, tokenLS,
-    updateBillingsList, setUpdateBillingsList
+    updateBillingsList, setUpdateBillingsList,
+    reportBillType, setReportBillType
   } = useContext(AuthContext);
 
   const history = useHistory();
@@ -40,6 +43,9 @@ function Billing() {
   const [listClients, setListClients] = useState([]);
   const [loading, setLoading] = useState(false);
   const [requestResult, setRequestResult] = useState();
+  const [isTypeVisible, setIsTypeVisible] = useState(false);
+  const [isStatusVisible, setIsStatusVisible] = useState(false);
+  const [statusText, setStatusText] = useState(reportBillType || 'Vencidas');
 
   useEffect(() => {
     setToken(tokenLS);
@@ -157,6 +163,35 @@ function Billing() {
     setIsDescSort(!isDescSort);
   };
 
+  function handleClientReport() {
+    history.push('/relatorio-cliente');
+  };
+
+  function handleTypeVisible() {
+    setIsTypeVisible(!isTypeVisible);
+  };
+
+  function handleStatusVisible() {
+    setIsStatusVisible(!isStatusVisible);
+  };
+
+  function handleStatus(e) {
+    if(e.target.innerText === 'Vencidas') {
+      setReportBillType('Vencidas');
+      setStatusText('Vencidas');
+      return;
+    };
+
+    if(e.target.innerText === 'Previstas') {
+      setReportBillType('Previstas');
+      setStatusText('Previstas');
+      return;
+    };
+
+    setReportBillType('Pagas');
+    setStatusText('Pagas');
+  };
+
   const theme = createTheme({
     palette: {
       secondary: {
@@ -164,6 +199,10 @@ function Billing() {
       }
     }
   });
+
+  const overdueBillList = billList.filter((bill) => bill.status === 'VENCIDO');
+  const pendingBillList = billList.filter((bill) => bill.status === 'PENDENTE');
+  const onTimeBillList = billList.filter((bill) => bill.status === 'PAGO');
 
   return (
     <div className={styles.content__wrapper}>
@@ -173,6 +212,66 @@ function Billing() {
         <div className={styles.content}>
           <ThemeProvider theme={theme}>
             <div className={styles.search__wrapper}>
+              <div className={styles.report__search}>
+                <div className={styles.report__type} onClick={handleTypeVisible}>
+                  <div className={styles.type__text}>Cobranças</div>
+                  {isTypeVisible &&
+                    <div className={styles.menuProfile}>
+                      <NavbarItem
+                        key='itemMenu_cliente'
+                        image=''
+                        title='Clientes'
+                        onClick={handleClientReport}
+                      />
+                      <NavbarItem
+                        key='itemMenu_cobranca'
+                        image=''
+                        title='Cobranças'
+                        onClick={handleTypeVisible}
+                        className={styles.text__selected}
+                      />
+                    </div>
+                  }
+                </div>
+                <img src={sideArrow} alt='' />
+                <div className={styles.report__status} onClick={handleStatusVisible}>
+                  <div className={styles.status__text}>{statusText}</div>
+                  {isStatusVisible &&
+                    <div className={styles.menuProfile}>
+                      <NavbarItem
+                        key='itemMenu_vencidas'
+                        image=''
+                        title='Vencidas'
+                        onClick={(e) => handleStatus(e)}
+                        className={
+                          (reportBillType === 'Vencidas' || statusText === 'Vencidas')
+                          && `${styles.text__selected}`
+                        }
+                      />
+                      <NavbarItem
+                        key='itemMenu_previstas'
+                        image=''
+                        title='Previstas'
+                        onClick={(e) => handleStatus(e)}
+                        className={
+                          (reportBillType === 'Previstas' || statusText === 'Previstas')
+                          && `${styles.text__selected}`
+                        }
+                      />
+                      <NavbarItem
+                        key='itemMenu_pagas'
+                        image=''
+                        title='Pagas'
+                        onClick={(e) => handleStatus(e)}
+                        className={
+                          (reportBillType === 'Pagas' || statusText === 'Pagas')
+                          && `${styles.text__selected}`
+                        }
+                      />
+                    </div>
+                  }
+                </div>
+              </div>
               <form>
                 <TextField
                   {...register('search')}
@@ -198,7 +297,15 @@ function Billing() {
             <div>Vencimento</div>
           </div>
           
-          {billList.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)}
+          {statusText === 'Vencidas' 
+            && overdueBillList.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
+          }
+          {statusText === 'Previstas' 
+            && pendingBillList.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
+          }
+          {statusText === 'Pagas' 
+            && onTimeBillList.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
+          }
 
           <Snackbar
             className={styles.snackbar}
@@ -227,4 +334,4 @@ function Billing() {
   );
 };
 
-export default Billing;
+export default BillingReport;
