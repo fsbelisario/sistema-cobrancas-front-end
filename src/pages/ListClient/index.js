@@ -157,9 +157,9 @@ function ListClient() {
     let searchedClients = [];
 
     for (const client of clientList) {
-      if ((client.name.toLowerCase()).includes(search.toLowerCase())
-        || (client.email.toLowerCase()).includes(search.toLowerCase())
-        || (client.tax_id).includes(search)
+      if ((client.name.toLowerCase()).includes(search.trim().toLowerCase())
+        || (client.email.toLowerCase()).includes(search.trim().toLowerCase())
+        || (client.tax_id).includes(search.trim())
       ) {
         searchedClients.push(client);
       };

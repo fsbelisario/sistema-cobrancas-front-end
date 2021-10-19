@@ -28,7 +28,7 @@ import styles from './styles.module.scss';
 function Billing() {
   const { register, handleSubmit } = useForm();
 
-  const { 
+  const {
     token, setToken, tokenLS,
     updateBillingsList, setUpdateBillingsList
   } = useContext(AuthContext);
@@ -36,6 +36,7 @@ function Billing() {
   const history = useHistory();
 
   const [billList, setBillList] = useState([]);
+  const [currentList, setCurrentList] = useState([]);
   const [isDescSort, setIsDescSort] = useState(false);
   const [listClients, setListClients] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -82,7 +83,7 @@ function Billing() {
 
     async function getBillings() {
       setIsDescSort(false);
-      
+
       try {
         setRequestResult();
         setLoading(true);
@@ -103,14 +104,14 @@ function Billing() {
         };
 
         requestData.sort((a, b) => {
-          if(a.name > b.name) {
+          if (a.name > b.name) {
             return 1;
           };
-      
+
           if (a.name < b.name) {
             return -1;
           };
-          
+
           return 0;
         });
 
@@ -130,21 +131,63 @@ function Billing() {
     };
   }, [token, setToken, tokenLS, history, setUpdateBillingsList, updateBillingsList]);
 
+  useEffect(() => {
+    let listManipulation;
+
+    if (searchBills.length > 0) {
+      listManipulation = searchBills;
+    } else {
+      listManipulation = billList;
+    };
+
+    if (isDescSort) {
+      listManipulation.sort((a, b) => {
+        if (a.name < b.name) {
+          return 1;
+        };
+
+        if (a.name > b.name) {
+          return -1;
+        };
+
+        return 0;
+      });
+    } else {
+      listManipulation.sort((a, b) => {
+        if (a.name > b.name) {
+          return 1;
+        };
+
+        if (a.name < b.name) {
+          return -1;
+        };
+
+        return 0;
+      });
+    };
+
+    setCurrentList(listManipulation);
+
+    console.log(currentList);
+  }, [isDescSort, searchBills, billList]);
+
   function handleSearch(data) {
     setSearch('');
-    
+
     const search = data.search;
     let searchedBills = [];
 
     for (const bill of billList) {
-      if((bill.name.toLowerCase()).includes(search.toLowerCase())
-        || (String(bill.id).includes(search))
+      if ((bill.name.toLowerCase()).includes(search.trim().toLowerCase())
+        || (bill.email.toLowerCase()).includes(search.trim().toLowerCase())
+        || (bill.tax_id).includes(search.trim())
+        || (String(bill.id).includes(search.trim()))
       ) {
         searchedBills.push(bill);
       };
     };
 
-    if(search.length !== 0 && searchedBills.length === 0) {
+    if (search.length !== 0 && searchedBills.length === 0) {
       setSearch('Sem resultados');
     };
 
@@ -158,9 +201,6 @@ function Billing() {
   function handleSortByName() {
     setIsDescSort(!isDescSort);
   };
-
-  const descBillList = billList.reverse();
-  const descSearchBills = searchBills.reverse();
 
   const theme = createTheme({
     palette: {
@@ -202,25 +242,12 @@ function Billing() {
             <div>Status</div>
             <div>Vencimento</div>
           </div>
-          {(searchBills.length === 0 && isDescSort)
+          {(currentList.length > 0)
             && ((search.length !== 0)
               ? <div className={styles.cardNoResult}>Sem resultados...</div>
-              : descBillList.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
+              : currentList.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
             )
           }
-          {(searchBills.length === 0 && !isDescSort)
-            && ((search.length !== 0)
-              ? <div className={styles.cardNoResult}>Sem resultados...</div>
-              : billList.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
-            )
-          }
-          {(searchBills.length !== 0 && isDescSort)
-            && descSearchBills.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
-          }
-          {(searchBills.length !== 0 && !isDescSort)
-            && searchBills.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
-          }
-
           <Snackbar
             className={styles.snackbar}
             open={!!requestResult}
@@ -232,7 +259,7 @@ function Billing() {
               {requestResult}
             </Alert>
           </Snackbar>
-          
+
           <Backdrop
             sx={{
               color: 'var(--color-white)',
