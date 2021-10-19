@@ -26,7 +26,7 @@ import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
 function Billing() {
-  const { register, handleSubmit } = useForm();
+  const { register } = useForm();
 
   const {
     token, setToken, tokenLS,
@@ -170,8 +170,6 @@ function Billing() {
     } else {
       setSearchBills([]);
     };
-
-
   };
 
   function handleAlertClose() {
