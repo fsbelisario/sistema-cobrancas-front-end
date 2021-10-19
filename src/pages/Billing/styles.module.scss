@@ -113,6 +113,15 @@
           width: 40%;
         }
       }
+
+      .cardNoResult {
+        background-color: var(--color-white-200);
+        border-radius: 8px;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        font-size: 0.875rem;
+        padding: 1.25rem;
+      }
     }
 
     .snackbar {

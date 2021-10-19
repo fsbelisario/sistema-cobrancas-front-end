@@ -26,9 +26,9 @@ import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
 function Billing() {
-  const { register } = useForm();
+  const { register, setValue, getValues } = useForm();
 
-  const { 
+  const {
     token, setToken, tokenLS,
     updateBillingsList, setUpdateBillingsList
   } = useContext(AuthContext);
@@ -36,10 +36,13 @@ function Billing() {
   const history = useHistory();
 
   const [billList, setBillList] = useState([]);
+  const [currentList, setCurrentList] = useState([]);
   const [isDescSort, setIsDescSort] = useState(false);
   const [listClients, setListClients] = useState([]);
   const [loading, setLoading] = useState(false);
   const [requestResult, setRequestResult] = useState();
+  const [searchBills, setSearchBills] = useState([]);
+  const [searchResult, setSearchResult] = useState('');
 
   useEffect(() => {
     setToken(tokenLS);
@@ -80,7 +83,7 @@ function Billing() {
 
     async function getBillings() {
       setIsDescSort(false);
-      
+
       try {
         setRequestResult();
         setLoading(true);
@@ -101,18 +104,20 @@ function Billing() {
         };
 
         requestData.sort((a, b) => {
-          if(a.name > b.name) {
+          if (a.name > b.name) {
             return 1;
           };
-      
+
           if (a.name < b.name) {
             return -1;
           };
-          
+
           return 0;
         });
 
         setBillList(requestData);
+        setSearchBills(requestData);
+        setValue('search', '');
       } catch (error) {
         setRequestResult(error.message);
       } finally {
@@ -126,28 +131,49 @@ function Billing() {
       getBillings();
       setUpdateBillingsList(false);
     };
-  }, [token, setToken, tokenLS, history, setUpdateBillingsList, updateBillingsList]);
+  }, [token, setToken, tokenLS, history, setUpdateBillingsList, updateBillingsList, setValue]);
 
-  /*function handleSearch(data) {
-    setSearch('');
-    
-    const search = data.search;
-    let searchedBills = [];
+  useEffect(() => {
+    let listManipulation;
 
-    for (const bill of billList) {
-      if((bill.name.toLowerCase()).includes(search.toLowerCase())
-        || (String(bill.id).includes(search))
-      ) {
-        searchedBills.push(bill);
+    if (searchBills.length > 0) {
+      listManipulation = searchBills;
+    } else {
+      listManipulation = billList;
+    };
+
+    setCurrentList(listManipulation);
+  }, [isDescSort, searchBills, billList]);
+
+  function handleSearch() {
+    setSearchResult('');
+    setIsDescSort(false);
+    const search = getValues('search');
+
+    if (search.trim().length > 0) {
+      let filter = [];
+
+      for (const bill of billList) {
+        if ((bill.name.toLowerCase()).includes(search.trim().toLowerCase())
+          || (bill.email.toLowerCase()).includes(search.trim().toLowerCase())
+          || (bill.tax_id).includes(search.trim())
+          || (String(bill.id).includes(search.trim()))
+        ) {
+          filter.push(bill);
+        };
       };
-    };
 
-    if(search.length !== 0 && searchedBills.length === 0) {
-      setSearch('Sem resultados');
-    };
+      if (filter.length === 0) {
+        setSearchResult('Sem resultados');
+        setSearchBills([]);
+        return;
+      };
 
-    setSearchBills(searchedBills);
-  };*/
+      setSearchBills(filter);
+    } else {
+      setSearchBills([]);
+    };
+  };
 
   function handleAlertClose() {
     setRequestResult();
@@ -173,13 +199,18 @@ function Billing() {
         <div className={styles.content}>
           <ThemeProvider theme={theme}>
             <div className={styles.search__wrapper}>
-              <form>
+              <form onSubmit={e => { e.preventDefault() }}>
                 <TextField
                   {...register('search')}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSearch();
+                    };
+                  }}
                   color='secondary'
-                  placeholder='Procurar por Nome ou ID'
+                  placeholder='Procurar por Nome, E-mail, CPF ou ID'
                 />
-                <Button className={styles.search__button} type='submit'>
+                <Button className={styles.search__button} onClick={handleSearch}>
                   <img src={searchIcon} alt='' />
                   Buscar
                 </Button>
@@ -197,9 +228,15 @@ function Billing() {
             <div>Status</div>
             <div>Vencimento</div>
           </div>
-          
-          {billList.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)}
-
+          {(currentList.length > 0)
+            && ((searchResult.length !== 0)
+              ? <div className={styles.cardNoResult}>Sem resultados...</div>
+              : (isDescSort
+                ? currentList.reverse().map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
+                : currentList.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
+              )
+            )
+          }
           <Snackbar
             className={styles.snackbar}
             open={!!requestResult}
@@ -211,7 +248,7 @@ function Billing() {
               {requestResult}
             </Alert>
           </Snackbar>
-          
+
           <Backdrop
             sx={{
               color: 'var(--color-white)',

@@ -37,6 +37,7 @@
 
   .button__active {
     background-color: var(--color-dark-blue-600);
+    pointer-events: none;
   }
 
   .button__addBilling {
