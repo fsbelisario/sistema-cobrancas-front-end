@@ -122,7 +122,6 @@ function BillingReport() {
         });
 
         setBillList(requestData);
-        setSearchBills(requestData);
         setValue('search', '');
       } catch (error) {
         setRequestResult(error.message);
@@ -144,12 +143,24 @@ function BillingReport() {
 
     if (searchBills.length > 0) {
       listManipulation = searchBills;
-    } else {
-      listManipulation = billList;
+      setCurrentList(listManipulation);
+      return;
+    } 
+    
+    if (statusText === 'Vencidas') {
+      listManipulation = billList.filter((bill) => bill.status === 'VENCIDO');
     };
 
+    if (statusText === 'Previstas') {
+      listManipulation = billList.filter((bill) => bill.status === 'PENDENTE');
+    };
+
+    if (statusText === 'Pagas') {
+      listManipulation = billList.filter((bill) => bill.status === 'PAGO');
+    };
+    
     setCurrentList(listManipulation);
-  }, [isDescSort, searchBills, billList]);
+  }, [isDescSort, searchBills, billList, statusText]);
 
   function handleAlertClose() {
     setRequestResult();
@@ -212,6 +223,18 @@ function BillingReport() {
         return;
       };
 
+      if (statusText === 'Vencidas') {
+        setSearchBills(filter.filter((bill) => bill.status === 'VENCIDO'));
+      };
+  
+      if (statusText === 'Previstas') {
+        setSearchBills(filter.filter((bill) => bill.status === 'PENDENTE'));
+      };
+
+      if (statusText === 'Pagas') {
+        setSearchBills(filter.filter((bill) => bill.status === 'PAGO'));
+      };
+
       setSearchBills(filter);
     } else {
       setSearchBills([]);
@@ -225,10 +248,6 @@ function BillingReport() {
       }
     }
   });
-
-  const overdueBillList = billList.filter((bill) => bill.status === 'VENCIDO');
-  const pendingBillList = billList.filter((bill) => bill.status === 'PENDENTE');
-  const onTimeBillList = billList.filter((bill) => bill.status === 'PAGO');
 
   return (
     <div className={styles.content__wrapper}>
@@ -323,14 +342,14 @@ function BillingReport() {
             <div>Vencimento</div>
           </div>
           
-          {statusText === 'Vencidas' 
-            && overdueBillList.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
-          }
-          {statusText === 'Previstas' 
-            && pendingBillList.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
-          }
-          {statusText === 'Pagas' 
-            && onTimeBillList.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
+          {(currentList.length > 0)
+            && ((searchResult.length !== 0)
+              ? <div className={styles.cardNoResult}>Sem resultados...</div>
+              : (isDescSort
+                ? currentList.reverse().map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
+                : currentList.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
+              )
+            )
           }
 
           <Snackbar
