@@ -1,15 +1,24 @@
 import {
   Alert,
   Backdrop,
+  Button,
   CircularProgress,
-  Snackbar
+  Snackbar,
+  TextField
 } from '@mui/material';
+import {
+  createTheme,
+  ThemeProvider
+} from '@mui/material/styles';
 import {
   useContext,
   useEffect,
   useState
 } from 'react';
+import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
+import searchIcon from '../../assets/search-icon.svg';
+import sortArrow from '../../assets/sort-arrow.svg';
 import CardBill from '../../components/CardBill';
 import Navbar from '../../components/Navbar';
 import UserProfile from '../../components/UserProfile';
@@ -17,6 +26,8 @@ import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
 function Billing() {
+  const { register, handleSubmit } = useForm();
+
   const { 
     token, setToken, tokenLS,
     updateBillingsList, setUpdateBillingsList
@@ -25,9 +36,12 @@ function Billing() {
   const history = useHistory();
 
   const [billList, setBillList] = useState([]);
+  const [isDescSort, setIsDescSort] = useState(false);
   const [listClients, setListClients] = useState([]);
   const [loading, setLoading] = useState(false);
   const [requestResult, setRequestResult] = useState();
+  const [searchBills, setSearchBills] = useState([]);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     setToken(tokenLS);
@@ -64,7 +78,11 @@ function Billing() {
       };
     };
 
+    retrieveClients();
+
     async function getBillings() {
+      setIsDescSort(false);
+      
       try {
         setRequestResult();
         setLoading(true);
@@ -84,6 +102,18 @@ function Billing() {
           throw new Error(requestData);
         };
 
+        requestData.sort((a, b) => {
+          if(a.name > b.name) {
+            return 1;
+          };
+      
+          if (a.name < b.name) {
+            return -1;
+          };
+          
+          return 0;
+        });
+
         setBillList(requestData);
       } catch (error) {
         setRequestResult(error.message);
@@ -92,18 +122,53 @@ function Billing() {
       };
     };
 
-    retrieveClients();
     getBillings();
 
     if (updateBillingsList) {
       getBillings();
       setUpdateBillingsList(false);
     };
-  }, [token, setToken, tokenLS, updateBillingsList, setUpdateBillingsList, history]);
+  }, [token, setToken, tokenLS, history, setUpdateBillingsList, updateBillingsList]);
+
+  function handleSearch(data) {
+    setSearch('');
+    
+    const search = data.search;
+    let searchedBills = [];
+
+    for (const bill of billList) {
+      if((bill.name.toLowerCase()).includes(search.toLowerCase())
+        || (String(bill.id).includes(search))
+      ) {
+        searchedBills.push(bill);
+      };
+    };
+
+    if(search.length !== 0 && searchedBills.length === 0) {
+      setSearch('Sem resultados');
+    };
+
+    setSearchBills(searchedBills);
+  };
 
   function handleAlertClose() {
     setRequestResult();
   };
+
+  function handleSortByName() {
+    setIsDescSort(!isDescSort);
+  };
+
+  const descBillList = billList.reverse();
+  const descSearchBills = searchBills.reverse();
+
+  const theme = createTheme({
+    palette: {
+      secondary: {
+        main: '#DA0175'
+      }
+    }
+  });
 
   return (
     <div className={styles.content__wrapper}>
@@ -111,17 +176,50 @@ function Billing() {
       <div className={styles.main__content}>
         <UserProfile />
         <div className={styles.content}>
+          <ThemeProvider theme={theme}>
+            <div className={styles.search__wrapper}>
+              <form onSubmit={handleSubmit(handleSearch)}>
+                <TextField
+                  {...register('search')}
+                  color='secondary'
+                  placeholder='Procurar por Nome ou ID'
+                />
+                <Button className={styles.search__button} type='submit'>
+                  <img src={searchIcon} alt='' />
+                  Buscar
+                </Button>
+              </form>
+            </div>
+          </ThemeProvider>
           <div className={styles.table__title}>
             <div className={styles.info__id}>ID</div>
-            <div className={styles.info__name}>Cliente</div>
+            <div className={styles.info__name} onClick={handleSortByName}>
+              Cliente
+              <img src={sortArrow} alt='' className={isDescSort ? `${styles.sortArrowUp}` : ''} />
+            </div>
             <div className={styles.info__description}>Descrição</div>
             <div>Valor</div>
             <div>Status</div>
             <div>Vencimento</div>
           </div>
-          {billList.map((bill) => 
-            <CardBill key={bill.id} bill={bill} listClients={listClients} />
-          )}
+          {(searchBills.length === 0 && isDescSort)
+            && ((search.length !== 0)
+              ? <div className={styles.cardNoResult}>Sem resultados...</div>
+              : descBillList.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
+            )
+          }
+          {(searchBills.length === 0 && !isDescSort)
+            && ((search.length !== 0)
+              ? <div className={styles.cardNoResult}>Sem resultados...</div>
+              : billList.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
+            )
+          }
+          {(searchBills.length !== 0 && isDescSort)
+            && descSearchBills.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
+          }
+          {(searchBills.length !== 0 && !isDescSort)
+            && searchBills.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
+          }
 
           <Snackbar
             className={styles.snackbar}
