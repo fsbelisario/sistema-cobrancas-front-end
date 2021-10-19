@@ -108,8 +108,6 @@ function ListClient() {
     };
 
     setCurrentList(listManipulation);
-
-    console.log(currentList);
   }, [isDescSort, searchClients, clientList]);
 
   function enrollClient() {

@@ -141,8 +141,6 @@ function Billing() {
     };
 
     setCurrentList(listManipulation);
-
-    console.log(currentList);
   }, [isDescSort, searchBills, billList]);
 
   function handleSearch(data) {
