@@ -90,7 +90,6 @@ function ClientReport() {
         });
 
         setClientList(requestData);
-        setSearchClients(requestData);
         setValue('search', '');
       } catch (error) {
         setRequestResult(error.message);
@@ -112,13 +111,20 @@ function ClientReport() {
 
     if (searchClients.length > 0) {
       listManipulation = searchClients;
-    } else {
-      listManipulation = clientList;
+      setCurrentList(listManipulation);
+      return;
+    } 
+    
+    if (statusText === 'Em dia') {
+      listManipulation = clientList.filter((client) => client.status === 'EM DIA');
     };
-
+    
+    if (statusText === 'Inadimplentes') {
+      listManipulation = clientList.filter((client) => client.status === 'INADIMPLENTE');
+    };
     setCurrentList(listManipulation);
-  }, [isDescSort, searchClients, clientList]);
-
+  }, [isDescSort, searchClients, clientList, statusText]);
+  
   function handleAlertClose() {
     setRequestResult();
   };
@@ -173,15 +179,18 @@ function ClientReport() {
         return;
       };
 
-      setSearchClients(filter);
+      if (statusText === 'Em dia') {
+        setSearchClients(filter.filter((client) => client.status === 'EM DIA'));
+      };
+  
+      if (statusText === 'Inadimplentes') {
+        setSearchClients(filter.filter((client) => client.status === 'INADIMPLENTE'));
+      };
     } else {
       setSearchClients([]);
     };
   };
-
-    const onTimeClientList = clientList.filter((client) => client.status === 'EM DIA');
-    const overdueClientList = clientList.filter((client) => client.status === 'INADIMPLENTE');
-
+  
   const theme = createTheme({
     palette: {
       secondary: {
