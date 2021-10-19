@@ -36,6 +36,7 @@ function ListClient() {
   const history = useHistory();
 
   const [clientList, setClientList] = useState([]);
+  const [currentList, setCurrentList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [requestResult, setRequestResult] = useState();
   const [isDescSort, setIsDescSort] = useState(false);
@@ -43,7 +44,6 @@ function ListClient() {
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    
     setToken(tokenLS);
     if (!token) {
       history.push('/');
@@ -69,18 +69,19 @@ function ListClient() {
         if (!response.ok) {
           throw new Error(requestData);
         };
-        
+
         requestData.sort((a, b) => {
-          if(a.name > b.name) {
+          if (a.name > b.name) {
             return 1;
           };
-      
+
           if (a.name < b.name) {
             return -1;
           };
-          
+
           return 0;
         });
+
         setClientList(requestData);
       } catch (error) {
         setRequestResult(error.message);
@@ -97,10 +98,46 @@ function ListClient() {
     };
   }, [token, setToken, tokenLS, history, updateClientsList, setUpdateClientsList]);
 
+  useEffect(() => {
+    let listManipulation;
 
-  console.log(isDescSort);
+    if (searchClients.length > 0) {
+      listManipulation = searchClients;
+    } else {
+      listManipulation = clientList;
+    };
 
-  
+    if (isDescSort) {
+      listManipulation.sort((a, b) => {
+        if (a.name < b.name) {
+          return 1;
+        };
+
+        if (a.name > b.name) {
+          return -1;
+        };
+
+        return 0;
+      });
+    } else {
+      listManipulation.sort((a, b) => {
+        if (a.name > b.name) {
+          return 1;
+        };
+
+        if (a.name < b.name) {
+          return -1;
+        };
+
+        return 0;
+      });
+    };
+
+    setCurrentList(listManipulation);
+
+    console.log(currentList);
+  }, [isDescSort, searchClients, clientList]);
+
   function enrollClient() {
     history.push('/adicionar-cliente');
   };
@@ -115,21 +152,23 @@ function ListClient() {
 
   function handleSearch(data) {
     setSearch('');
-    
+
     const search = data.search;
     let searchedClients = [];
 
     for (const client of clientList) {
-      if((client.name.toLowerCase()).includes(search.toLowerCase())
-          || (client.email.toLowerCase()).includes(search.toLowerCase())
-          || (client.tax_id).includes(search)
-        ) {
+      if ((client.name.toLowerCase()).includes(search.toLowerCase())
+        || (client.email.toLowerCase()).includes(search.toLowerCase())
+        || (client.tax_id).includes(search)
+      ) {
         searchedClients.push(client);
       };
     };
 
-    if(search.length !== 0 && searchedClients.length === 0) {
+    if (search.length !== 0 && searchedClients.length === 0) {
       setSearch('Sem resultados');
+      setSearchClients([]);
+      return;
     };
 
     setSearchClients(searchedClients);
@@ -184,26 +223,12 @@ function ListClient() {
             <div className={styles.blank__space}>
             </div>
           </div>
-          {(searchClients.length === 0 && isDescSort)
+          {(currentList.length > 0)
             && ((search.length !== 0)
-              ? <div className={styles.cardNoResult}>Sem resultados...</div>
-              : clientList.reverse().map((client) => <CardClient key={client.id} client={client} />)
+              ?
+              <div className={styles.cardNoResult}>Sem resultados...</div>
+              : currentList.map((client) => <CardClient key={client.id} client={client} />)
             )
-          }
-          {(searchClients.length === 0 && !isDescSort)
-            && ((search.length !== 0)
-              ? <div className={styles.cardNoResult}>Sem resultados...</div>
-              : clientList.map((client) => <CardClient key={client.id} client={client} />)
-            )
-          }
-          {(searchClients.length !== 0 && isDescSort)
-            && searchClients.reverse().map((client) => <CardClient key={client.id} client={client} />)
-          }
-          {(searchClients.length !== 0 && !isDescSort)
-            && searchClients.map((client) => {
-              console.log(searchClients.length, isDescSort, search.length)
-              return <CardClient key={client.id} client={client} />
-            })
           }
           <Snackbar
             className={styles.snackbar}
