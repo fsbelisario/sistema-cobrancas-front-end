@@ -3,8 +3,9 @@
   align-items: center;
   flex-direction: column;
   gap: 2rem;
-  justify-content: center;
   height: 100vh;
+  justify-content: center;
+  padding: 2rem;
 
   form {
     background-color: var(--color-white);
@@ -105,6 +106,14 @@
     form {
       gap: 1rem;
       padding: 2.5rem;
+
+      input {
+        width: 15rem;
+      }
+
+      .password__input {
+        width: 16.55rem;
+      }
     }
 
     footer {

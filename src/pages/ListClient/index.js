@@ -2,8 +2,7 @@ import {
   Alert,
   Backdrop,
   Button,
-  CircularProgress,
-  Snackbar,
+  CircularProgress, Snackbar,
   TextField
 } from '@mui/material';
 import {
@@ -19,29 +18,29 @@ import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router';
 import searchIcon from '../../assets/search-icon.svg';
 import sortArrow from '../../assets/sort-arrow.svg';
-import CardBill from '../../components/CardBill';
+import CardClient from '../../components/CardClient';
 import Navbar from '../../components/Navbar';
 import UserProfile from '../../components/UserProfile';
 import AuthContext from '../../contexts/AuthContext';
 import styles from './styles.module.scss';
 
-function Billing() {
+function ListClient() {
   const { register, setValue, getValues } = useForm();
 
   const {
-    token, setToken, tokenLS,
-    updateBillingsList, setUpdateBillingsList
+    token, setToken,
+    tokenLS,
+    updateClientsList, setUpdateClientsList
   } = useContext(AuthContext);
 
   const history = useHistory();
 
-  const [billList, setBillList] = useState([]);
+  const [clientList, setClientList] = useState([]);
   const [currentList, setCurrentList] = useState([]);
-  const [isDescSort, setIsDescSort] = useState(false);
-  const [listClients, setListClients] = useState([]);
   const [loading, setLoading] = useState(false);
   const [requestResult, setRequestResult] = useState();
-  const [searchBills, setSearchBills] = useState([]);
+  const [isDescSort, setIsDescSort] = useState(false);
+  const [searchClients, setSearchClients] = useState([]);
   const [searchResult, setSearchResult] = useState('');
 
   useEffect(() => {
@@ -51,44 +50,12 @@ function Billing() {
       return;
     };
 
-    async function retrieveClients() {
+    async function getClientsList() {
       try {
         setRequestResult();
         setLoading(true);
 
-        const response = await fetch('https://academy-bills.herokuapp.com/clients/options', {
-          method: 'GET',
-          mode: 'cors',
-          headers: {
-            'Content-type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        const requestData = await response.json();
-
-        if (!response.ok) {
-          throw new Error(requestData);
-        };
-
-        setListClients(requestData);
-      } catch (error) {
-        setRequestResult(error.message);
-      } finally {
-        setLoading(false);
-      };
-    };
-
-    retrieveClients();
-
-    async function getBillings() {
-      setIsDescSort(false);
-
-      try {
-        setRequestResult();
-        setLoading(true);
-
-        const response = await fetch('https://academy-bills.herokuapp.com/billings', {
+        const response = await fetch('https://academy-bills.herokuapp.com/clients', {
           method: 'GET',
           mode: 'cors',
           headers: {
@@ -115,8 +82,8 @@ function Billing() {
           return 0;
         });
 
-        setBillList(requestData);
-        setSearchBills(requestData);
+        setClientList(requestData);
+        setSearchClients(requestData);
         setValue('search', '');
       } catch (error) {
         setRequestResult(error.message);
@@ -125,25 +92,37 @@ function Billing() {
       };
     };
 
-    getBillings();
+    getClientsList();
 
-    if (updateBillingsList) {
-      getBillings();
-      setUpdateBillingsList(false);
+    if (updateClientsList) {
+      getClientsList();
+      setUpdateClientsList(false);
     };
-  }, [token, setToken, tokenLS, history, setUpdateBillingsList, updateBillingsList, setValue]);
+  }, [token, setToken, tokenLS, history, updateClientsList, setUpdateClientsList, setValue]);
 
   useEffect(() => {
     let listManipulation;
 
-    if (searchBills.length > 0) {
-      listManipulation = searchBills;
+    if (searchClients.length > 0) {
+      listManipulation = searchClients;
     } else {
-      listManipulation = billList;
+      listManipulation = clientList;
     };
 
     setCurrentList(listManipulation);
-  }, [isDescSort, searchBills, billList]);
+  }, [isDescSort, searchClients, clientList]);
+
+  function enrollClient() {
+    history.push('/adicionar-cliente');
+  };
+
+  function handleAlertClose() {
+    setRequestResult();
+  };
+
+  function handleSortByName() {
+    setIsDescSort(!isDescSort);
+  };
 
   function handleSearch() {
     setSearchResult('');
@@ -153,34 +132,25 @@ function Billing() {
     if (search.trim().length > 0) {
       let filter = [];
 
-      for (const bill of billList) {
-        if ((bill.name.toLowerCase()).includes(search.trim().toLowerCase())
-          || (bill.email.toLowerCase()).includes(search.trim().toLowerCase())
-          || (bill.tax_id).includes(search.trim())
-          || (String(bill.id).includes(search.trim()))
+      for (const client of clientList) {
+        if ((client.name.toLowerCase()).includes(search.trim().toLowerCase())
+          || (client.email.toLowerCase()).includes(search.trim().toLowerCase())
+          || (client.tax_id).includes(search.trim())
         ) {
-          filter.push(bill);
+          filter.push(client);
         };
       };
 
       if (filter.length === 0) {
         setSearchResult('Sem resultados');
-        setSearchBills([]);
+        setSearchClients([]);
         return;
       };
 
-      setSearchBills(filter);
+      setSearchClients(filter);
     } else {
-      setSearchBills([]);
+      setSearchClients([]);
     };
-  };
-
-  function handleAlertClose() {
-    setRequestResult();
-  };
-
-  function handleSortByName() {
-    setIsDescSort(!isDescSort);
   };
 
   const theme = createTheme({
@@ -199,6 +169,13 @@ function Billing() {
         <div className={styles.content}>
           <ThemeProvider theme={theme}>
             <div className={styles.search__wrapper}>
+              <Button
+                className={styles.button__client}
+                onClick={enrollClient}
+                variant='contained'
+              >
+                Adicionar cliente
+              </Button>
               <form onSubmit={e => { e.preventDefault() }}>
                 <TextField
                   {...register('search')}
@@ -208,7 +185,7 @@ function Billing() {
                     };
                   }}
                   color='secondary'
-                  placeholder='Procurar por Nome, E-mail, CPF ou ID'
+                  placeholder='Procurar por Nome, E-mail ou CPF'
                 />
                 <Button className={styles.search__button} onClick={handleSearch}>
                   <img src={searchIcon} alt='' />
@@ -218,25 +195,29 @@ function Billing() {
             </div>
           </ThemeProvider>
           <div className={styles.table__title}>
-            <div className={styles.info__id}>ID</div>
-            <div className={styles.info__name} onClick={handleSortByName}>
+            <div className={styles.table__client} onClick={handleSortByName}>
               Cliente
               <img src={sortArrow} alt='' className={isDescSort ? `${styles.sortArrowUp}` : ''} />
             </div>
-            <div className={styles.info__description}>Descrição</div>
-            <div>Valor</div>
-            <div>Status</div>
-            <div>Vencimento</div>
+            <div className={styles.table__others}>
+              <div>Cobranças Feitas</div>
+              <div>Cobranças Recebidas</div>
+              <div>Status</div>
+            </div>
+            <div className={styles.blank__space}>
+            </div>
           </div>
+
           {(currentList.length > 0)
             && ((searchResult.length !== 0)
               ? <div className={styles.cardNoResult}>Sem resultados...</div>
               : (isDescSort
-                ? currentList.reverse().map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
-                : currentList.map((bill) => <CardBill key={bill.id} bill={bill} listClients={listClients} />)
+                ? currentList.reverse().map((client) => <CardClient key={client.id} client={client} />)
+                : currentList.map((client) => <CardClient key={client.id} client={client} />)
               )
             )
           }
+          
           <Snackbar
             className={styles.snackbar}
             open={!!requestResult}
@@ -248,7 +229,6 @@ function Billing() {
               {requestResult}
             </Alert>
           </Snackbar>
-
           <Backdrop
             sx={{
               color: 'var(--color-white)',
@@ -264,4 +244,4 @@ function Billing() {
   );
 };
 
-export default Billing;
+export default ListClient;
